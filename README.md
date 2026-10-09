@@ -1,3 +1,5 @@
+[English](README.md) | [中文](README.zh.md)
+
 # Ontology-Driven RCA Agent — with a Reproducible Fault-Injection Benchmark
 
 An **ontology-driven root-cause-analysis agent** for a containerized cluster
@@ -57,13 +59,18 @@ end-to-end diagnosis scoring, and a versioned ontology-evolution protocol.
 #    Prometheus/Grafana/Alertmanager, RCA backend + console)
 docker compose -f rca-agent/docker-compose.yml up -d
 
-# 2) build the synthetic dataset (~4.8M rows) — required by the scenarios
+# 2) bootstrap the cluster: schema + replication. **This is NOT done by compose** —
+#    the replicas start as empty instances (no appuser, no tables, no replication).
+#    Skipping it shows up as "Access denied" on the read path plus two replication FAILs.
+python tools/cluster_bootstrap.py
+
+# 3) build the synthetic dataset (~4.8M rows) — required by the scenarios
 python tools/fault_injector.py seed
 
-# 3) environment health check (18 items) — expect all PASS
+# 4) environment health check (18 items) — expect all PASS
 python tools/fault_injector.py doctor
 
-# 4) open the console
+# 5) open the console
 #    http://localhost:3001   (chaos / stress / cost / diagnosis tabs)
 ```
 
