@@ -1,0 +1,502 @@
+# =============================================================================
+# RCA Agent — 生产环境 Docker Compose（集群版）
+# =============================================================================
+# 拓扑：
+#
+#   客户端 ──► cc-app-gateway (Nginx LB :8080)
+#                   │  least_conn + Docker DNS 发现
+#                   ├──► payment-app 副本 ×3   (读走只读副本)
+#                   │
+#   ┌───────────────┴──────────────────────────────────────────────┐
+#   │  数据库层集群                                                 │
+#   │    cc-mysql-core        (PRIMARY, 读写, :3306)                │
+#   │      └─ binlog / GTID ──┬──► cc-mysql-replica-1 (只读副本)     │
+#   │                         └──► cc-mysql-replica-2 (只读副本)     │
+#   └───────────────────────────────────────────────────────────────┘
+#
+#   监控：Prometheus（DNS-SD 发现全部 app 副本 + 3 个 mysqld-exporter）
+#         Grafana / 3× mysqld-exporter
+#   Agent：rca-agent-backend (FastAPI :8088) + rca-agent-frontend (:3001)
+#
+# 资源限额（用于"资源不足"类故障注入：OOMKill / CPU 节流）：
+#   app 副本 cpus=0.5 mem=256m，MySQL 主库 mem=1g，副本 mem=768m
+#
+# 访问地址（默认都只绑 **127.0.0.1**，见下方"安全默认值"）：
+#   Agent UI        http://localhost:3001
+#   应用网关          http://localhost:8080  (/health /metrics /txn /topology)
+#   Prometheus      http://localhost:9090
+#   Grafana         http://localhost:3000 (admin / cc-ops-grafana)
+#   API 文档        http://localhost:8088/docs
+#
+# ── 安全默认值（§11.21 第 6、18 项）────────────────────────────────────────
+# 1. **端口默认只绑回环**：全部宿主机端口写成 `${CC_BIND:-127.0.0.1}:...`。
+#    本机访问照旧（Docker Desktop 会把 localhost 转发进来），但**别的机器连不上**。
+#    确实要对外暴露时显式指定绑定地址，并同时做下面两件事：
+#        CC_BIND=0.0.0.0 docker compose up -d
+# 2. **暴露前必须给故障注入接口设令牌**（它能操作这些容器）：
+#        CHAOS_API_TOKEN=<随机串> docker compose up -d
+#    前端「故障注入」页右上角有令牌输入框，填一次存在浏览器里，之后自动带上
+#    `X-Chaos-Token` 头。
+# 3. **Grafana 不再是默认口令** `admin123`，改为 `cc-ops-grafana`
+#    （可用 `GRAFANA_ADMIN_PASSWORD` 覆盖），并关闭自助注册与匿名访问。
+# =============================================================================
+
+services:
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 应用层集群：3 副本 + 网关
+  # ═══════════════════════════════════════════════════════════════════════════
+  payment-app:
+    build:
+      context: ../demo/app
+      dockerfile: Dockerfile
+    # ⚠ 集群化后不能设置 container_name（会阻止 scale）
+    #    副本名由 compose 生成：rca-agent-payment-app-1/2/3
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+      DB_NAME: creditcard
+      # 读写分离：读路径轮询到只读副本（副本挂了会暴露为读失败）
+      DB_REPLICA_HOSTS: "mysql-replica-1:3306,mysql-replica-2:3306"
+      POOL_LIMIT: "10"
+      APP_NAME: payment-app
+      APP_VERSION: "1.8.3"
+      # 实例身份：留空 → server.js 回退到 HOSTNAME（Docker 注入的容器 ID 前 12 位），
+      # 保证每个副本的 app_instance 指标标签唯一且可与 docker ps 的 ID 对齐。
+    restart: unless-stopped
+    # PID 1 用 tini 做初始化，**负责回收僵尸进程**。
+    # 不加的话 PID 1 是 node，它不会 wait() 子进程：每次注入用 stress-ng 起压、
+    # 结束后 kill 掉，被 kill 的子进程就变成 `<defunct>` 永久堆积
+    # （实测跑几轮演练后单副本堆了 26 个僵尸）。僵尸不占 CPU/内存，
+    # 但会污染"进程计数"类判断（pgrep 会把它们算进去），也会白占 pids_limit=512 的名额。
+    init: true
+    networks:
+      - rca-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # ── 资源限额：故障注入"资源不足"的可复现边界 ──────────────
+    cpus: "0.50"
+    mem_limit: 256m
+    pids_limit: 512
+    # NET_ADMIN 供 tc netem 注入网络延迟/丢包（仅在模拟环境开启）
+    cap_add:
+      - NET_ADMIN
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      replicas: 3
+
+  # ── 应用层网关（负载均衡 + 副本健康视图）────────────────────────────────
+  app-gateway:
+    image: nginx:1.27-alpine
+    container_name: cc-app-gateway
+    restart: unless-stopped
+    ports:
+      # 默认只绑回环 —— 见文件顶部关于 CC_BIND 的说明
+      - "${CC_BIND:-127.0.0.1}:8080:8080"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro,z
+    networks:
+      - rca-net
+    depends_on:
+      - payment-app
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/gateway/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 数据库层集群：1 主 + 2 只读副本（GTID 异步复制）
+  # ═══════════════════════════════════════════════════════════════════════════
+  mysql:
+    image: mysql:8.0
+    container_name: cc-mysql-core
+    restart: unless-stopped
+    # ⚠ 必须有 init —— 不是可选项。
+    #
+    # 故障注入会在容器里跑 `sh` 后台循环（`db_slow_query_flood` 等），
+    # 回滚时 `kill_by_marker` 用 `kill -9` 杀这些循环外壳，
+    # **在飞的子进程（`mysql` 客户端）就被孤儿化**，reparent 到 PID 1。
+    # 而 mysqld 作为 PID 1 **不会回收任意孤儿** → 它们永久变成僵尸。
+    #
+    # 实测后果：cc-mysql-core 累积了 **1769 个僵尸**（1640 个 mysql 客户端 + 124 个 sh + 5 个 sleep），
+    # 而 replica 上只有个位数进程。连锁反应是：
+    #   清理脚本按标记扫 /proc（O(进程数)），条目从 ~10 涨到 1769 →
+    #   每条 docker exec 从 <1s 变成 ~10s → 整体清理从 17s 变成 **75.6s**，
+    #   而且中途不产出日志 → 看板上"停止"按钮像是没反应。
+    # 加 `init: true` 后由 docker-init(tini) 当 PID 1 负责回收孤儿。
+    init: true
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: creditcard
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "${CC_BIND:-127.0.0.1}:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./monitoring/mysql/init:/docker-entrypoint-initdb.d:ro,z
+    networks:
+      - rca-net
+    command:
+      - --server-id=1
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
+      - --log-replica-updates=ON
+      - --max-connections=200
+      - --slow-query-log=1
+      - --slow-query-log-file=/var/log/mysql/slow.log
+      - --long-query-time=1            # 原为 0.1：空闲时 Slow_queries 也在涨（1.4 次/分），
+                                       # 正常写入(INSERT 均 396ms)全被记成慢查询 → 计数器变成"流量"代理。
+                                       # 而注入类慢语句实测 2.2s~170s，1s 门槛仍能 100% 检出。
+      - --min-examined-row-limit=10000  # 只记"又慢又扫了很多行"的：挡掉展示类 COUNT(*)，
+                                        # 保留注入故障（它们要扫 400 万行）
+      - --wait_timeout=28800
+      - --innodb-buffer-pool-size=256M
+    mem_limit: 1g
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  mysql-replica-1:
+    image: mysql:8.0
+    container_name: cc-mysql-replica-1
+    restart: unless-stopped
+    init: true          # 同 mysql：DB 注入会在容器内起 sh 循环，需要 PID 1 回收孤儿（见上）
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: creditcard
+    volumes:
+      - mysql-replica-1-data:/var/lib/mysql
+    networks:
+      - rca-net
+    command:
+      - --server-id=11
+      - --log-bin=replica1-bin
+      - --binlog-format=ROW
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
+      - --log-replica-updates=ON
+      - --relay-log=relay-bin
+      - --read-only=ON
+      - --max-connections=200
+      - --slow-query-log=1
+      - --slow-query-log-file=/var/log/mysql/slow.log
+      - --long-query-time=1            # 原为 0.1：空闲时 Slow_queries 也在涨（1.4 次/分），
+                                       # 正常写入(INSERT 均 396ms)全被记成慢查询 → 计数器变成"流量"代理。
+                                       # 而注入类慢语句实测 2.2s~170s，1s 门槛仍能 100% 检出。
+      - --min-examined-row-limit=10000  # 只记"又慢又扫了很多行"的：挡掉展示类 COUNT(*)，
+                                        # 保留注入故障（它们要扫 400 万行）
+      - --innodb-buffer-pool-size=128M
+    mem_limit: 768m
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  mysql-replica-2:
+    image: mysql:8.0
+    container_name: cc-mysql-replica-2
+    restart: unless-stopped
+    init: true          # 同 mysql：DB 注入会在容器内起 sh 循环，需要 PID 1 回收孤儿（见上）
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: creditcard
+    volumes:
+      - mysql-replica-2-data:/var/lib/mysql
+    networks:
+      - rca-net
+    command:
+      - --server-id=12
+      - --log-bin=replica2-bin
+      - --binlog-format=ROW
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
+      - --log-replica-updates=ON
+      - --relay-log=relay-bin
+      - --read-only=ON
+      - --max-connections=200
+      - --slow-query-log=1
+      - --slow-query-log-file=/var/log/mysql/slow.log
+      - --long-query-time=1            # 原为 0.1：空闲时 Slow_queries 也在涨（1.4 次/分），
+                                       # 正常写入(INSERT 均 396ms)全被记成慢查询 → 计数器变成"流量"代理。
+                                       # 而注入类慢语句实测 2.2s~170s，1s 门槛仍能 100% 检出。
+      - --min-examined-row-limit=10000  # 只记"又慢又扫了很多行"的：挡掉展示类 COUNT(*)，
+                                        # 保留注入故障（它们要扫 400 万行）
+      - --innodb-buffer-pool-size=128M
+    mem_limit: 768m
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 监控层
+  # ═══════════════════════════════════════════════════════════════════════════
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: cc-prometheus
+    restart: unless-stopped
+    ports:
+      - "${CC_BIND:-127.0.0.1}:9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro,z
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro,z
+      - prometheus-data:/prometheus
+    networks:
+      - rca-net
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    mem_limit: 512m
+    depends_on:
+      - payment-app
+      - mysql
+      - mysqld-exporter-primary
+      - blackbox-exporter
+
+  # ── 黑盒探针：从"外部用户视角"观测网关与副本可达性 ──────────────
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: cc-blackbox-exporter
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/blackbox/blackbox.yml'
+    volumes:
+      - ./monitoring/blackbox/blackbox.yml:/etc/blackbox/blackbox.yml:ro,z
+    networks:
+      - rca-net
+    mem_limit: 64m
+
+  # mysqld-exporter v0.16 不再支持 DATA_SOURCE_NAME，改用
+  # --mysqld.address/--mysqld.username + MYSQLD_EXPORTER_PASSWORD 环境变量。
+  mysqld-exporter-primary:
+    image: prom/mysqld-exporter:v0.16.0
+    container_name: cc-mysqld-exporter-primary
+    restart: unless-stopped
+    command:
+      - "--mysqld.address=mysql:3306"
+      - "--mysqld.username=rca_readonly"
+      - "--config.my-cnf=/dev/null"
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: rca_readonly_pwd
+    networks:
+      - rca-net
+    mem_limit: 128m
+    depends_on:
+      - mysql
+
+  mysqld-exporter-replica-1:
+    image: prom/mysqld-exporter:v0.16.0
+    container_name: cc-mysqld-exporter-replica-1
+    restart: unless-stopped
+    command:
+      - "--mysqld.address=mysql-replica-1:3306"
+      - "--mysqld.username=rca_readonly"
+      - "--config.my-cnf=/dev/null"
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: rca_readonly_pwd
+    networks:
+      - rca-net
+    mem_limit: 128m
+    depends_on:
+      - mysql-replica-1
+
+  mysqld-exporter-replica-2:
+    image: prom/mysqld-exporter:v0.16.0
+    container_name: cc-mysqld-exporter-replica-2
+    restart: unless-stopped
+    command:
+      - "--mysqld.address=mysql-replica-2:3306"
+      - "--mysqld.username=rca_readonly"
+      - "--config.my-cnf=/dev/null"
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: rca_readonly_pwd
+    networks:
+      - rca-net
+    mem_limit: 128m
+    depends_on:
+      - mysql-replica-2
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    container_name: cc-grafana
+    restart: unless-stopped
+    ports:
+      - "${CC_BIND:-127.0.0.1}:3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      # 不再用默认口令 admin123（§11.21 第 18 项）。
+      # 可用 GRAFANA_ADMIN_PASSWORD 覆盖；对外暴露前**务必**改掉。
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-cc-ops-grafana}
+      # 关闭自助注册：能访问到 Grafana 的人不应能自己开账号
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro,z
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro,z
+      - grafana-data:/var/lib/grafana
+    networks:
+      - rca-net
+    mem_limit: 384m
+    depends_on:
+      - prometheus
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # RCA Agent 后端（FastAPI）
+  # ═══════════════════════════════════════════════════════════════════════════
+  rca-agent-backend:
+    # PID 1 = tini：健康检查/Dockerfile CMD 留下的孤儿由它回收。
+    # 不加的话 PID 1 是 uvicorn/nginx，不 wait() 被收养的子进程 → 僵尸只增不减
+    init: true
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: rca-agent-backend
+    restart: unless-stopped
+    ports:
+      - "${CC_BIND:-127.0.0.1}:8088:8088"
+    environment:
+      PYTHONPATH: /app:/app/vendor/EvoOntology
+      PYTHONIOENCODING: utf-8
+      PYTHONUNBUFFERED: "1"
+      RCA_FRONTEND_ORIGIN: http://localhost:3001
+      PROMETHEUS_URL: http://prometheus:9090
+      EVO_WORKSPACE: /app/.evoontology
+      EVO_VENDOR: /app/vendor/EvoOntology
+      # ── 集群拓扑（Agent 用于枚举副本 / 分片）──────────────────
+      RCA_APP_SERVICE: payment-app
+      RCA_APP_REPLICAS: "3"
+      RCA_APP_GATEWAY: cc-app-gateway
+      RCA_DB_PRIMARY: mysql
+      RCA_DB_REPLICAS: "mysql-replica-1,mysql-replica-2"
+      # MySQL 持久化（incident / feedback / trajectory / agent run）
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+      DB_NAME: creditcard
+      # 只读取证账号（PROCESS + REPLICATION CLIENT + performance_schema）
+      RCA_DB_USER: ${RCA_DB_USER:-rca_readonly}
+      RCA_DB_PASSWORD: ${RCA_DB_PASSWORD:-rca_readonly_pwd}
+      # ── LLM（Agent 引擎）────────────────────────────────────────
+      RCA_LLM_PROVIDER: ${RCA_LLM_PROVIDER:-agnes}
+      RCA_LLM_MODEL: ${RCA_LLM_MODEL:-agnes-3.0-flash}
+      RCA_LLM_FALLBACK_MODEL: ${RCA_LLM_FALLBACK_MODEL:-agnes-3.0-flash}
+      AGNES_API_KEY: ${AGNES_API_KEY:-}
+      RSXERMU666_API_KEY: ${RSXERMU666_API_KEY:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      # ── Agent 预算 ──────────────────────────────────────────────
+      RCA_AGENT_MAX_STEPS: ${RCA_AGENT_MAX_STEPS:-10}
+      RCA_AGENT_TIMEOUT_S: ${RCA_AGENT_TIMEOUT_S:-240}
+      RCA_AGENT_MAX_TOKENS: ${RCA_AGENT_MAX_TOKENS:-60000}
+      RCA_FAST_PATH_CONFIDENCE: ${RCA_FAST_PATH_CONFIDENCE:-0.85}
+      # ── 故障注入控制台（人工手动注入）────────────────────────────
+      # 复用已有 docker-cli + /var/run/docker.sock，直接调用 tools/chaos 注入引擎。
+      # 服务地址必须换成 compose 服务名（默认值是给宿主机 CLI 用的 localhost）。
+      CHAOS_PROM_URL: http://prometheus:9090
+      CHAOS_APP_LB: http://cc-app-gateway:8080
+      CHAOS_RCA_API: http://127.0.0.1:8088
+      # 只读挂载代码 → 禁止写字节码缓存（否则 Python 会尝试写 __pycache__ 失败告警）
+      PYTHONDONTWRITEBYTECODE: "1"
+      # 总开关：设为 0 可整体停用注入接口（默认启用）
+      CHAOS_UI_ENABLED: ${CHAOS_UI_ENABLED:-1}
+      # 可选访问令牌：非空时所有写操作必须带 X-Chaos-Token 头
+      CHAOS_API_TOKEN: ${CHAOS_API_TOKEN:-}
+    volumes:
+      # 后端代码（开发时热更新）
+      - ./backend:/app/backend,z
+      # 共享 EvoOntology 本体工作区（读写）
+      - ../.evoontology:/app/.evoontology,z
+      # 共享 EvoOntology Python 包（只读）
+      - ../vendor/EvoOntology:/app/vendor/EvoOntology:ro,z
+      # Docker socket（只读诊断用；环境层工具通过 docker CLI 访问）
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # ── 故障注入控制台依赖（只读代码 + 读写状态目录）──────────────
+      # tools/ 只读：与宿主机 CLI 共用同一套场景目录，避免两份漂移
+      - ../tools:/app/tools:ro,z
+      # .chaos/ 读写：状态文件必须与宿主机 CLI 共享，否则 UI 与 CLI 看到不同的激活故障
+      - ../.chaos:/app/.chaos,z
+    mem_limit: 512m
+    networks:
+      - rca-net
+    depends_on:
+      - prometheus
+      - payment-app
+      - mysql
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 容器级指标导出器（**容器外观测**：容器被杀重启后证据不会消失）
+  # 背景：应用自曝的 oom_kill 计数器读的是**容器内** cgroup，容器一重启就从 0 开始，
+  # 于是 increase(cc_container_oom_kill_total[5m]) > 0 永远为假
+  # （实测：注入层已确认 OOMKilled=true，而三个实例的该计数器同时全为 0）。
+  # 改读 Docker API 的 RestartCount / OOMKilled：单调、且不随容器重启消失。
+  # ═══════════════════════════════════════════════════════════════════════════
+  container-exporter:
+    image: python:3.11-alpine
+    command: ["python", "/exporter.py"]
+    environment:
+      EXPORTER_PORT: "9105"
+      CONTAINER_PREFIXES: "rca-agent-payment-app"
+    volumes:
+      - ./monitoring/container/exporter.py:/exporter.py:ro,z
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - rca-net
+    mem_limit: 96m
+    init: true
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # RCA Agent 前端（Nginx）
+  # ═══════════════════════════════════════════════════════════════════════════
+  rca-agent-frontend:
+    # PID 1 = tini：健康检查/Dockerfile CMD 留下的孤儿由它回收。
+    # 不加的话 PID 1 是 uvicorn/nginx，不 wait() 被收养的子进程 → 僵尸只增不减
+    init: true
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rca-agent-frontend
+    restart: unless-stopped
+    ports:
+      - "${CC_BIND:-127.0.0.1}:3001:80"
+    networks:
+      - rca-net
+    mem_limit: 128m
+    depends_on:
+      - rca-agent-backend
+
+# =============================================================================
+# 网络与存储
+# =============================================================================
+volumes:
+  mysql-data:
+  mysql-replica-1-data:
+  mysql-replica-2-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  rca-net:
+    driver: bridge

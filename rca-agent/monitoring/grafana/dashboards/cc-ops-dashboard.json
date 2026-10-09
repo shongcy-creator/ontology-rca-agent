@@ -1,0 +1,224 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "content": "## 💳 信用卡系统运维仪表板\npayment-app · MySQL creditcard · Prometheus + Grafana\n\n| 指标 | 目标 | 当前阈值 |\n|---|---|---|\n| HTTP P99 延迟 | < 500ms | — |\n| MySQL P99 延迟 | < 100ms | — |\n| 连接池活跃连接 | < 8 / 10 | — |\n| 交易成功率 | > 99.9% | — |\n| CPU 使用率 | < 80% | — |",
+        "mode": "markdown"
+      },
+      "title": "概述",
+      "type": "text"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green",  "value": null },
+              { "color": "yellow", "value": 0.5 },
+              { "color": "red",   "value": 0.8 }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 3 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "rate(cc_http_request_duration_seconds_sum[5m]) / rate(cc_http_request_duration_seconds_count[5m])",
+          "legendFormat": "HTTP P99",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP 平均延迟",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 3 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        { "expr": "rate(cc_http_requests_total[5m])", "legendFormat": "QPS", "refId": "A" }
+      ],
+      "title": "HTTP QPS",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 8 }] },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 3 },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        { "expr": "cc_mysql_pool_active", "legendFormat": "活跃连接", "refId": "A" }
+      ],
+      "title": "MySQL 活跃连接数",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 7 },
+      "id": 5,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, rate(cc_http_request_duration_seconds_bucket[5m]))",
+          "legendFormat": "HTTP P99",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.99, rate(cc_mysql_query_duration_seconds_bucket[5m]))",
+          "legendFormat": "MySQL P99",
+          "refId": "B"
+        }
+      ],
+      "title": "延迟 P99",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 1, "pointSize": 5 },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 8 }]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 7 },
+      "id": 6,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        { "expr": "cc_mysql_pool_active", "legendFormat": "活跃连接", "refId": "A" },
+        { "expr": "cc_mysql_pool_limit", "legendFormat": "连接上限", "refId": "B" }
+      ],
+      "title": "MySQL 连接池状态",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "bars", "fillOpacity": 80, "lineWidth": 0 },
+          "mappings": [],
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 15 },
+      "id": 7,
+      "options": {
+        "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        { "expr": "increase(cc_txn_total[1h])", "legendFormat": "{{status}}", "refId": "A" }
+      ],
+      "title": "每小时交易量（按状态）",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 1 },
+          "mappings": [],
+          "unit": "bytes"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 15 },
+      "id": 8,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        { "expr": "cc_container_memory_bytes", "legendFormat": "内存 RSS", "refId": "A" },
+        { "expr": "cc_container_cpu_seconds", "legendFormat": "CPU 秒", "refId": "B" }
+      ],
+      "title": "容器资源",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["credit-card-ops", "demo"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "💳 Credit Card Ops",
+  "uid": "cc-ops-001",
+  "version": 1,
+  "weekStart": ""
+}

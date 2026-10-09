@@ -1,0 +1,282 @@
+[
+  {
+    "id": "map:app-container",
+    "term_id": "env:container",
+    "database_source": "docker:cc-credit-card-app",
+    "table": "docker_ps",
+    "column": "NAMES",
+    "semantic_filter": "NAMES='cc-credit-card-app'",
+    "grain": "container",
+    "validation": "docker ps 输出匹配",
+    "evidence_refs": [
+      "ev-docker-ps"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:app-ip",
+    "term_id": "env:container",
+    "database_source": "http://127.0.0.1:8080/topology/raw",
+    "table": "network",
+    "column": "containerIP",
+    "grain": "container",
+    "semantic_filter": "containerIP=172.18.0.3",
+    "validation": "GET /topology/raw",
+    "evidence_refs": [
+      "ev-app-topology"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:db-version",
+    "term_id": "db:mysql-core",
+    "database_source": "mysql:creditcard",
+    "table": "performance_schema",
+    "column": "server_status",
+    "semantic_filter": "Variable_name='@@version'",
+    "aggregation_semantics": "scalar",
+    "grain": "server",
+    "validation": "SELECT @@version",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:db-maxconn",
+    "term_id": "db:mysql-core",
+    "database_source": "mysql:creditcard",
+    "table": "performance_schema",
+    "column": "server_status",
+    "semantic_filter": "Variable_name='@@max_connections'",
+    "grain": "server",
+    "validation": "SELECT @@max_connections",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:table-rows",
+    "term_id": "table:t_txn",
+    "database_source": "mysql:information_schema",
+    "table": "tables",
+    "column": "table_rows",
+    "semantic_filter": "table_schema='creditcard' AND table_name='t_txn'",
+    "grain": "table",
+    "validation": "information_schema 行数",
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:host-cpu",
+    "term_id": "env:host-phys",
+    "database_source": "windows:wmi",
+    "table": "Win32_Processor",
+    "column": "NumberOfCores",
+    "grain": "host",
+    "validation": "Get-CimInstance Win32_Processor",
+    "evidence_refs": [
+      "ev-host-facts"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:latency-p99",
+    "term_id": "metric:mysql-p99",
+    "database_source": "http://127.0.0.1:8080/topology/raw",
+    "table": "db.probe",
+    "column": "latencyMs",
+    "grain": "query",
+    "validation": "app-side JDBC ping latency",
+    "evidence_refs": [
+      "ev-db-probe"
+    ],
+    "confidence": "medium"
+  },
+  {
+    "id": "map:cluster-replica-count",
+    "term_id": "metric:replica-healthy-count",
+    "database_source": "http://localhost:9090",
+    "table": "prometheus",
+    "column": "up",
+    "semantic_filter": "count(up{job=\"payment-app\"} == 1)",
+    "grain": "cluster",
+    "validation": "Prometheus 目标发现 + up 指标",
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ],
+    "confidence": "high",
+    "aggregation_semantics": "count"
+  },
+  {
+    "id": "map:cluster-app-instance",
+    "term_id": "app:payment-app-cluster",
+    "database_source": "docker:compose",
+    "table": "docker_ps",
+    "column": "Names",
+    "semantic_filter": "label=com.docker.compose.service=payment-app",
+    "grain": "replica",
+    "validation": "docker ps 按 compose service 标签枚举副本",
+    "evidence_refs": [
+      "ev-cluster-topology"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:gateway-probe",
+    "term_id": "metric:gateway-probe",
+    "database_source": "http://localhost:9090",
+    "table": "probe_success",
+    "column": "value",
+    "semantic_filter": "probe_success{job=\"blackbox-gateway\"}",
+    "grain": "gateway",
+    "validation": "blackbox_exporter 外部 HTTP 探活",
+    "evidence_refs": [
+      "ev-cluster-blackbox"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:cpu-throttle",
+    "term_id": "metric:cpu-throttle",
+    "database_source": "http://127.0.0.1:8080/metrics",
+    "table": "cc_container_cpu_nr_throttled_total",
+    "column": "value",
+    "semantic_filter": "rate(cc_container_cpu_nr_throttled_total[5m]) > 0",
+    "grain": "container",
+    "validation": "app /metrics 读取 /sys/fs/cgroup/cpu.stat",
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:mem-pressure",
+    "term_id": "metric:mem-pressure",
+    "database_source": "http://127.0.0.1:8080/metrics",
+    "table": "cc_container_memory_working_set_bytes",
+    "column": "ratio",
+    "semantic_filter": "working_set / memory_limit",
+    "grain": "container",
+    "validation": "app /metrics 读取 /sys/fs/cgroup/memory.current 与 memory.max",
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:replica-lag",
+    "term_id": "metric:replica-lag",
+    "database_source": "mysql:performance_schema",
+    "table": "replication_applier_status_by_worker",
+    "column": "SECONDS_BEHIND_MASTER",
+    "semantic_filter": "SHOW REPLICA STATUS -> Seconds_Behind_Source",
+    "grain": "replica",
+    "validation": "mysqld-exporter mysql_slave_status_seconds_behind_master",
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:replica-io-running",
+    "term_id": "metric:replica-io-running",
+    "database_source": "mysql:performance_schema",
+    "table": "replication_connection_status",
+    "column": "SERVICE_STATE",
+    "semantic_filter": "SHOW REPLICA STATUS -> Replica_IO_Running",
+    "grain": "replica",
+    "validation": "mysqld-exporter mysql_slave_status_slave_io_running",
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:db-tmp-disk",
+    "term_id": "metric:db-tmp-disk",
+    "database_source": "mysql:performance_schema",
+    "table": "global_status",
+    "column": "Created_tmp_disk_tables",
+    "semantic_filter": "rate(mysql_global_status_created_tmp_disk_tables[5m])",
+    "grain": "server",
+    "validation": "mysqld-exporter SHOW GLOBAL STATUS",
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:conn-processlist",
+    "term_id": "metric:conn-exhaust",
+    "database_source": "mysql:information_schema",
+    "table": "processlist",
+    "column": "COUNT(*)",
+    "semantic_filter": "threads_connected / max_connections",
+    "grain": "server",
+    "validation": "information_schema.processlist 与 @@max_connections",
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:deploy-event",
+    "term_id": "evt:deploy",
+    "database_source": "docker:docker-inspect",
+    "table": "Container",
+    "column": "Config.Image / Created / State.StartedAt",
+    "semantic_filter": "label=com.docker.compose.service=payment-app",
+    "grain": "container",
+    "validation": "docker inspect → 镜像 ID 与容器创建/启动时间；镜像 ID 变化即一次发布",
+    "evidence_refs": [
+      "ev-deploy-source"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:uptime-since-deploy",
+    "term_id": "metric:uptime-since-deploy",
+    "database_source": "docker:docker-inspect",
+    "table": "Container",
+    "column": "State.StartedAt",
+    "semantic_filter": "now() - StartedAt",
+    "grain": "container",
+    "validation": "docker inspect 计算距最近一次发布/重启的时长（秒）",
+    "evidence_refs": [
+      "ev-deploy-source"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:idx-txn-created",
+    "term_id": "idx:txn-created",
+    "database_source": "mysql:information_schema",
+    "table": "statistics",
+    "column": "INDEX_NAME/COLUMN_NAME",
+    "semantic_filter": "table_schema='creditcard' AND table_name='t_txn' AND index_name='idx_txn_created'",
+    "grain": "index",
+    "validation": "SELECT ... FROM information_schema.statistics",
+    "evidence_refs": [
+      "ev-mysql-indexes"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:idx-txn-customer",
+    "term_id": "idx:txn-customer",
+    "database_source": "mysql:information_schema",
+    "table": "statistics",
+    "column": "INDEX_NAME/COLUMN_NAME",
+    "semantic_filter": "table_schema='creditcard' AND table_name='t_txn' AND index_name='idx_txn_customer'",
+    "grain": "index",
+    "validation": "SELECT ... FROM information_schema.statistics",
+    "evidence_refs": [
+      "ev-mysql-indexes"
+    ],
+    "confidence": "high"
+  }
+]

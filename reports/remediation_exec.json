@@ -1,0 +1,57 @@
+{
+  "plan_counts": {
+    "promql": 1,
+    "sql-readonly": 1,
+    "prose": 0,
+    "placeholder": 1,
+    "empty": 1,
+    "other": 0
+  },
+  "plan_ok": true,
+  "readonly_steps": [
+    {
+      "index": 0,
+      "kind": "promql",
+      "urgency": "P0",
+      "command": "rate(mysql_global_status_created_tmp_disk_tables[2m]); SHOW VARIABLES LIKE 'tmp_table_size'; SHOW VARIABLES LIKE 'sort_buffer_size'",
+      "action": "确认磁盘临时表速率与内存临时表阈值的当前值（判断是排序内存不足而非磁盘故障）",
+      "exec": {
+        "ok": false,
+        "value": null
+      },
+      "ok": false,
+      "result": "执行失败：None"
+    },
+    {
+      "index": 2,
+      "kind": "sql-readonly",
+      "urgency": "P1",
+      "command": "SET SESSION tmp_table_size=...",
+      "action": "上调 tmp_table_size / sort_buffer_size（可先在会话级验证再改全局）",
+      "exec": {
+        "ok": false,
+        "stdout": "",
+        "stderr": "mysql: [Warning] Using a password on the command line interface can be insecure.\nERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '...' at line 1\n",
+        "user": "rca_readonly"
+      },
+      "ok": false,
+      "result": "执行失败：mysql: [Warning] Using a password on the command line interface can be insecure.\nERROR 1064 (42000) at line 1: You have "
+    }
+  ],
+  "rollback_test": {
+    "applied": {
+      "ok": true,
+      "stderr": "mysql: [Warning] Using a password on the command line interface can be insecure.\n"
+    },
+    "verify": {
+      "ok": false,
+      "value": null,
+      "waited_s": 15.1
+    },
+    "rolled_back": {
+      "ok": true,
+      "stderr": "mysql: [Warning] Using a password on the command line interface can be insecure.\n"
+    }
+  },
+  "restored_max_connections": 200
+}

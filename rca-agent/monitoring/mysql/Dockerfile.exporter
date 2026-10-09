@@ -1,0 +1,2 @@
+FROM prom/mysqld-exporter:v0.16.0
+COPY --chmod=444 --chown=65534:65534 exporter.cnf /.my.cnf

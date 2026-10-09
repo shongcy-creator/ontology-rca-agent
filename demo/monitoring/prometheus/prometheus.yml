@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers: []
+
+scrape_configs:
+  # ── payment-app: Prometheus metrics ──────────────────────
+  - job_name: 'payment-app'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['app:8080']
+        labels:
+          app: 'payment-app'
+          env: 'demo'
+
+  # ── MySQL exporter ─────────────────────────────────────
+  - job_name: 'mysql-exporter'
+    static_configs:
+      - targets: ['mysqld-exporter:9104']
+        labels:
+          db: 'creditcard'
+
+  # ── Prometheus self-scraping ────────────────────────────
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

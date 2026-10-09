@@ -1,0 +1,36 @@
+# =============================================================================
+# blackbox-exporter 模块配置
+# -----------------------------------------------------------------------------
+# 集群化后"外部可达性"必须与"内部指标"分开观测：
+#   · 应用副本自己报的 /metrics 只能证明"副本认为自己活着"
+#   · 网关前的 probe_success 才能证明"用户能不能打进来"
+# RCA 需要能区分「全部副本都挂」与「网关/LB 挂」这两类完全不同的根因。
+# =============================================================================
+
+modules:
+  # 应用网关（对外唯一入口）
+  http_gateway:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200]
+      follow_redirects: false
+      preferred_ip_protocol: ip4
+      fail_if_ssl: false
+      fail_if_not_ssl: false
+
+  # 直连单个应用副本（绕过网关：区分"副本挂"与"网关挂"）
+  http_app_replica:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      valid_status_codes: [200]
+      preferred_ip_protocol: ip4
+
+  # TCP 探活（MySQL 端口）
+  tcp_connect:
+    prober: tcp
+    timeout: 5s

@@ -1,0 +1,30 @@
+{
+  "name": "cc-ops-dsh-plugin-chaos-console",
+  "version": "1.0.1",
+  "description": "把 credit-card-sys-ops 的故障注入控制台嵌入 DSH GUI（薄客户端插件，复用 /api/chaos/*）",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ],
+      "platform": "web"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml"
+  ],
+  "license": "MIT"
+}

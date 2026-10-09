@@ -1,0 +1,171 @@
+{
+  "n": 18,
+  "attribution_ok": 16,
+  "strict_top1": 16,
+  "loose_but_right_cluster": 1,
+  "rows": [
+    {
+      "scenario": "app_cpu_stress",
+      "layer": "runtime",
+      "root_cause": "rc:cpu-throttle",
+      "got_cluster": "应用集群",
+      "expected_cluster": "应用集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "app_gateway_stop",
+      "layer": "application",
+      "root_cause": "rc:gateway-down",
+      "got_cluster": "应用集群（入口）",
+      "expected_cluster": "应用集群（入口）",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "app_kill_replica",
+      "layer": "application",
+      "root_cause": "rc:replica-loss",
+      "got_cluster": "应用集群",
+      "expected_cluster": "应用集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "app_memory_stress",
+      "layer": "runtime",
+      "root_cause": "rc:oom-kill",
+      "got_cluster": "应用集群",
+      "expected_cluster": "应用集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "app_network_delay",
+      "layer": "application",
+      "root_cause": "rc:net-fault",
+      "got_cluster": "应用集群",
+      "expected_cluster": "应用集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "app_network_loss",
+      "layer": "application",
+      "root_cause": "rc:net-fault",
+      "got_cluster": "应用集群",
+      "expected_cluster": "应用集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "app_oom_kill",
+      "layer": "runtime",
+      "root_cause": "env:cluster",
+      "got_cluster": "运行环境",
+      "expected_cluster": "应用集群",
+      "attribution_ok": false,
+      "strict_hit": false
+    },
+    {
+      "scenario": "app_pause_replica",
+      "layer": "application",
+      "root_cause": "rc:replica-loss",
+      "got_cluster": "应用集群",
+      "expected_cluster": "应用集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "app_stop_replica",
+      "layer": "application",
+      "root_cause": "rc:replica-loss",
+      "got_cluster": "应用集群",
+      "expected_cluster": "应用集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_conn_saturation",
+      "layer": "database",
+      "root_cause": "rc:db-replica-loss",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": false
+    },
+    {
+      "scenario": "db_cpu_stress",
+      "layer": "database",
+      "root_cause": "rc:db-cpu-starve",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_disk_temp_tables",
+      "layer": "database",
+      "root_cause": "rc:tmp-disk",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_primary_readonly",
+      "layer": "database",
+      "root_cause": "rc:primary-readonly",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_replica_io_stop",
+      "layer": "database",
+      "root_cause": "rc:db-replica-loss",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_replica_kill",
+      "layer": "database",
+      "root_cause": "rc:replica-loss",
+      "got_cluster": "应用集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": false,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_replica_lag",
+      "layer": "database",
+      "root_cause": "rc:replica-lag",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_row_lock_hold",
+      "layer": "database",
+      "root_cause": "rc:row-lock",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    },
+    {
+      "scenario": "db_slow_query_flood",
+      "layer": "database",
+      "root_cause": "rc:slow-sql",
+      "got_cluster": "数据库集群",
+      "expected_cluster": "数据库集群",
+      "attribution_ok": true,
+      "strict_hit": true
+    }
+  ],
+  "boundary": "本验证覆盖**推理层的跨集群归属**（本体能否表达、引擎能否落到正确的集群）；**未覆盖**跨环境的操作面（第二套 compose / 另一命名空间的实际注入与隔离），那需要真实的第二套环境。"
+}

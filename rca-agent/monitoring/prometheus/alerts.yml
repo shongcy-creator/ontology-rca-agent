@@ -1,0 +1,415 @@
+# =============================================================================
+# RCA Agent — Prometheus 告警规则（集群版）
+# -----------------------------------------------------------------------------
+# 集群化后告警必须回答三个新问题：
+#   1. 是 **整个层** 坏了，还是 **某一个副本** 坏了？   → 副本级 up / count
+#   2. 是 **内部指标** 显示有问题，还是 **外部真的打不进来**？→ blackbox probe
+#   3. 是 **容量不足**（连接/内存/CPU）还是 **性能退化**（锁/慢查询）？→ 分维度
+#
+# 每条告警都带 `rca_hint`（喂给 RCA Agent 的告警文本）与 `onto_constraint`
+# （指向本体约束 id，供确定性引擎与 LLM Agent 共同定位）。
+# =============================================================================
+
+groups:
+  # ── 应用层：集群与副本 ────────────────────────────────────────────────
+  - name: cc-app-cluster
+    interval: 30s
+    rules:
+      # 期望副本数 3，实际在册副本数不足 → 副本丢失
+      - alert: AppReplicaCountLow
+        expr: count(up{job="payment-app"}) < 3
+        for: 1m
+        labels:
+          severity: P1
+          layer: application
+          component: payment-app
+          onto_constraint: con:app-replica-quorum
+        annotations:
+          summary: "payment-app 在册副本数不足（期望 3）"
+          description: "当前在册副本 {{ $value }} 个，副本可能被 OOMKill / 崩溃 / 摘除"
+          rca_hint: "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启"
+
+      # 全部副本同时不可用 → 整层宕机
+      - alert: AppLayerDown
+        expr: count(up{job="payment-app"} == 1) == 0
+        for: 1m
+        labels:
+          severity: P0
+          layer: application
+          onto_constraint: con:app-replica-quorum
+        annotations:
+          summary: "payment-app 全部副本不可达"
+          rca_hint: "payment-app 应用集群整层不可用 down，全部副本失联"
+
+      # 网关侧黑盒探活失败 → 外部用户打不进来（可能是网关或整层）
+      - alert: AppGatewayUnreachable
+        expr: probe_success{job="blackbox-gateway"} == 0
+        for: 2m
+        labels:
+          severity: P0
+          layer: application
+          component: app-gateway
+          onto_constraint: con:gateway-availability
+        annotations:
+          summary: "应用网关黑盒探活失败"
+          description: "probe_success=0，外部请求无法进入应用层"
+          rca_hint: "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503"
+
+      # 单个副本健康探针失败（绕过网关的直连视角）
+      - alert: AppReplicaProbeFailing
+        expr: probe_success{job="blackbox-app-replica"} == 0
+        for: 2m
+        labels:
+          severity: P1
+          layer: application
+          component: payment-app
+          onto_constraint: con:app-replica-quorum
+        annotations:
+          summary: "应用副本 {{ $labels.instance }} 探活失败"
+          rca_hint: "payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降"
+
+  # ── 应用层：性能与容量 ────────────────────────────────────────────────
+  - name: cc-app-alerts
+    interval: 30s
+    rules:
+      - alert: AppHighLatencyP99
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(cc_http_request_duration_seconds_bucket[5m])) by (le)
+          ) > 0.5
+        for: 2m
+        labels:
+          severity: P1
+          layer: application
+          component: payment-app
+          onto_constraint: con:p99-threshold
+        annotations:
+          summary: "payment-app P99 延迟 > 500ms"
+          description: "P99={{ $value | humanizeDuration }}，超过本体约束 con:p99-threshold 阈值 500ms"
+          rca_hint: "payment-app 整体 P99 latency > 500ms（所有副本同时偏高，非单副本偏斜）—— 判据：P99>500ms 且副本间无显著差异。常见原因按可能性：① 数据库层变慢（慢查询/行锁等待/DB CPU 不足）② 连接池耗尽 ③ 下游依赖退化"
+
+      # 单副本延迟异常：集群里"只有一台慢"是最典型的容量/邻居问题
+      #
+      # ⚠ 这条规则原先写的是"任一副本 P99 > 500ms"，**它根本不是偏斜检查**：
+      # 所有副本一起慢时也会触发，而注解却断言"其余副本正常 → 单副本资源/节流问题"，
+      # 并直接把原因猜成"疑似 CPU 节流" —— 实测因此把网络延迟/丢包类故障也引到 CPU 节流上。
+      # 现改为**真正的偏斜**：最大值 > 最小值的 2 倍，且有绝对下限（避免低延迟下的假偏斜）。
+      # `for` 从 3m 降到 2m：3m 在保持期内几乎等不到 firing（见验证手册 §11.26）。
+      - alert: AppReplicaLatencySkew
+        expr: |
+          (
+            max(histogram_quantile(0.99,
+              sum(rate(cc_http_request_duration_seconds_bucket[5m])) by (le, app_instance)))
+            /
+            min(histogram_quantile(0.99,
+              sum(rate(cc_http_request_duration_seconds_bucket[5m])) by (le, app_instance)))
+            > 2
+          )
+          and
+          (
+            max(histogram_quantile(0.99,
+              sum(rate(cc_http_request_duration_seconds_bucket[5m])) by (le, app_instance)))
+            > 0.3
+          )
+        for: 2m
+        labels:
+          severity: P2
+          layer: application
+          component: payment-app
+          onto_constraint: con:app-cpu-throttle
+        annotations:
+          summary: "payment-app 存在单副本延迟偏斜（最慢副本 P99 超过最快副本 2 倍）"
+          description: "最慢副本 P99 是最快副本的 2 倍以上且 > 300ms → 问题集中在单个副本上"
+          rca_hint: "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes"
+
+      - alert: AppHighErrorRate
+        expr: |
+          sum(rate(cc_http_requests_total{status=~"5.."}[5m]))
+          /
+          sum(rate(cc_http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: P1
+          layer: application
+          component: payment-app
+          onto_constraint: con:app-error-budget
+        annotations:
+          summary: "payment-app 5xx 错误率 > 5%"
+          description: "当前错误率 {{ $value | humanizePercentage }}"
+          rca_hint: "5xx 错误率突增，请求大量失败"
+
+      # 连接池排队：池上限 10 被打满，后续请求被迫等待
+      - alert: MySQLConnectionPoolExhausted
+        expr: |
+          sum(cc_mysql_pool_active) by (app_instance) /
+          sum(cc_mysql_pool_limit) by (app_instance) > 0.8
+        for: 2m
+        labels:
+          severity: P1
+          layer: database
+          component: mysql-core
+          onto_constraint: con:pool-exhaust
+        annotations:
+          summary: "副本 {{ $labels.app_instance }} 连接池使用率 > 80%"
+          description: "活跃 {{ $value }}，接近本体约束 con:pool-exhaust 阈值（poolLimit=10）"
+          rca_hint: "MySQL connection pool exhausted, payment-app P99 latency high"
+
+      - alert: MySQLPoolQueueBacklog
+        expr: sum(cc_mysql_pool_waiting) by (app_instance) > 0
+        for: 1m
+        labels:
+          severity: P1
+          layer: database
+          onto_constraint: con:pool-waiting
+        annotations:
+          summary: "副本 {{ $labels.app_instance }} 连接池出现排队"
+          description: "有 {{ $value }} 个请求在等待连接，池已饱和"
+          rca_hint: "MySQL 连接池排队 waiting queue 出现堆积，连接池容量不足，请求被迫等待"
+
+      # 容器内存逼近 mem_limit(256MB) → OOMKill 前兆
+      - alert: AppContainerMemoryPressure
+        expr: |
+          cc_container_memory_working_set_bytes
+          /
+          (cc_container_memory_limit_bytes > 0) > 0.85
+        for: 1m
+        labels:
+          severity: P1
+          layer: runtime
+          component: payment-app
+          onto_constraint: con:app-mem-limit
+        annotations:
+          summary: "应用副本 {{ $labels.app_instance }} 容器内存 > 85% 上限"
+          description: "workingset={{ $value | humanizePercentage }}，逼近 mem_limit，随时可能被 OOM Kill"
+          rca_hint: "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启"
+
+      # CPU 配额节流（cpus=0.5）：nr_throttled 持续增长说明被 CPU 限制压制
+      - alert: AppContainerCpuThrottled
+        expr: rate(cc_container_cpu_nr_throttled_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: P1
+          layer: runtime
+          component: payment-app
+          onto_constraint: con:app-cpu-throttle
+        annotations:
+          summary: "应用副本 {{ $labels.app_instance }} 被 CPU 配额节流"
+          description: "节流周期速率 {{ $value }}/s，CPU 配额(cpu quota) 成为瓶颈"
+          rca_hint: "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢"
+
+  # ── 数据库层：集群与副本 ──────────────────────────────────────────────
+  - name: cc-db-cluster
+    interval: 30s
+    rules:
+      # 单副本 exporter 消失 → 副本丢失
+      #
+      # ⚠ 原写法 `up{job=~"mysql-replica-.*"} == 0` 在**容器被删/停**时会漏报：
+      # 目标从服务发现里消失后该序列直接过期，`up{x} == 0` 永远匹配不到。
+      # 改成"在册且 up 的副本数不足 2" —— 序列消失同样会减少计数，因此更稳。
+      - alert: MySQLReplicaDown
+        expr: count(up{job=~"mysql-replica-.*"} == 1) < 2
+        for: 1m
+        labels:
+          severity: P1
+          layer: database
+          db_role: replica
+          onto_constraint: con:replica-down
+        annotations:
+          summary: "MySQL 只读副本 {{ $labels.instance }} 不可达"
+          rca_hint: "MySQL 只读副本 replica 节点不可用 down，读路径容量下降"
+
+      # 复制线程中断（IO/SQL 任一停止）
+      - alert: MySQLReplicationBroken
+        expr: |
+          mysql_slave_status_slave_io_running == 0
+          or
+          mysql_slave_status_slave_sql_running == 0
+        for: 1m
+        labels:
+          severity: P1
+          layer: database
+          db_role: replica
+          onto_constraint: con:replica-down
+        annotations:
+          summary: "MySQL 副本 {{ $labels.instance }} 复制线程中断"
+          description: "IO/SQL 线程停止 → 副本数据不再更新，读路径返回陈旧数据"
+          rca_hint: "MySQL 主从复制中断 replication broken，副本 IO/SQL 线程停止，副本数据滞后"
+
+      # 复制延迟
+      - alert: MySQLReplicationLag
+        expr: mysql_slave_status_seconds_behind_master > 5
+        for: 1m
+        labels:
+          severity: P1
+          layer: database
+          db_role: replica
+          onto_constraint: con:replica-lag
+        annotations:
+          summary: "MySQL 副本 {{ $labels.instance }} 复制延迟 > 5s"
+          description: "Seconds_Behind_Master={{ $value }}s，读路径数据陈旧"
+          rca_hint: "MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据"
+
+      - alert: MySQLDown
+        expr: mysql_up == 0
+        for: 1m
+        labels:
+          severity: P0
+          layer: database
+          onto_constraint: con:db-availability
+        annotations:
+          summary: "MySQL 节点 {{ $labels.instance }} 不可达"
+          # 判据要写清是**哪个角色**，而且要把真实节点名/角色**带进文本**。
+          # 踩过的坑：原注解是一句与角色无关的"MySQL 数据库不可用 down"，
+          # 于是"只读副本挂了"这类故障里，文本中最扎眼的词是"不可用/down"，
+          # 引擎因此落到 `rc:gateway-down`（实测 db_replica_kill 判成 gateway-down）。
+          # 运维看到的告警本来就带 instance 标签，所以把标签写进注解既真实又必要。
+          description: "mysql_up=0（instance={{ $labels.instance }}, db_role={{ $labels.db_role }}）。主库不可用 → 写路径全部失败、复制中断；只读副本不可用 → 写路径正常，仅读容量下降"
+          # ⚠ 用 db_role（值为 primary/replica）而不是 db_node（值为 primary/replica-1/replica-2）
+          # —— db_node 带序号，写死 `db_node=replica` 匹配不到任何序列（实测 0 条）。
+          rca_hint: "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果是读容量下降与复制滞后"
+
+  # ── 数据库层：容量与性能 ──────────────────────────────────────────────
+  - name: cc-db-alerts
+    interval: 30s
+    rules:
+      - alert: MySQLTooManyConnections
+        expr: |
+          mysql_global_status_threads_connected
+          /
+          mysql_global_variables_max_connections > 0.85
+        for: 2m
+        labels:
+          severity: P1
+          layer: database
+          onto_constraint: con:db-maxconn
+        annotations:
+          summary: "MySQL {{ $labels.instance }} 连接数接近 max_connections"
+          # 阈值 0.85 的依据（原来是 0.9，**恰好压在故障量级上**）：
+          # max_connections=200，本场景注入 170 个长连接，加应用自身连接 ≈180，
+          # 180/200 = 0.90 → `> 0.9` 不成立，告警**在故障期反而不响**
+          # （实测 alert_coverage=False；同类"阈值贴边"缺陷见验证手册 §11.21 第 2d 项）。
+          # 0.85 对应 >170 个连接：注入本身就已越过，且离空闲基线（~37/200=0.19）很远。
+          description: "占用率 {{ $value | humanizePercentage }}（阈值 85%；空闲基线约 19%）"
+          rca_hint: "MySQL 连接数逼近/耗尽 max_connections（占用率 > 85%）—— 连接池排队、新连接被拒，写路径与查询延迟同时上升"
+
+      # 连接被拒：连接数打满后的直接后果
+      - alert: MySQLConnectionRefused
+        expr: rate(mysql_global_status_connection_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: P1
+          layer: database
+          onto_constraint: con:db-maxconn
+        annotations:
+          summary: "MySQL {{ $labels.instance }} 出现连接错误"
+          description: "连接错误速率 {{ $value }}/s（Too many connections / aborted）"
+          rca_hint: "MySQL 连接被拒绝 Too many connections，数据库连接资源耗尽"
+
+      - alert: MySQLSlowQueries
+        expr: rate(mysql_global_status_slow_queries[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: P2
+          layer: database
+          onto_constraint: con:p99-threshold
+        annotations:
+          summary: "MySQL {{ $labels.instance }} 慢查询增长"
+          rca_hint: "MySQL 慢查询增多，t_txn 表响应变慢"
+
+      # ⚠ 必须用**累计计数器的速率**，不能用 `Innodb_row_lock_current_waits` 这个瞬时 gauge。
+      #
+      # 踩过的坑：该 gauge 靠"等待结束时递减"来维护，而故障注入/回滚是**直接 KILL 会话**
+      # （见 tools/chaos 的 db_row_lock_hold recover），等待被中断时那次递减会漏掉 →
+      # gauge **永久卡在 1**（`SET GLOBAL` 也重置不了，只能重启 MySQL）。
+      # 后果是环境明明干净（information_schema.innodb_trx = 0、sys.innodb_lock_waits 为空），
+      # 这条 P1 告警却一直在 firing —— 既污染演示，也会把 RCA 引向不存在的行锁故障。
+      #
+      # 改用 `Innodb_row_lock_waits`（只增计数器）的速率：只反映"是否有**新的**行锁等待"。
+      # 实测（primary）：空闲 0.000 / 注入 db_row_lock_hold 时 0.190 → 阈值 0.05 两侧余量充足。
+      - alert: MySQLRowLockContention
+        expr: rate(mysql_global_status_innodb_row_lock_waits[2m]) > 0.02
+        for: 1m
+        labels:
+          severity: P1
+          layer: database
+          onto_constraint: con:row-lock
+        annotations:
+          summary: "MySQL {{ $labels.instance }} 持续出现新的行锁等待"
+          description: "近 2 分钟行锁等待新增速率 {{ $value | printf \"%.3f\" }}/s（空闲基线为 0），写事务被长事务阻塞"
+          rca_hint: "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入"
+
+      - alert: MySQLThreadsRunningHigh
+        expr: mysql_global_status_threads_running > 12
+        for: 2m
+        labels:
+          severity: P2
+          layer: database
+          onto_constraint: con:db-maxconn
+        annotations:
+          summary: "MySQL {{ $labels.instance }} 并发执行线程过高"
+          # 阈值 12 的依据：空闲基线 primary≈4 / replica≈2，而 db_cpu_stress
+          # 实测能把线程数推到 **20**。原阈值写的是 `> 20`，正好卡在故障量级上，
+          # 于是"故障期间的实测值恰好等于阈值"→ 永不触发（同一类"阈值贴边"缺陷，
+          # 见验证手册 §11.21 第 2d 项）。
+          description: "Threads_running={{ $value }}（空闲基线约 2–4），CPU 成为瓶颈"
+          rca_hint: "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足"
+
+      # 磁盘临时表：内存不足把排序/分组挤到磁盘
+      #
+      # ⚠ 原阈值 `rate(...[5m]) > 0.5` + for 3m 是**不可达**的：
+      # 同一故障下 [2m] 速率实测只有 0.105（空闲基线恒为 0），
+      # 5m 窗口还会把尖峰再稀释一遍 → 这条规则实际上从不触发，
+      # 对应的两个场景（db_disk_temp_tables / res_db_memory）因此没有任何告警文本。
+      # 现改为 [2m] 窗口 + 0.05 阈值（基线 0，与实测口径一致），for 降到 1m。
+      - alert: MySQLDiskTempTables
+        expr: rate(mysql_global_status_created_tmp_disk_tables[2m]) > 0.05
+        for: 1m
+        labels:
+          severity: P2
+          layer: database
+          onto_constraint: con:db-tmp-table
+        annotations:
+          summary: "MySQL {{ $labels.instance }} 大量磁盘临时表"
+          description: "磁盘临时表速率 {{ $value }}/s（空闲基线为 0），排序/分组落盘，内存不足"
+          rca_hint: "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢"
+
+      # 容器被 OOM Kill —— 应用层原先**没有任何 OOM 证据**，这条是新增的
+      #
+      # 为什么必须新增：OOM Kill 发生后容器重启、内存回落，
+      # "内存逼近上限"类告警随之消失，于是"被 OOM 杀过"在指标上完全不可观测
+      # （实测场景 app_oom_kill 在端到端里拿不到任何告警文本）。
+      # 证据取自 cgroup memory.events 的 oom_kill（**只增计数器**），
+      # 用 increase 而非直接比较，避免历史累计值把规则永久钉在 firing。
+      - alert: AppContainerOOMKilled
+        expr: increase(cc_container_oom_kill_total[5m]) > 0 or increase(cc_container_restart_count[5m]) > 0
+        for: 1m
+        labels:
+          severity: P1
+          layer: application
+          component: payment-app
+          onto_constraint: con:container-oom
+        annotations:
+          summary: "payment-app 容器发生 OOM Kill"
+          description: "近 5 分钟内 cgroup oom_kill 计数增加 → 容器内存超限被内核杀死并重启"
+          rca_hint: "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高"
+
+      # 主库被置为只读 —— 读写分离下最隐蔽的配置漂移，原先**没有专用告警**
+      #
+      # 为什么必须新增：db_primary_readonly 故障下，健康检查与读接口全部正常，
+      # 只有写路径 500/503；原先只声明了泛化的 AppHighErrorRate，
+      # 而那条注解完全不含"只读/写入失败"判据 → 诊断只能靠猜（见 §11.21 第 2b 项）。
+      - alert: MySQLPrimaryReadOnly
+        expr: |
+          max(mysql_global_variables_read_only{db_node="primary"}) == 1
+          or
+          max(mysql_global_variables_super_read_only{db_node="primary"}) == 1
+        for: 1m
+        labels:
+          severity: P0
+          layer: database
+          db_role: primary
+          onto_constraint: con:db-role
+        annotations:
+          summary: "MySQL 主库被置为只读（写路径不可用）"
+          description: "primary 的 read_only / super_read_only = 1 → 所有写事务失败，但读路径与健康检查正常，极易误判"
+          rca_hint: "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题"

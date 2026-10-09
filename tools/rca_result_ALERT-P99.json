@@ -1,0 +1,204 @@
+{
+  "incident_id": "INC-ALERT-P99-1790828814",
+  "alert": {
+    "alertId": "ALERT-P99",
+    "severity": "P1",
+    "message": "payment-app P99 latency > 500ms, MySQL connection pool exhausted",
+    "keywords": [
+      "延迟",
+      "latency",
+      "p99",
+      "P99",
+      "超时",
+      "timeout",
+      "slow",
+      "连接",
+      "pool",
+      "conn",
+      "exhaust",
+      "max_connections",
+      "连接池",
+      "耗尽",
+      "mysql",
+      "MySQL",
+      "数据库",
+      "db",
+      "sql",
+      "慢查询",
+      "索引"
+    ],
+    "confidence_boost": 0.7
+  },
+  "topology": [
+    {
+      "id": "ds:pay",
+      "name": "支付数据源",
+      "type": "entity",
+      "scope": "数据库层",
+      "relation_type": "支付数据源"
+    },
+    {
+      "id": "rel:app-accesses-db",
+      "name": "association",
+      "type": "relation",
+      "scope": "",
+      "relation_type": "association"
+    },
+    {
+      "id": "rel:app-produces-metric",
+      "name": "association",
+      "type": "relation",
+      "scope": "",
+      "relation_type": "association"
+    },
+    {
+      "id": "rel:app-runs-on-container",
+      "name": "composition",
+      "type": "relation",
+      "scope": "",
+      "relation_type": "composition"
+    },
+    {
+      "id": "app:payment-app",
+      "name": "支付交易应用 payment-app",
+      "type": "entity",
+      "scope": "应用层",
+      "relation_type": "支付交易应用 payment-app"
+    },
+    {
+      "id": "env:container",
+      "name": "支付容器 cc-credit-card-app",
+      "type": "entity",
+      "scope": "运行环境层",
+      "relation_type": "支付容器 cc-credit-card-app"
+    }
+  ],
+  "candidates": [
+    {
+      "category": "依赖",
+      "entity_id": "rel:app-accesses-db",
+      "entity_name": "association",
+      "confidence": 0.99,
+      "relation_type": "association",
+      "reason": "命中关键词: accesses"
+    },
+    {
+      "category": "资源",
+      "entity_id": "rel:app-runs-on-container",
+      "entity_name": "composition",
+      "confidence": 0.99,
+      "relation_type": "composition",
+      "reason": "命中关键词: container"
+    },
+    {
+      "category": "资源",
+      "entity_id": "env:container",
+      "entity_name": "支付容器 cc-credit-card-app",
+      "confidence": 0.99,
+      "relation_type": "支付容器 cc-credit-card-app",
+      "reason": "命中关键词: 容器, container"
+    }
+  ],
+  "root_cause": {
+    "category": "依赖",
+    "entity_id": "rel:app-accesses-db",
+    "entity_name": "association",
+    "confidence": 0.99,
+    "relation_type": "association",
+    "reason": "命中关键词: accesses"
+  },
+  "confidence": 0.99,
+  "rca_chain": [
+    {
+      "step": 1,
+      "type": "alert",
+      "description": "[P1] payment-app P99 latency > 500ms, MySQL connection pool exhausted",
+      "keywords": [
+        "延迟",
+        "latency",
+        "p99",
+        "P99",
+        "超时",
+        "timeout",
+        "slow",
+        "连接",
+        "pool",
+        "conn",
+        "exhaust",
+        "max_connections",
+        "连接池",
+        "耗尽",
+        "mysql",
+        "MySQL",
+        "数据库",
+        "db",
+        "sql",
+        "慢查询",
+        "索引"
+      ],
+      "source": "monitoring"
+    },
+    {
+      "step": 2,
+      "type": "topology",
+      "description": "拓扑逆向遍历，发现 6 个节点",
+      "nodes": [
+        {
+          "id": "ds:pay",
+          "name": "支付数据源",
+          "type": "entity"
+        },
+        {
+          "id": "rel:app-accesses-db",
+          "name": "association",
+          "type": "relation"
+        },
+        {
+          "id": "rel:app-produces-metric",
+          "name": "association",
+          "type": "relation"
+        },
+        {
+          "id": "rel:app-runs-on-container",
+          "name": "composition",
+          "type": "relation"
+        },
+        {
+          "id": "app:payment-app",
+          "name": "支付交易应用 payment-app",
+          "type": "entity"
+        },
+        {
+          "id": "env:container",
+          "name": "支付容器 cc-credit-card-app",
+          "type": "entity"
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "type": "candidate",
+      "category": "依赖",
+      "entity": "association",
+      "confidence": 0.99,
+      "reason": "命中关键词: accesses"
+    },
+    {
+      "step": 4,
+      "type": "candidate",
+      "category": "资源",
+      "entity": "composition",
+      "confidence": 0.99,
+      "reason": "命中关键词: container"
+    },
+    {
+      "step": 5,
+      "type": "candidate",
+      "category": "资源",
+      "entity": "支付容器 cc-credit-card-app",
+      "confidence": 0.99,
+      "reason": "命中关键词: 容器, container"
+    }
+  ],
+  "elapsed_ms": 146.5
+}

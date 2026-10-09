@@ -1,0 +1,420 @@
+
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix :     <https://sapiens.ai/ontology/credit-card-ops#> .
+
+:Ontology a owl:Ontology ;
+  rdfs:label "Credit Card Operations Ontology"@en , "信用卡系统运维本体"@zh ;
+  rdfs:comment "面向信用卡系统运维智能体，覆盖应用层、运行环境层、数据库层及其拓扑关系，支撑根因分析（RCA）"@zh .
+
+# ------------------------------------------------------------------
+# 顶层抽象
+# ------------------------------------------------------------------
+:Component a owl:Class ;
+  rdfs:label "Component"@en , "组件"@zh ;
+  rdfs:comment "系统中最小的可观测/可定位的抽象单元"@zh .
+
+:Resource a owl:Class ;
+  rdfs:label "Resource"@en , "资源"@zh ;
+  rdfs:comment "承载或消耗算力的实体（容器、宿主机、数据库、表等）"@zh .
+
+:Observation a owl:Class ;
+  rdfs:label "Observation"@en , "观测对象"@zh ;
+  rdfs:comment "可被采样的量化信号或离散运维事件"@zh .
+
+:Problem a owl:Class ;
+  rdfs:label "Problem"@en , "问题对象"@zh ;
+  rdfs:comment "故障或根因等需要被定位的对象"@zh .
+
+# ------------------------------------------------------------------
+# 应用层
+# ------------------------------------------------------------------
+:Application a owl:Class ;
+  rdfs:subClassOf :Component ;
+  rdfs:label "Application"@en , "应用"@zh ;
+  rdfs:comment "信用卡系统中的业务应用（微服务/模块）"@zh .
+
+:BusinessFunction a owl:Class ;
+  rdfs:subClassOf :Component ;
+  rdfs:label "BusinessFunction"@en , "业务功能"@zh ;
+  rdfs:comment "应用内可独立度量的业务能力（授权、清算、限额校验等）"@zh .
+
+:Interface a owl:Class ;
+  rdfs:subClassOf :Component ;
+  rdfs:label "Interface"@en , "接口"@zh ;
+  rdfs:comment "应用对外或应用间调用的服务接口（RPC/HTTP/消息）"@zh .
+
+# ------------------------------------------------------------------
+# 运行环境层
+# ------------------------------------------------------------------
+:RuntimeEnvironment a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "RuntimeEnvironment"@en , "运行环境"@zh ;
+  rdfs:comment "承载应用运行的环境抽象（容器、集群、宿主机）"@zh .
+
+:Container a owl:Class ;
+  rdfs:subClassOf :RuntimeEnvironment ;
+  rdfs:label "Container"@en , "容器"@zh ;
+  rdfs:comment "应用所运行的容器实例（如 K8s Pod/Container）"@zh .
+
+:HostMachine a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "HostMachine"@en , "宿主机"@zh ;
+  rdfs:comment "承载容器的物理或虚拟宿主机"@zh .
+
+:Cluster a owl:Class ;
+  rdfs:subClassOf :RuntimeEnvironment ;
+  rdfs:label "Cluster"@en , "集群"@zh ;
+  rdfs:comment "容器编排集群（如 Kubernetes Cluster）"@zh .
+
+# ------------------------------------------------------------------
+# 数据库层
+# ------------------------------------------------------------------
+:Database a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "Database"@en , "数据库"@zh ;
+  rdfs:comment "应用访问的数据存储资源（关系库、缓存、消息队列）"@zh .
+
+:DataSource a owl:Class ;
+  rdfs:subClassOf :Database ;
+  rdfs:label "DataSource"@en , "数据源"@zh ;
+  rdfs:comment "应用配置中引用的逻辑数据库连接（JDBC 视角）"@zh .
+
+:Table a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "Table"@en , "表"@zh ;
+  rdfs:comment "数据库中的逻辑表"@zh .
+
+:Index a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "Index"@en , "索引"@zh ;
+  rdfs:comment "表上的索引对象，用于定位慢 SQL"@zh .
+
+# ------------------------------------------------------------------
+# RCA 支撑
+# ------------------------------------------------------------------
+:Metric a owl:Class ;
+  rdfs:subClassOf :Observation ;
+  rdfs:label "Metric"@en , "指标"@zh ;
+  rdfs:comment "可采样的量化观测值（CPU/内存/QPS/延迟/GC 等）"@zh .
+
+:Event a owl:Class ;
+  rdfs:subClassOf :Observation ;
+  rdfs:label "Event"@en , "事件"@zh ;
+  rdfs:comment "离散运维事件（部署、扩缩容、故障切换、告警触发）"@zh .
+
+:Alert a owl:Class ;
+  rdfs:subClassOf :Observation ;
+  rdfs:label "Alert"@en , "告警"@zh ;
+  rdfs:comment "由规则或模型产生的告警，含严重级别"@zh .
+
+:Incident a owl:Class ;
+  rdfs:subClassOf :Problem ;
+  rdfs:label "Incident"@en , "故障"@zh ;
+  rdfs:comment "一次可被确认的故障，聚合若干告警与影响"@zh .
+
+:RootCause a owl:Class ;
+  rdfs:subClassOf :Problem ;
+  rdfs:label "RootCause"@en , "根因"@zh ;
+  rdfs:comment "被归因的最小故障因素，关联到具体实体与证据"@zh .
+
+# ------------------------------------------------------------------
+# 对象属性（拓扑关系）
+# ------------------------------------------------------------------
+:runsOn a owl:ObjectProperty ;
+  rdfs:domain :Application ;
+  rdfs:range :Container ;
+  rdfs:label "runsOn"@en , "运行于"@zh ;
+  rdfs:comment "应用运行于容器（1 应用可对应多副本容器）"@zh .
+
+:deployedOn a owl:ObjectProperty ;
+  rdfs:domain :Container ;
+  rdfs:range :HostMachine ;
+  rdfs:label "deployedOn"@en , "部署于"@zh ;
+  rdfs:comment "容器被调度部署在某台宿主机上"@zh .
+
+:hosts a owl:ObjectProperty ;
+  rdfs:domain :HostMachine ;
+  rdfs:range :Container ;
+  rdfs:label "hosts"@en , "承载"@zh ;
+  rdfs:comment "deployedOn 的逆向，便于从宿主机查容器"@zh .
+
+:accesses a owl:ObjectProperty ;
+  rdfs:domain :Application ;
+  rdfs:range :Database ;
+  rdfs:label "accesses"@en , "访问"@zh ;
+  rdfs:comment "应用通过数据源访问数据库"@zh .
+
+:hasDataSource a owl:ObjectProperty ;
+  rdfs:domain :Application ;
+  rdfs:range :DataSource ;
+  rdfs:label "hasDataSource"@en , "引用数据源"@zh ;
+  rdfs:comment "应用引用连接池"@zh .
+
+:dataSourceOf a owl:ObjectProperty ;
+  rdfs:domain :DataSource ;
+  rdfs:range :Database ;
+  rdfs:label "dataSourceOf"@en , "指向数据库"@zh ;
+  rdfs:comment "数据源指向具体数据库实例"@zh .
+
+:containsTable a owl:ObjectProperty ;
+  rdfs:domain :Database ;
+  rdfs:range :Table ;
+  rdfs:label "containsTable"@en , "包含表"@zh ;
+  rdfs:comment "库内表"@zh .
+
+:hasIndex a owl:ObjectProperty ;
+  rdfs:domain :Table ;
+  rdfs:range :Index ;
+  rdfs:label "hasIndex"@en , "拥有索引"@zh ;
+  rdfs:comment "表拥有索引"@zh .
+
+:managedBy a owl:ObjectProperty ;
+  rdfs:domain :Container ;
+  rdfs:range :Cluster ;
+  rdfs:label "managedBy"@en , "由集群管理"@zh ;
+  rdfs:comment "容器由某集群管理（可选）"@zh .
+
+:produces a owl:ObjectProperty ;
+  rdfs:domain :Component ;
+  rdfs:range :Metric ;
+  rdfs:label "produces"@en , "产出指标"@zh ;
+  rdfs:comment "组件产出某类指标（RCA 证据关联）"@zh .
+
+:generatesEvent a owl:ObjectProperty ;
+  rdfs:domain :Component ;
+  rdfs:range :Event ;
+  rdfs:label "generatesEvent"@en , "产生事件"@zh ;
+  rdfs:comment "组件产生运维事件（变更关联）"@zh .
+
+:raises a owl:ObjectProperty ;
+  rdfs:domain :Component ;
+  rdfs:range :Alert ;
+  rdfs:label "raises"@en , "触发告警"@zh ;
+  rdfs:comment "组件触发告警"@zh .
+
+:triggers a owl:ObjectProperty ;
+  rdfs:domain :Alert ;
+  rdfs:range :Incident ;
+  rdfs:label "triggers"@en , "升级为故障"@zh ;
+  rdfs:comment "告警升级为故障"@zh .
+
+:hasRootCause a owl:ObjectProperty ;
+  rdfs:domain :Incident ;
+  rdfs:range :RootCause ;
+  rdfs:label "hasRootCause"@en , "根因"@zh ;
+  rdfs:comment "故障的根因结论（RCA 输出）"@zh .
+
+:attributedTo a owl:ObjectProperty ;
+  rdfs:domain :RootCause ;
+  rdfs:range :Resource ;
+  rdfs:label "attributedTo"@en , "归因于实体"@zh ;
+  rdfs:comment "根因归因到某实体（容器/宿主机/数据库/表）"@zh .
+
+:evidencedBy a owl:ObjectProperty ;
+  rdfs:domain :RootCause ;
+  rdfs:range :Metric ;
+  rdfs:label "evidencedBy"@en , "由指标支撑"@zh ;
+  rdfs:comment "根因由某指标证据支撑（可解释性）"@zh .
+
+:dependsOn a owl:ObjectProperty ;
+  rdfs:domain :Component ;
+  rdfs:range :Component ;
+  rdfs:label "dependsOn"@en , "依赖"@zh ;
+  rdfs:comment "通用依赖（弱语义），可由 invokes/accesses 派生"@zh .
+
+# ------------------------------------------------------------------
+# 数据属性
+# ------------------------------------------------------------------
+:appName a owl:DatatypeProperty ; rdfs:domain :Application ; rdfs:range xsd:string .
+:appVersion a owl:DatatypeProperty ; rdfs:domain :Application ; rdfs:range xsd:string .
+:owner a owl:DatatypeProperty ; rdfs:domain :Application ; rdfs:range xsd:string .
+:language a owl:DatatypeProperty ; rdfs:domain :Application ; rdfs:range xsd:string .
+
+:criticality a owl:DatatypeProperty ; rdfs:domain :BusinessFunction ; rdfs:range xsd:integer .
+:slaLevel a owl:DatatypeProperty ; rdfs:domain :BusinessFunction ; rdfs:range xsd:string .
+:qps a owl:DatatypeProperty ; rdfs:domain :BusinessFunction ; rdfs:range xsd:decimal .
+
+:protocol a owl:DatatypeProperty ; rdfs:domain :Interface ; rdfs:range xsd:string .
+:timeout a owl:DatatypeProperty ; rdfs:domain :Interface ; rdfs:range xsd:integer .
+:retryPolicy a owl:DatatypeProperty ; rdfs:domain :Interface ; rdfs:range xsd:string .
+
+:containerId a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:string .
+:containerName a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:string .
+:image a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:string .
+:cpuLimit a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:decimal .
+:memLimit a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:decimal .
+:replicas a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:integer .
+:restartCount a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:integer .
+:containerIP a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:string .
+:containerHostname a owl:DatatypeProperty ; rdfs:domain :Container ; rdfs:range xsd:string .
+
+:hostName a owl:DatatypeProperty ; rdfs:domain :HostMachine ; rdfs:range xsd:string .
+:hostIP a owl:DatatypeProperty ; rdfs:domain :HostMachine ; rdfs:range xsd:string .
+:cpuCores a owl:DatatypeProperty ; rdfs:domain :HostMachine ; rdfs:range xsd:integer .
+:memoryGB a owl:DatatypeProperty ; rdfs:domain :HostMachine ; rdfs:range xsd:decimal .
+:region a owl:DatatypeProperty ; rdfs:domain :HostMachine ; rdfs:range xsd:string .
+:osVersion a owl:DatatypeProperty ; rdfs:domain :HostMachine ; rdfs:range xsd:string .
+
+:dbId a owl:DatatypeProperty ; rdfs:domain :Database ; rdfs:range xsd:string .
+:dbType a owl:DatatypeProperty ; rdfs:domain :Database ; rdfs:range xsd:string .
+:dbVersion a owl:DatatypeProperty ; rdfs:domain :Database ; rdfs:range xsd:string .
+:endpoint a owl:DatatypeProperty ; rdfs:domain :Database ; rdfs:range xsd:string .
+:shardPolicy a owl:DatatypeProperty ; rdfs:domain :Database ; rdfs:range xsd:string .
+:maxConnections a owl:DatatypeProperty ; rdfs:domain :Database ; rdfs:range xsd:integer .
+:waitTimeout a owl:DatatypeProperty ; rdfs:domain :Database ; rdfs:range xsd:integer .
+
+:url a owl:DatatypeProperty ; rdfs:domain :DataSource ; rdfs:range xsd:string .
+:user a owl:DatatypeProperty ; rdfs:domain :DataSource ; rdfs:range xsd:string .
+:poolLimit a owl:DatatypeProperty ; rdfs:domain :DataSource ; rdfs:range xsd:integer .
+
+:tableName a owl:DatatypeProperty ; rdfs:domain :Table ; rdfs:range xsd:string .
+:rowCount a owl:DatatypeProperty ; rdfs:domain :Table ; rdfs:range xsd:decimal .
+:indexCount a owl:DatatypeProperty ; rdfs:domain :Table ; rdfs:range xsd:integer .
+:isHot a owl:DatatypeProperty ; rdfs:domain :Table ; rdfs:range xsd:boolean .
+
+:metricName a owl:DatatypeProperty ; rdfs:domain :Metric ; rdfs:range xsd:string .
+:unit a owl:DatatypeProperty ; rdfs:domain :Metric ; rdfs:range xsd:string .
+:sampleInterval a owl:DatatypeProperty ; rdfs:domain :Metric ; rdfs:range xsd:integer .
+:threshold a owl:DatatypeProperty ; rdfs:domain :Metric ; rdfs:range xsd:decimal .
+
+:eventId a owl:DatatypeProperty ; rdfs:domain :Event ; rdfs:range xsd:string .
+:eventTime a owl:DatatypeProperty ; rdfs:domain :Event ; rdfs:range xsd:dateTime .
+:eventType a owl:DatatypeProperty ; rdfs:domain :Event ; rdfs:range xsd:string .
+:source a owl:DatatypeProperty ; rdfs:domain :Event ; rdfs:range xsd:string .
+
+:alertId a owl:DatatypeProperty ; rdfs:domain :Alert ; rdfs:range xsd:string .
+:severity a owl:DatatypeProperty ; rdfs:domain :Alert ; rdfs:range xsd:string .
+:triggerRule a owl:DatatypeProperty ; rdfs:domain :Alert ; rdfs:range xsd:string .
+
+:incidentId a owl:DatatypeProperty ; rdfs:domain :Incident ; rdfs:range xsd:string .
+:detectedAt a owl:DatatypeProperty ; rdfs:domain :Incident ; rdfs:range xsd:dateTime .
+:resolvedAt a owl:DatatypeProperty ; rdfs:domain :Incident ; rdfs:range xsd:dateTime .
+:impact a owl:DatatypeProperty ; rdfs:domain :Incident ; rdfs:range xsd:string .
+
+:rootCauseId a owl:DatatypeProperty ; rdfs:domain :RootCause ; rdfs:range xsd:string .
+:category a owl:DatatypeProperty ; rdfs:domain :RootCause ; rdfs:range xsd:string .
+:confidence a owl:DatatypeProperty ; rdfs:domain :RootCause ; rdfs:range xsd:decimal .
+:evidenceRef a owl:DatatypeProperty ; rdfs:domain :RootCause ; rdfs:range xsd:string .
+
+# ------------------------------------------------------------------
+# 传递性 / 对称性 约束（用于推理）
+# ------------------------------------------------------------------
+# 注：deployedOn 在 OWL 中不设为 transitive（容器->宿主机是单层），
+# 但可通过 runsOn o deployedOn 派生 应用->宿主机 的隐含路径。
+# 这里仅声明 hasRootCause 与 triggers 的语义；跨层推导由 SPARQL 路径表达式完成。
+
+# ==================================================================
+# v1 增量：集群化（Cluster / Replica / Gateway / Replication）
+# ==================================================================
+# 背景：环境由"单容器 + 单库"演进为"3 副本应用 + Nginx 网关 + 1 主 2 从 MySQL"，
+# 本体必须同步长出集群概念，否则 RCA 只能回答"服务挂了"，
+# 无法回答"哪个副本 / 哪个节点 / 哪类资源"。
+# 该增量通过 EvoOntology 自演化协议发布为 ontology_v1（见 tools/evolve_ontology_cluster.py）。
+
+# ---- 应用层集群 ---------------------------------------------------
+:ApplicationCluster a owl:Class ;
+  rdfs:subClassOf :Component ;
+  rdfs:label "ApplicationCluster"@en , "应用集群"@zh ;
+  rdfs:comment "同一应用的多个等价副本构成的逻辑单元，健康度由在册健康副本数决定"@zh .
+
+:ApplicationInstance a owl:Class ;
+  rdfs:subClassOf :Component ;
+  rdfs:label "ApplicationInstance"@en , "应用副本"@zh ;
+  rdfs:comment "集群中的一个副本容器实例（可独立故障、独立节流）"@zh .
+
+:Gateway a owl:Class ;
+  rdfs:subClassOf :Component ;
+  rdfs:label "Gateway"@en , "网关/负载均衡"@zh ;
+  rdfs:comment "集群对外唯一入口；副本全健康但网关故障时对外仍完全不可用"@zh .
+
+# ---- 运行环境层：资源配额 ------------------------------------------
+:ResourceQuota a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "ResourceQuota"@en , "资源配额"@zh ;
+  rdfs:comment "cgroup 层面的 CPU/内存上限；配额不足会表现为节流或 OOMKill"@zh .
+
+# ---- 数据库层集群 -------------------------------------------------
+:DatabaseCluster a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "DatabaseCluster"@en , "数据库集群"@zh ;
+  rdfs:comment "主从复制构成的数据库集群；健康度需同时看主库与副本"@zh .
+
+:DatabaseNode a owl:Class ;
+  rdfs:subClassOf :Resource ;
+  rdfs:label "DatabaseNode"@en , "数据库节点"@zh ;
+  rdfs:comment "集群中的单个数据库实例（主库或只读副本）"@zh .
+
+:ReplicationLink a owl:Class ;
+  rdfs:subClassOf :Component ;
+  rdfs:label "ReplicationLink"@en , "复制链路"@zh ;
+  rdfs:comment "主库到副本的复制关系；可处于正常/延迟/中断三种状态"@zh .
+
+# ---- 故障注入（自演化证据来源）-------------------------------------
+:FailureInjection a owl:Class ;
+  rdfs:subClassOf :Event ;
+  rdfs:label "FailureInjection"@en , "故障注入事件"@zh ;
+  rdfs:comment "受控注入的故障场景，其可观测信号构成演化评估的 ground truth"@zh .
+
+# ---- 对象属性（集群拓扑）------------------------------------------
+:hasInstance a owl:ObjectProperty ;
+  rdfs:domain :ApplicationCluster ; rdfs:range :ApplicationInstance ;
+  rdfs:label "hasInstance"@en , "包含副本"@zh .
+
+:memberOf a owl:ObjectProperty ;
+  rdfs:label "memberOf"@en , "属于"@zh ;
+  rdfs:comment "逻辑身份（应用/库）属于某个集群"@zh .
+
+:loadBalancedBy a owl:ObjectProperty ;
+  rdfs:domain :ApplicationCluster ; rdfs:range :Gateway ;
+  rdfs:label "loadBalancedBy"@en , "由网关负载均衡"@zh .
+
+:routesTo a owl:ObjectProperty ;
+  rdfs:domain :Gateway ; rdfs:range :ApplicationCluster ;
+  rdfs:label "routesTo"@en , "转发到"@zh .
+
+:hasNode a owl:ObjectProperty ;
+  rdfs:domain :DatabaseCluster ; rdfs:range :DatabaseNode ;
+  rdfs:label "hasNode"@en , "包含节点"@zh .
+
+:replicatesTo a owl:ObjectProperty ;
+  rdfs:domain :DatabaseNode ; rdfs:range :DatabaseNode ;
+  rdfs:label "replicatesTo"@en , "异步复制到"@zh .
+
+:readsFrom a owl:ObjectProperty ;
+  rdfs:domain :Application ; rdfs:range :DatabaseNode ;
+  rdfs:label "readsFrom"@en , "读路径指向"@zh ;
+  rdfs:comment "读写分离：读走只读副本，写走主库"@zh .
+
+:hasQuota a owl:ObjectProperty ;
+  rdfs:range :ResourceQuota ;
+  rdfs:label "hasQuota"@en , "受配额约束"@zh .
+
+:throttledBy a owl:ObjectProperty ;
+  rdfs:range :Metric ;
+  rdfs:label "throttledBy"@en , "被指标刻画节流"@zh .
+
+:observedBy a owl:ObjectProperty ;
+  rdfs:range :Metric ;
+  rdfs:label "observedBy"@en , "由指标观测"@zh ;
+  rdfs:comment "集群/节点的健康必须由外部探活或指标观测，不能由组件自报"@zh .
+
+# ---- 数据属性（集群/节点/配额）------------------------------------
+:clusterName a owl:DatatypeProperty ; rdfs:domain :ApplicationCluster ; rdfs:range xsd:string .
+:desiredReplicas a owl:DatatypeProperty ; rdfs:domain :ApplicationCluster ; rdfs:range xsd:integer .
+:healthyReplicas a owl:DatatypeProperty ; rdfs:domain :ApplicationCluster ; rdfs:range xsd:integer .
+:instanceId a owl:DatatypeProperty ; rdfs:domain :ApplicationInstance ; rdfs:range xsd:string .
+:lbStrategy a owl:DatatypeProperty ; rdfs:domain :Gateway ; rdfs:range xsd:string .
+:serverId a owl:DatatypeProperty ; rdfs:domain :DatabaseNode ; rdfs:range xsd:integer .
+:readOnly a owl:DatatypeProperty ; rdfs:domain :DatabaseNode ; rdfs:range xsd:boolean .
+:nodeRole a owl:DatatypeProperty ; rdfs:domain :DatabaseNode ; rdfs:range xsd:string .
+:gtidMode a owl:DatatypeProperty ; rdfs:domain :DatabaseCluster ; rdfs:range xsd:string .
+:replicationDelaySeconds a owl:DatatypeProperty ;
+  rdfs:domain :ReplicationLink ; rdfs:range xsd:integer .
+:cpuQuota a owl:DatatypeProperty ; rdfs:domain :ResourceQuota ; rdfs:range xsd:decimal .
+:memQuotaMB a owl:DatatypeProperty ; rdfs:domain :ResourceQuota ; rdfs:range xsd:integer .
+:faultLayer a owl:DatatypeProperty ; rdfs:domain :FailureInjection ; rdfs:range xsd:string .
+

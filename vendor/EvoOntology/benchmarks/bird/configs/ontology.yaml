@@ -1,0 +1,30 @@
+condition: semantic
+
+agent:
+  model: "qwen3.5-flash"
+  temperature: 0.0
+  max_turns: 30
+  provider: "openai"
+  base_url: "https://llm-yh2l9b6l3or0e5bi.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+  api_key_env: "BIRD_AGENT_API_KEY"
+
+semantic:
+  enabled: true
+  store_path: ""
+
+mcp_servers:
+  - name: sqlite
+    module: "tool_server.sqlite_mcp"
+    description: "SQLite database exploration tools"
+    args:
+      - "--db-path"
+      - ""
+
+  - name: semantic
+    module: "tool_server.semantic_mcp"
+    description: "EvoOntology semantic tools"
+    args:
+      - "--store"
+      - ""
+      - "--db-id"
+      - ""

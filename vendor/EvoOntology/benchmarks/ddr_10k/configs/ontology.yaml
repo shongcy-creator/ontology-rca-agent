@@ -1,0 +1,40 @@
+base_data_dir: "./data"
+base_log_dir: "./outputs"
+
+provider:
+  default_provider: "vllm"
+  default_model: "MODEL_NAME"
+  vllm_base_url: ""
+  api_key_env: "DDR_AGENT_API_KEY"
+
+agent:
+  max_turns: 150
+  max_retries: 2
+  auto_finish: true
+  log_level: "INFO"
+  parallel: 1
+
+semantic:
+  enabled: true
+  store_path: "./.evoontology"
+  exposed_tools:
+    - "browse_semantics"
+    - "resolve_semantics"
+
+evaluation:
+  provider: "vllm"
+  model: "EVALUATOR_MODEL_NAME"
+  base_url: ""
+  api_key_env: "DDR_EVALUATOR_API_KEY"
+  max_retries: 5
+  retry_delay: 2.0
+  eval_max_tokens: 4096
+  parallel: 1
+
+scenarios:
+  10k:
+    db_path: "./data/10k_financial_data.db"
+    id_file: "./data/entity_ids.json"
+    qa_file: "./data/qa.json"
+    log_dir: "./outputs/semantic"
+    identifier_prefix: "company"

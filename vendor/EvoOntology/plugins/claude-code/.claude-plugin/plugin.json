@@ -1,0 +1,18 @@
+{
+  "name": "evoontology",
+  "version": "1.1.1",
+  "description": "Build, evolve, and explore a self-evolving ontology layer through three skills, a semantic MCP runtime, and a session-start evolution reminder.",
+  "author": {
+    "name": "Meiduo Chong"
+  },
+  "homepage": "https://github.com/ruc-datalab/EvoOntology",
+  "repository": "https://github.com/ruc-datalab/EvoOntology",
+  "license": "MIT",
+  "keywords": [
+    "ontology",
+    "ontology-layer",
+    "self-evolution",
+    "data-agent",
+    "text-to-sql"
+  ]
+}

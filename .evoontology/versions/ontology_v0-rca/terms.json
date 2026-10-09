@@ -1,0 +1,244 @@
+[
+  {
+    "id": "app:payment-app",
+    "name": "支付交易应用 payment-app",
+    "type": "entity",
+    "definition": "信用卡支付业务 Node.js 应用，版本 1.8.2，暴露 /health 与 /topology 端点",
+    "scope": "应用层",
+    "aliases": [
+      "PaymentApp",
+      "cc-credit-card-app"
+    ],
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-app-topology",
+      "ev:rca-alert-p99"
+    ]
+  },
+  {
+    "id": "fn:auth",
+    "name": "授权业务功能",
+    "type": "entity",
+    "definition": "payment-app 内的授权（Auth）功能，P0 关键度",
+    "scope": "应用层",
+    "aliases": [
+      "AuthFunc"
+    ],
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "api:auth",
+    "name": "授权接口 authAPI",
+    "type": "entity",
+    "definition": "RPC 授权接口，超时 500ms，3 次指数退避重试",
+    "scope": "应用层",
+    "aliases": [
+      "AuthAPI"
+    ],
+    "evidence_refs": []
+  },
+  {
+    "id": "env:container",
+    "name": "支付容器 cc-credit-card-app",
+    "type": "entity",
+    "definition": "承载 payment-app 的容器实例",
+    "scope": "运行环境层",
+    "aliases": [
+      "PayContainer"
+    ],
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "env:host-wsl",
+    "name": "宿主机（Docker Desktop WSL2）",
+    "type": "entity",
+    "definition": "Docker Desktop 的 WSL2 虚拟宿主，承载容器调度",
+    "scope": "运行环境层",
+    "aliases": [
+      "HostWsl",
+      "docker-desktop"
+    ],
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-host-facts"
+    ]
+  },
+  {
+    "id": "env:host-phys",
+    "name": "物理宿主机（遥遥领先）",
+    "type": "entity",
+    "definition": "Windows 物理主机：11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz，16GB RAM",
+    "scope": "运行环境层",
+    "aliases": [
+      "HostPhys",
+      "遥遥领先"
+    ],
+    "evidence_refs": [
+      "ev-host-facts"
+    ]
+  },
+  {
+    "id": "env:cluster",
+    "name": "Docker Desktop 集群",
+    "type": "entity",
+    "definition": "Docker Desktop 引擎（WSL2 后端），8 CPU / 7.66 GB",
+    "scope": "运行环境层",
+    "aliases": [
+      "DockerCluster"
+    ],
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-host-facts"
+    ]
+  },
+  {
+    "id": "db:mysql-core",
+    "name": "核心账务库 creditcard (MySQL 8.0)",
+    "type": "entity",
+    "definition": "MySQL 关系库，含 t_customer/t_txn/t_audit 三表；max_connections=200",
+    "scope": "数据库层",
+    "aliases": [
+      "MysqlCore",
+      "cc-mysql-core"
+    ],
+    "evidence_refs": [
+      "ev-mysql-vars",
+      "ev-mysql-tables",
+      "ev:rca-alert-p99"
+    ]
+  },
+  {
+    "id": "ds:pay",
+    "name": "支付数据源",
+    "type": "entity",
+    "definition": "payment-app 的 JDBC 数据源，连接池上限 10，指向 mysql:3306",
+    "scope": "数据库层",
+    "aliases": [
+      "PayDataSource"
+    ],
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "table:t_txn",
+    "name": "交易表 t_txn",
+    "type": "entity",
+    "definition": "信用卡交易流水表，热表；含 customer_id 与 created_at 索引",
+    "scope": "数据库层",
+    "aliases": [
+      "TTxn"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  },
+  {
+    "id": "table:t_customer",
+    "name": "客户表 t_customer",
+    "type": "entity",
+    "definition": "信用卡客户与卡号表",
+    "scope": "数据库层",
+    "aliases": [
+      "TCustomer"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  },
+  {
+    "id": "table:t_audit",
+    "name": "审计表 t_audit",
+    "type": "entity",
+    "definition": "交易审计事件表（JSON payload）",
+    "scope": "数据库层",
+    "aliases": [
+      "TAudit"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  },
+  {
+    "id": "metric:mysql-p99",
+    "name": "MySQL P99 延迟",
+    "type": "metric",
+    "definition": "MySQL 查询 P99 延迟（ms），阈值 100ms",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "MysqlLatencyP99"
+    ],
+    "evidence_refs": [
+      "ev-db-probe"
+    ]
+  },
+  {
+    "id": "metric:conn-exhaust",
+    "name": "连接池耗尽信号",
+    "type": "metric",
+    "definition": "活跃连接数逼近 poolLimit(10) 的耗尽信号",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "ConnExhaustion"
+    ],
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "evt:deploy",
+    "name": "应用发布事件",
+    "type": "entity",
+    "definition": "CI/CD 部署 payment-app 的事件（eventType=deploy）",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "DeployEvent"
+    ],
+    "evidence_refs": []
+  },
+  {
+    "id": "alert:p99",
+    "name": "MySQL P99 超阈值告警",
+    "type": "entity",
+    "definition": "P1 告警，触发规则 mysql.latency.p99>100 for 5m",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "AlertP99"
+    ],
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ]
+  },
+  {
+    "id": "incident:payment-timeout",
+    "name": "支付交易超时故障",
+    "type": "entity",
+    "definition": "P0 故障：支付成功率下降，关联 t_txn 慢查询",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "IncPaymentTimeout"
+    ],
+    "evidence_refs": [
+      "ev-db-probe"
+    ]
+  },
+  {
+    "id": "rc:slow-sql",
+    "name": "根因：t_txn 慢查询致连接耗尽",
+    "type": "entity",
+    "definition": "数据类根因，置信度 0.86，归因于 t_txn 索引缺失/慢查询",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootSlowSql"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables",
+      "ev:rca-root-cause"
+    ]
+  }
+]

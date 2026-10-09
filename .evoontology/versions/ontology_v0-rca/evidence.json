@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ev-docker-ps",
+    "source": "docker-compose",
+    "query": "docker ps --format 'table {{.Names}}\\t{{.Status}}'",
+    "result": "cc-credit-card-app: Up (healthy); cc-mysql-core: Up (healthy)",
+    "validation_method": "read-only docker CLI",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-app-topology",
+    "source": "http://cc-credit-card-app:8080/topology/raw",
+    "query": "GET /topology/raw",
+    "result": "{\"app\": {\"name\": \"payment-app\", \"version\": \"1.8.2\", \"containerName\": \"3177c9796e5c\", \"pid\": 1}, \"containerIP\": \"172.18.0.3\", \"db\": {\"endpoint\": \"mysql:3306\", \"reachable\": true, \"version\": \"8.0.46\", \"maxConn\": 200}}",
+    "validation_method": "http probe",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-mysql-vars",
+    "source": "mysql:creditcard",
+    "query": "SELECT @@version, @@max_connections, @@wait_timeout",
+    "result": "8.0.46, 200, 28800",
+    "validation_method": "MySQL @@ variables",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-mysql-tables",
+    "source": "mysql:creditcard",
+    "query": "SELECT table_name, table_rows FROM information_schema.tables WHERE table_schema='creditcard'",
+    "result": "t_customer=3, t_txn=3, t_audit=0",
+    "validation_method": "information_schema",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-host-facts",
+    "source": "windows-host",
+    "query": "Get-CimInstance Win32_Processor / Win32_OperatingSystem / Win32_PhysicalMemory",
+    "result": "遥遥领先: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz 4C/8T, 16GB RAM, Microsoft Windows 11 专业版 (build 26200)",
+    "validation_method": "WMI",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-db-probe",
+    "source": "http://cc-credit-card-app:8080/topology/raw",
+    "query": "GET /topology/raw -> db.probe",
+    "result": "reachable=true, latency=5ms",
+    "validation_method": "app-side JDBC probe",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev:rca-alert-p99",
+    "source": "Prometheus monitoring",
+    "query": "cc_http_request_duration_seconds P99 > 0.5s for 5min",
+    "result": "{\"http_total_requests\": 168, \"http_p99_gt_500ms_pct\": 100, \"mysql_threads_connected\": 2, \"mysql_max_used_conn\": 3, \"incident_id\": \"INC-ALERT-P99-1790828814\", \"severity\": \"P1\", \"alert\": \"payment-app P99 latency > 500ms, MySQL connection pool exhausted\"}",
+    "validation_method": "Prometheus query + RCA engine",
+    "timestamp": "2026-10-01T14:48:58Z"
+  },
+  {
+    "id": "ev:rca-topology-path",
+    "source": "EvoOntology resolve_semantics",
+    "query": "payment-app container host MySQL database table",
+    "result": "{\"topology_path\": [\"app:payment-app\", \"rel:app-runs-on-container\", \"env:container\", \"rel:app-accesses-db\", \"db:mysql-core\", \"ds:pay\"], \"node_count\": 6}",
+    "validation_method": "EvoOntology MCP browse_semantics",
+    "timestamp": "2026-10-01T14:48:58Z"
+  },
+  {
+    "id": "ev:rca-root-cause",
+    "source": "RCA engine inference",
+    "query": "P99 latency + connection pool exhausted",
+    "result": "{\"category\": \"data\", \"entity_id\": \"rel:app-accesses-db\", \"confidence\": 0.99, \"reason\": \"keywords matched: \\u5ef6\\u8fdf/latency/P99 + \\u8fde\\u63a5\\u6c60/pool + MySQL\", \"candidates\": [{\"entity_id\": \"rel:app-accesses-db\", \"category\": \"\\u6570\\u636e\", \"confidence\": 0.99}, {\"entity_id\": \"rel:app-runs-on-container\", \"category\": \"\\u8d44\\u6e90\", \"confidence\": 0.99}, {\"entity_id\": \"env:container\", \"category\": \"\\u8d44\\u6e90\", \"confidence\": 0.99}], \"rca_chain\": [{\"step\": 1, \"type\": \"alert\", \"description\": \"[P1] payment-app P99 latency > 500ms\"}, {\"step\": 2, \"type\": \"topology\", \"description\": \"\\u62d3\\u6251\\u9006\\u5411\\u904d\\u5386\\u53d1\\u73b0 6 \\u4e2a\\u8282\\u70b9\"}, {\"step\": 3, \"type\": \"candidate\", \"description\": \"[\\u6570\\u636e] rel:app-accesses-db conf=0.99\"}, {\"step\": 4, \"type\": \"candidate\", \"description\": \"[\\u8d44\\u6e90] rel:app-runs-on-container conf=0.99\"}, {\"step\": 5, \"type\": \"candidate\", \"description\": \"[\\u8d44\\u6e90] env:container conf=0.99\"}]}",
+    "validation_method": "RCA engine confidence scoring",
+    "timestamp": "2026-10-01T14:48:58Z"
+  }
+]

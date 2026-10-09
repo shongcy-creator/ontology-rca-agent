@@ -1,0 +1,58 @@
+[
+  {
+    "id": "ev-docker-ps",
+    "source": "docker-compose",
+    "query": "docker ps --format 'table {{.Names}}\\t{{.Status}}'",
+    "result": "cc-credit-card-app: Up (healthy); cc-mysql-core: Up (healthy)",
+    "validation_method": "read-only docker CLI",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-app-topology",
+    "source": "http://cc-credit-card-app:8080/topology/raw",
+    "query": "GET /topology/raw",
+    "result": "{\"app\": {\"name\": \"payment-app\", \"version\": \"1.8.2\", \"containerName\": \"3177c9796e5c\", \"pid\": 1}, \"containerIP\": \"172.18.0.3\", \"db\": {\"endpoint\": \"mysql:3306\", \"reachable\": true, \"version\": \"8.0.46\", \"maxConn\": 200}}",
+    "validation_method": "http probe",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-mysql-vars",
+    "source": "mysql:creditcard",
+    "query": "SELECT @@version, @@max_connections, @@wait_timeout",
+    "result": "8.0.46, 200, 28800",
+    "validation_method": "MySQL @@ variables",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-mysql-tables",
+    "source": "mysql:creditcard",
+    "query": "SELECT table_name, table_rows FROM information_schema.tables WHERE table_schema='creditcard'",
+    "result": "t_customer=3, t_txn=3, t_audit=0",
+    "validation_method": "information_schema",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-host-facts",
+    "source": "windows-host",
+    "query": "Get-CimInstance Win32_Processor / Win32_OperatingSystem / Win32_PhysicalMemory",
+    "result": "遥遥领先: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz 4C/8T, 16GB RAM, Microsoft Windows 11 专业版 (build 26200)",
+    "validation_method": "WMI",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev-db-probe",
+    "source": "http://cc-credit-card-app:8080/topology/raw",
+    "query": "GET /topology/raw -> db.probe",
+    "result": "reachable=true, latency=5ms",
+    "validation_method": "app-side JDBC probe",
+    "timestamp": "2026-10-01T03:09:35+00:00"
+  },
+  {
+    "id": "ev:rca-inc_1790868998",
+    "source": "RCA Agent inference",
+    "query": "MySQL 慢查询增多，数据库响应变慢",
+    "result": "{\"category\": \"数据\", \"entity_id\": \"rc:slow-sql\", \"confidence\": 0.83, \"reason\": \"命中 数据 类关键词: 慢查询, t_txn, sql\", \"rca_chain\": [{\"step\": 1, \"type\": \"alert\", \"description\": \"[P1] MySQL 慢查询增多，数据库响应变慢\", \"keywords\": [\"mysql\", \"MySQL\", \"数据库\", \"sql\", \"慢查询\"], \"matched_categories\": [\"数据库\"], \"source\": \"user_input\"}, {\"step\": 2, \"type\": \"monitoring\", \"description\": \"Prometheus 阈值检查: 0 项触发\", \"alerts\": [], \"evidence\": {\"http_latency\": {\"p50\": [{\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"GET\", \"path\": \"/health\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.304, \"0.0025\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"GET\", \"path\": \"/metrics\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.304, \"0.004318181818181817\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"POST\", \"path\": \"/txn\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.304, \"0.0175\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"POST\", \"path\": \"/txn\", \"status\": \"500\", \"version\": \"1.8.2\"}, \"value\": [1790868998.304, \"2.5\"]}], \"p95\": [{\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"GET\", \"path\": \"/health\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.307, \"0.00475\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"GET\", \"path\": \"/metrics\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.307, \"0.010749999999999971\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"POST\", \"path\": \"/txn\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.307, \"0.02425\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"POST\", \"path\": \"/txn\", \"status\": \"500\", \"version\": \"1.8.2\"}, \"value\": [1790868998.307, \"2.5\"]}], \"p99\": [{\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"GET\", \"path\": \"/health\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.309, \"0.00495\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"GET\", \"path\": \"/metrics\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.309, \"0.022149999999999982\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"POST\", \"path\": \"/txn\", \"status\": \"200\", \"version\": \"1.8.2\"}, \"value\": [1790868998.309, \"0.02485\"]}, {\"metric\": {\"app\": \"payment-app\", \"env\": \"prod\", \"exported_app\": \"payment-app\", \"instance\": \"payment-app:8080\", \"job\": \"payment-app\", \"method\": \"POST\", \"path\": \"/txn\", \"status\": \"500\", \"version\": \"1.8.2\"}, \"value\": [1790868998.309, \"2.5\"]}]}, \"http_latency_buckets\": {\"0.1\": 220.0, \"0.25\": 220.0, \"0.5\": 220.0, \"1.0\": 0.0, \"2.5\": 220.0}, \"http_request_total\": 220.0, \"mysql_pool\": {\"active\": \"0\", \"idle\": \"0\", \"limit\": \"0\"}, \"mysql_global\": {\"threads_connected\": \"3\", \"max_used_connections\": \"116\", \"aborted_connects\": \"0\", \"uptime\": \"2911\"}, \"mysql_max_connections\": 200.0, \"txn\": {\"settled\": \"196\", \"pending\": \"0\", \"failed\": \"0\"}, \"targets\": [{\"job\": \"mysql-exporter\", \"health\": \"up\", \"lastError\": \"\"}, {\"job\": \"payment-app\", \"health\": \"up\", \"lastError\": \"\"}, {\"job\": \"prometheus\", \"health\": \"up\", \"lastError\": \"\"}]}, \"source\": \"prometheus\"}, {\"step\": 3, \"type\": \"topology\", \"description\": \"本体拓扑逆向遍历: 发现 16 个节点\", \"nodes\": [{\"id\": \"app:payment-app\", \"name\": \"支付交易应用 payment-app\", \"type\": \"entity\"}, {\"id\": \"env:container\", \"name\": \"支付容器 cc-credit-card-app\", \"type\": \"entity\"}, {\"id\": \"api:auth\", \"name\": \"授权接口 authAPI\", \"type\": \"entity\"}, {\"id\": \"fn:auth\", \"name\": \"授权业务功能\", \"type\": \"entity\"}, {\"id\": \"db:mysql-core\", \"name\": \"核心账务库 creditcard (MySQL 8.0)\", \"type\": \"entity\"}, {\"id\": \"ds:pay\", \"name\": \"支付数据源\", \"type\": \"entity\"}, {\"id\": \"metric:mysql-p99\", \"name\": \"MySQL P99 延迟\", \"type\": \"metric\"}, {\"id\": \"env:host-wsl\", \"name\": \"宿主机（Docker Desktop WSL2）\", \"type\": \"entity\"}, {\"id\": \"table:t_txn\", \"name\": \"交易表 t_txn\", \"type\": \"entity\"}, {\"id\": \"table:t_customer\", \"name\": \"客户表 t_customer\", \"type\": \"entity\"}], \"source\": \"evo_ontology\"}, {\"step\": 4, \"type\": \"path\", \"description\": \"根因传播路径: rc:slow-sql → metric:mysql-p99 → app:payment-app\", \"path\": [{\"from\": \"rc:slow-sql\", \"to\": \"metric:mysql-p99\", \"relation\": \"rel:rc-evidence-p99\", \"relation_type\": \"association\", \"condition\": \"evidencedBy: 根因由指标证据支撑\"}, {\"from\": \"metric:mysql-p99\", \"to\": \"app:payment-app\", \"relation\": \"rel:app-produces-metric\", \"relation_type\": \"association\", \"condition\": \"produces: 组件产出指标\"}], \"source\": \"evo_ontology\"}, {\"step\": 5, \"type\": \"candidate\", \"category\": \"数据\", \"entity\": \"rc:slow-sql\", \"confidence\": 0.83, \"reason\": \"命中 数据 类关键词: 慢查询, t_txn, sql\"}, {\"step\": 6, \"type\": \"candidate\", \"category\": \"数据\", \"entity\": \"db:mysql-core\", \"confidence\": 0.77, \"reason\": \"命中 数据 类关键词: mysql, sql\"}, {\"step\": 7, \"type\": \"candidate\", \"category\": \"数据\", \"entity\": \"metric:mysql-p99\", \"confidence\": 0.77, \"reason\": \"命中 数据 类关键词: mysql, sql\"}, {\"step\": 8, \"type\": \"candidate\", \"category\": \"数据\", \"entity\": \"alert:p99\", \"confidence\": 0.77, \"reason\": \"命中 数据 类关键词: mysql, sql\"}], \"topology\": [\"app:payment-app\", \"env:container\", \"api:auth\", \"fn:auth\", \"db:mysql-core\", \"ds:pay\", \"metric:mysql-p99\", \"env:host-wsl\", \"table:t_txn\", \"table:t_customer\", \"table:t_audit\", \"rc:slow-sql\", \"env:host-phys\", \"incident:payment-timeout\", \"metric:conn-exhaust\", \"alert:p99\"], \"candidates\": [{\"entity_id\": \"rc:slow-sql\", \"category\": \"数据\", \"confidence\": 0.83}, {\"entity_id\": \"db:mysql-core\", \"category\": \"数据\", \"confidence\": 0.77}, {\"entity_id\": \"metric:mysql-p99\", \"category\": \"数据\", \"confidence\": 0.77}, {\"entity_id\": \"alert:p99\", \"category\": \"数据\", \"confidence\": 0.77}, {\"entity_id\": \"table:t_txn\", \"category\": \"数据\", \"confidence\": 0.7}, {\"entity_id\": \"table:t_customer\", \"category\": \"数据\", \"confidence\": 0.7}]}",
+    "validation_method": "RCA engine confidence scoring + Prometheus evidence",
+    "timestamp": "2026-10-01T15:36:50Z"
+  }
+]

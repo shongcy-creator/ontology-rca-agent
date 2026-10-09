@@ -1,0 +1,124 @@
+services:
+  # ── 应用层 ────────────────────────────────────────────────
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: cc-credit-card-app
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+      DB_NAME: creditcard
+      APP_NAME: payment-app
+      APP_VERSION: "1.8.2"
+    restart: unless-stopped
+    networks:
+      - ccdemo-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── 数据库层 ─────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: cc-mysql-core
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: creditcard
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./monitoring/mysql/exporter.cnf:/etc/mysql/conf.d/exporter.cnf:ro
+    networks:
+      - ccdemo-net
+    command:
+      - --max-connections=200
+      - --slow-query-log=1
+      - --slow-query-log-file=/var/log/mysql/slow.log
+      - --long-query-time=1
+      - --min-examined-row-limit=10000
+      - --wait_timeout=28800
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # ── 监控层 ───────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: cc-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - ccdemo-net
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    depends_on:
+      - app
+      - mysql
+      - mysqld-exporter
+
+  mysqld-exporter:
+    build:
+      context: ./monitoring/mysql
+      dockerfile: Dockerfile.exporter
+    container_name: cc-mysqld-exporter
+    restart: unless-stopped
+    ports:
+      - "9104:9104"
+    networks:
+      - ccdemo-net
+    depends_on:
+      - mysql
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    container_name: cc-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ALERTING_ENABLED: "true"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      - ccdemo-net
+    depends_on:
+      - prometheus
+
+  # ── 网络与存储 ─────────────────────────────────────────
+volumes:
+  mysql-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  ccdemo-net:
+    driver: bridge

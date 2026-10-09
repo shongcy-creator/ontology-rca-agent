@@ -1,0 +1,32 @@
+# DSH 接入 EvoOntology MCP Server 的 Cordis overlay
+# 用法: dsh web --patch "$PWD/config/evoontology.cordis.yml"
+# 说明:
+#   - EvoOntology 核心 (vendor/EvoOntology/evoontology) 自带零依赖 stdio MCP server
+#   - DSH 通过 @deepseek-ai/dsh-mcp-client 启动该子进程, 工具以 mcp__evoontology__<tool> 形式注册
+#   - 工作区默认指向项目根下的 .evoontology/ (含 ontology_v0)
+#   - 启动时自动清洗含 KEY/PASSWORD/SECRET/TOKEN 及 DSH_* 的环境变量, 本项目无敏感 env 依赖
+#
+# 前置条件:
+#   - Python >= 3.10 在 PATH (此处用 DSH 自带运行时)
+#   - 已运行 tools/init_evo_ontology.py 生成 .evoontology/ontology_v0
+#
+# 跨 profile 持久化: 将下方 insert 合并到 $DSH_HOME/cordis.patch.yml
+
+insert:
+  - id: mcp-evoontology
+    name: '@deepseek-ai/dsh-mcp-client'
+    config:
+      serverName: evoontology
+      transport: stdio
+      command: 'C:\Users\41187\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe'
+      args:
+        - -m
+        - evoontology.runtime.mcp_server
+        - --store
+        - 'D:\05_code\credit-card-sys-ops\.evoontology'
+      cwd: 'D:\05_code\credit-card-sys-ops'
+      env:
+        PYTHONPATH: 'D:\05_code\credit-card-sys-ops\vendor\EvoOntology'
+        PYTHONIOENCODING: 'utf-8'
+      # 可选: 启动失败时不阻塞 harness, 仅工具不可用
+      # failOnStartupError: false

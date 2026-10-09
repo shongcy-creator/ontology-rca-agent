@@ -1,0 +1,68 @@
+/* 成本与限流看板 */
+
+.cost-page { padding: 16px 20px 32px; overflow-y: auto; height: 100%; }
+
+.cost-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 14px;
+}
+.cost-header h2 { font-size: 16px; margin-bottom: 4px; }
+.cost-sub { font-size: 11px; color: var(--text-muted); }
+.cost-sub code { font-size: 10px; }
+
+.cost-err {
+  font-size: 12px; color: var(--red); background: rgba(248,81,73,.10);
+  border: 1px solid rgba(248,81,73,.35); border-radius: 6px;
+  padding: 8px 10px; margin-bottom: 12px;
+}
+
+.cost-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px; margin-bottom: 14px;
+}
+.kpi {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.kpi-v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi-k { font-size: 11px; color: var(--text-muted); }
+
+.cost-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px; margin-bottom: 12px;
+}
+.cost-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+}
+.cost-card.wide { margin-bottom: 8px; }
+.cost-card h3 { font-size: 13px; margin-bottom: 8px; }
+.cost-card table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.cost-card td { padding: 3px 0; border-bottom: 1px solid var(--border); }
+.cost-card tr:last-child td { border-bottom: none; }
+.cost-card td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.cost-hint { font-size: 11px; color: var(--text-muted); line-height: 1.6; margin-top: 8px; }
+.cost-hint.warn { color: var(--yellow); }
+
+.tag {
+  font-size: 10px; margin-left: 6px; padding: 1px 6px; border-radius: 8px;
+  border: 1px solid var(--border); color: var(--text-muted);
+}
+.tag.ok { color: var(--green); border-color: rgba(63,185,80,.45); }
+
+.rl-bar {
+  height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+  margin: 6px 0 6px;
+}
+.rl-fill { height: 100%; background: var(--accent); transition: width .3s; }
+.rl-meta { font-size: 12px; display: flex; gap: 10px; align-items: baseline; }
+.rl-rest { color: var(--text-muted); font-size: 11px; }
+
+.price-table th {
+  text-align: left; font-size: 11px; color: var(--text-muted);
+  font-weight: 500; padding-bottom: 4px;
+}
+.price-table th:not(:first-child) { text-align: right; }
+.price-table code { font-size: 11px; }

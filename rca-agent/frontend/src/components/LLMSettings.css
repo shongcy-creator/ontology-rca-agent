@@ -1,0 +1,91 @@
+/* LLM provider 手动切换面板 */
+
+/* 自带的弹窗外壳。
+   为什么不复用 FaultInjectionPage.css 里的 .modal-backdrop/.modal：
+   本组件挂在 **AgentPage** 上，而那两个类定义在**别的页面**的样式文件里。
+   现在 App.tsx 是静态 import 所以样式恰好全局可见，但那是"隐式依赖别人的
+   bundled CSS"——一旦有人给页面加 lazy()/代码分割，这个弹窗就会静默失去样式。
+   三个规则的值与现有实现保持一致（视觉统一），代价只是少量重复。 */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6);
+  display: flex; align-items: center; justify-content: center; z-index: 50;
+}
+.modal {
+  width: min(560px, 92vw); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+}
+.modal h3 { font-size: 15px; margin-bottom: 10px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+
+/* 用两个类选择器提高优先级：别的页面样式文件里也有 `.modal { width: 560px }`，
+   打包顺序不确定，单类选择器会被它盖掉（实测弹窗宽度被压到 560px）。 */
+.modal.llm-modal { width: min(680px, 94vw); }
+.llm-banner {
+  display: flex; align-items: center; gap: 10px; font-size: 12px;
+  padding: 6px 10px; border-radius: 6px; margin-bottom: 10px;
+}
+.llm-banner.ok { background: rgba(63,185,80,.12); color: var(--green); }
+.llm-banner.warn { background: rgba(210,153,34,.12); color: var(--yellow); }
+.llm-banner.err { background: rgba(248,81,73,.12); color: var(--red); }
+.llm-banner .link { margin-left: auto; }
+
+.llm-current {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 10px; margin-bottom: 12px;
+}
+.llm-row { display: flex; align-items: baseline; gap: 8px; font-size: 12px; margin-bottom: 4px; }
+.llm-row:last-child { margin-bottom: 0; }
+.llm-k { flex: 0 0 72px; color: var(--text-muted); font-size: 11px; }
+.llm-v { flex: 1; overflow-wrap: anywhere; }
+.llm-v.mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: var(--text-muted); }
+.llm-tag {
+  font-size: 10px; padding: 1px 7px; border-radius: 10px;
+  border: 1px solid var(--border); color: var(--text-muted);
+}
+.llm-tag.warn { color: var(--yellow); border-color: rgba(210,153,34,.5); }
+
+.llm-section-title {
+  font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: .04em; margin: 10px 0 6px;
+}
+.llm-providers { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.llm-provider {
+  display: grid; grid-template-columns: 1.1fr 1.4fr 1fr; gap: 8px; align-items: baseline;
+  text-align: left; font-size: 12px; padding: 6px 10px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 5px;
+}
+.llm-provider.on { border-color: var(--accent); background: rgba(88,166,255,.10); }
+.lp-name { font-weight: 600; }
+.lp-model { color: var(--text-muted); font-family: ui-monospace, monospace; font-size: 11px; }
+.lp-key { font-size: 11px; text-align: right; }
+.lp-key.ok { color: var(--green); }
+.lp-key.miss { color: var(--red); }
+
+.llm-form { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.llm-form label { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.llm-form label > span { flex: 0 0 72px; color: var(--text-muted); font-size: 11px; }
+.llm-form input { flex: 1; padding: 4px 8px; font-size: 12px; }
+.llm-adv { align-self: flex-start; font-size: 11px; }
+
+.llm-test { border-radius: 6px; padding: 8px 10px; font-size: 12px; margin-bottom: 10px; }
+.llm-test.ok { background: rgba(63,185,80,.10); border: 1px solid rgba(63,185,80,.35); }
+.llm-test.err { background: rgba(248,81,73,.10); border: 1px solid rgba(248,81,73,.35); }
+.lt-head { font-weight: 600; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.lt-meta { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+.lt-warn { margin-top: 4px; color: var(--yellow); font-size: 11px; }
+.lt-sample { margin-top: 4px; color: var(--text-muted); font-size: 11px; }
+.lt-err { margin-top: 4px; color: var(--red); font-size: 11px; overflow-wrap: anywhere; }
+
+.llm-note {
+  font-size: 11px; color: var(--text-muted); line-height: 1.6;
+  border-left: 2px solid var(--border); padding-left: 8px; margin-bottom: 4px;
+}
+
+/* 头部常驻的模型指示 + 齿轮入口 */
+.llm-chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 11px;
+  padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border);
+  color: var(--text-muted); font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.llm-chip.override { color: var(--yellow); border-color: rgba(210,153,34,.5); }
+.llm-chip button { font-size: 11px; padding: 0 4px; }

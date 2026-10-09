@@ -1,0 +1,140 @@
+# =============================================================================
+# Prometheus 抓取配置（集群版）
+# -----------------------------------------------------------------------------
+# 集群带来两个新问题，配置上必须解决：
+#   1. 应用副本数量是动态的（compose replicas / DNS 轮询）→ 用 dns_sd_configs
+#      让 Prometheus 直接问 Docker 内嵌 DNS 要全部副本 A 记录，而不是写死 IP。
+#   2. 单个 MySQL 实例不够 → 主库 + 2 个只读副本各自暴露 exporter，
+#      用 db_node 标签区分，instance 重写为可读节点名。
+# =============================================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: credit-card-cluster
+    env: prod
+
+# ── 告警规则（与本体约束对齐）──────────────────────────────
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+alerting:
+  alertmanagers: []
+
+scrape_configs:
+  # 容器外观测：容器被杀重启后"重启计数"不会清零（容器内计数器会清零 →
+  # 导致 OOMKill 类告警永远不触发，实测过）
+  - job_name: container-exporter
+    scrape_interval: 15s
+    static_configs:
+      - targets: ["container-exporter:9105"]
+  # ── payment-app 集群：DNS-SD 发现全部副本 ──────────────────
+  # Docker 内嵌 DNS(127.0.0.11) 对 compose 服务名返回所有副本 IP；
+  # dns_sd_configs 会为每个 A 记录生成一个 target，副本扩缩容自动跟随。
+  - job_name: 'payment-app'
+    metrics_path: '/metrics'
+    dns_sd_configs:
+      - names: ['payment-app']
+        type: A
+        port: 8080
+        refresh_interval: 15s
+    relabel_configs:
+      # instance 从 "IP:8080" 归一为纯 IP，便于日志/告警可读
+      - source_labels: [__address__]
+        regex: '([^:]+):.*'
+        target_label: instance
+        replacement: '$1'
+      - target_label: layer
+        replacement: application
+      - target_label: component
+        replacement: payment-app
+
+  # ── 应用层网关（LB 对外可达性）──────────────────────────────
+  # 注意：网关自身只暴露 JSON 健康端点，不是 Prometheus 文本格式，
+  # 因此不能直接 scrape；改用 blackbox_exporter 做真实 HTTP 探测，
+  # 得到 probe_success / probe_duration_seconds —— 这是"用户能不能打进来"
+  # 的唯一可靠信号（副本自报的 /metrics 无法证明这一点）。
+  - job_name: 'blackbox-gateway'
+    metrics_path: '/probe'
+    params:
+      module: [http_gateway]
+    static_configs:
+      - targets: ['http://app-gateway:8080/gateway/health']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+      - target_label: layer
+        replacement: application
+      - target_label: component
+        replacement: app-gateway
+
+  # ── 应用副本直连探活（绕过网关，区分"副本挂"与"网关挂"）────────
+  - job_name: 'blackbox-app-replica'
+    metrics_path: '/probe'
+    params:
+      module: [http_app_replica]
+    dns_sd_configs:
+      - names: ['payment-app']
+        type: A
+        port: 8080
+        refresh_interval: 15s
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: '([^:]+):(\d+)'
+        target_label: __param_target
+        replacement: 'http://$1:$2/health'
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+      - target_label: layer
+        replacement: application
+      - target_label: component
+        replacement: payment-app
+
+  # ── MySQL 集群：1 主 + 2 只读副本 ───────────────────────────
+  - job_name: 'mysql-primary'
+    static_configs:
+      - targets: ['mysqld-exporter-primary:9104']
+        labels:
+          layer: database
+          db_node: primary
+          db_role: primary
+          db_cluster: creditcard
+    relabel_configs:
+      - source_labels: [db_node]
+        target_label: instance
+
+  - job_name: 'mysql-replica-1'
+    static_configs:
+      - targets: ['mysqld-exporter-replica-1:9104']
+        labels:
+          layer: database
+          db_node: replica-1
+          db_role: replica
+          db_cluster: creditcard
+    relabel_configs:
+      - source_labels: [db_node]
+        target_label: instance
+
+  - job_name: 'mysql-replica-2'
+    static_configs:
+      - targets: ['mysqld-exporter-replica-2:9104']
+        labels:
+          layer: database
+          db_node: replica-2
+          db_role: replica
+          db_cluster: creditcard
+    relabel_configs:
+      - source_labels: [db_node]
+        target_label: instance
+
+  # ── Prometheus self-scraping ────────────────────────────
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

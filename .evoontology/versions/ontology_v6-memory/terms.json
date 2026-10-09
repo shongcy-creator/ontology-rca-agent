@@ -1,0 +1,1724 @@
+[
+  {
+    "id": "app:payment-app",
+    "name": "支付交易应用 payment-app",
+    "type": "entity",
+    "definition": "信用卡支付业务 Node.js 应用，版本 1.8.2，暴露 /health 与 /topology 端点",
+    "scope": "应用层",
+    "aliases": [
+      "PaymentApp",
+      "cc-credit-card-app"
+    ],
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-app-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "fn:auth",
+    "name": "授权业务功能",
+    "type": "entity",
+    "definition": "payment-app 内的授权（Auth）功能，P0 关键度",
+    "scope": "应用层",
+    "aliases": [
+      "AuthFunc"
+    ],
+    "evidence_refs": [
+      "ev-app-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "api:auth",
+    "name": "授权接口 authAPI",
+    "type": "entity",
+    "definition": "RPC 授权接口，超时 500ms，3 次指数退避重试",
+    "scope": "应用层",
+    "aliases": [
+      "AuthAPI"
+    ],
+    "evidence_refs": [],
+    "lifecycle": {
+      "state": "draft"
+    }
+  },
+  {
+    "id": "env:container",
+    "name": "支付容器 cc-credit-card-app",
+    "type": "entity",
+    "definition": "承载 payment-app 的容器实例",
+    "scope": "运行环境层",
+    "aliases": [
+      "PayContainer"
+    ],
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-app-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "env:host-wsl",
+    "name": "宿主机（Docker Desktop WSL2）",
+    "type": "entity",
+    "definition": "Docker Desktop 的 WSL2 虚拟宿主，承载容器调度",
+    "scope": "运行环境层",
+    "aliases": [
+      "HostWsl",
+      "docker-desktop"
+    ],
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-host-facts"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "env:host-phys",
+    "name": "物理宿主机（遥遥领先）",
+    "type": "entity",
+    "definition": "Windows 物理主机：11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz，16GB RAM",
+    "scope": "运行环境层",
+    "aliases": [
+      "HostPhys",
+      "遥遥领先"
+    ],
+    "evidence_refs": [
+      "ev-host-facts"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "env:cluster",
+    "name": "Docker 容器运行时引擎（非业务集群）",
+    "type": "entity",
+    "definition": "承载容器的 Docker Desktop 运行时（WSL2 后端，8 CPU / ≈7.66GB，overlayfs）。注意：这是**运行时引擎**，业务侧的『集群』是 app:payment-app-cluster（3 副本应用集群）与 db:mysql-cluster（主从数据库集群），三者不要混用。",
+    "scope": "运行环境层",
+    "aliases": [
+      "DockerEngine",
+      "DockerVM",
+      "docker-desktop"
+    ],
+    "evidence_refs": [
+      "ev-docker-runtime",
+      "ev-host-facts"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "docker desktop",
+      "运行时引擎",
+      "docker 引擎",
+      "wsl2",
+      "overlayfs"
+    ],
+    "negative_keywords": [
+      "业务集群",
+      "副本",
+      "payment-app 集群",
+      "主从"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "db:mysql-core",
+    "name": "核心账务库 creditcard (MySQL 8.0)",
+    "type": "entity",
+    "definition": "MySQL 关系库，含 t_customer/t_txn/t_audit 三表；max_connections=200",
+    "scope": "数据库层",
+    "aliases": [
+      "MysqlCore",
+      "cc-mysql-core"
+    ],
+    "evidence_refs": [
+      "ev-mysql-vars",
+      "ev-mysql-tables"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "核心库",
+      "creditcard",
+      "账务库",
+      "业务库"
+    ],
+    "negative_keywords": [
+      "只读副本",
+      "副本丢失",
+      "复制中断"
+    ],
+    "scoring_rationale": "库（逻辑数据库）与『节点/副本』是不同粒度，避免粒度混淆。",
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "ds:pay",
+    "name": "支付数据源",
+    "type": "entity",
+    "definition": "payment-app 的 JDBC 数据源，连接池上限 10，指向 mysql:3306",
+    "scope": "数据库层",
+    "aliases": [
+      "PayDataSource"
+    ],
+    "evidence_refs": [
+      "ev-app-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "table:t_txn",
+    "name": "交易表 t_txn",
+    "type": "entity",
+    "definition": "信用卡交易流水表，热表；含 customer_id 与 created_at 索引",
+    "scope": "数据库层",
+    "aliases": [
+      "TTxn"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "交易表",
+      "t_txn",
+      "流水表",
+      "交易流水"
+    ],
+    "negative_keywords": [
+      "审计表",
+      "客户表"
+    ],
+    "scoring_rationale": "表级定位词。",
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "table:t_customer",
+    "name": "客户表 t_customer",
+    "type": "entity",
+    "definition": "信用卡客户与卡号表",
+    "scope": "数据库层",
+    "aliases": [
+      "TCustomer"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "table:t_audit",
+    "name": "审计表 t_audit",
+    "type": "entity",
+    "definition": "交易审计事件表（JSON payload）",
+    "scope": "数据库层",
+    "aliases": [
+      "TAudit"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:mysql-p99",
+    "name": "MySQL P99 延迟",
+    "type": "metric",
+    "definition": "MySQL 查询 P99 延迟（ms），阈值 100ms",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "MysqlLatencyP99"
+    ],
+    "evidence_refs": [
+      "ev-db-probe"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:conn-exhaust",
+    "name": "连接池耗尽信号",
+    "type": "metric",
+    "definition": "活跃连接数逼近 poolLimit(10) 的耗尽信号",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "ConnExhaustion"
+    ],
+    "evidence_refs": [
+      "ev-app-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "evt:deploy",
+    "name": "应用发布/重启事件",
+    "type": "entity",
+    "definition": "payment-app 的发布或重启事件（CI/CD 部署、镜像更新、容器重启）。可观测代理指标：容器镜像 ID + 容器 Created/StartedAt（即最近一次发布/重启的时间戳）。用于回答『是不是发布引入的』。",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "DeployEvent",
+      "ReleaseEvent",
+      "Rollout"
+    ],
+    "evidence_refs": [
+      "ev-deploy-source"
+    ],
+    "role": "observation",
+    "scoring_keywords": [
+      "发布",
+      "上线",
+      "变更",
+      "deploy",
+      "版本升级",
+      "rollout",
+      "镜像更新",
+      "重启",
+      "灰度"
+    ],
+    "negative_keywords": [
+      "行锁",
+      "复制延迟",
+      "临时表落盘"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "alert:p99",
+    "name": "MySQL P99 超阈值告警",
+    "type": "entity",
+    "definition": "P1 告警，触发规则 mysql.latency.p99>100 for 5m",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "AlertP99"
+    ],
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "incident:payment-timeout",
+    "name": "支付交易超时故障",
+    "type": "entity",
+    "definition": "P0 故障：支付成功率下降，关联 t_txn 慢查询",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "IncPaymentTimeout"
+    ],
+    "evidence_refs": [
+      "ev-db-probe"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "rc:slow-sql",
+    "name": "根因：t_txn 慢查询致连接耗尽",
+    "type": "entity",
+    "definition": "数据类根因，置信度 0.86，归因于 t_txn 索引缺失/慢查询",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootSlowSql"
+    ],
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "慢查询",
+      "全表扫描",
+      "索引缺失",
+      "slow query",
+      "slow_queries",
+      "sql 变慢",
+      "扫描行数"
+    ],
+    "negative_keywords": [
+      "行锁",
+      "锁等待",
+      "连接耗尽",
+      "复制延迟",
+      "临时表",
+      "置为只读",
+      "read_only"
+    ],
+    "scoring_rationale": "慢查询的证据是 slow_queries 增长与疑似全表扫描，需要与锁等待、连接耗尽等『由他人拖慢』的情形区分。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "对聚合语句做 EXPLAIN，确认是否 type=ALL 全表扫描 + Using filesort",
+        "command": "EXPLAIN <slow-sql>",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "为聚合/过滤条件补索引（t_txn.created_at、t_txn.customer_id）",
+        "command": "ALTER TABLE t_txn ADD INDEX ...",
+        "needs_approval": true
+      },
+      {
+        "urgency": "P1",
+        "action": "把应用层遍历大表的聚合下推到 SQL 侧并加 LIMIT，避免亿级行扫描",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "app:payment-app-cluster",
+    "name": "支付应用集群 payment-app-cluster",
+    "type": "entity",
+    "definition": "payment-app 的集群视图：3 个等价副本 + 1 个网关负载均衡；集群健康度由「在册健康副本数」而非单副本存活决定",
+    "scope": "应用层",
+    "aliases": [
+      "PaymentAppCluster",
+      "pay-cluster"
+    ],
+    "evidence_refs": [
+      "ev-cluster-topology",
+      "ev-cluster-prometheus-targets"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "集群",
+      "副本数",
+      "在册副本",
+      "副本不足"
+    ],
+    "negative_keywords": [
+      "副本丢失",
+      "副本假死",
+      "副本离线",
+      "单副本",
+      "被杀",
+      "下线"
+    ],
+    "scoring_rationale": "集群是副本的集合视图；它描述『整体/多点』，因此必须用负向词排除单副本的故障模式（丢失/假死/离线），否则任何含『副本』的告警都会把集群实体顶到第一。",
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "app:instance-1",
+    "name": "payment-app 副本 #1",
+    "type": "entity",
+    "definition": "集群中的第一个应用副本容器（compose service 的 replica）",
+    "scope": "应用层",
+    "aliases": [
+      "PaymentAppInstance1"
+    ],
+    "evidence_refs": [
+      "ev-cluster-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "app:instance-2",
+    "name": "payment-app 副本 #2",
+    "type": "entity",
+    "definition": "集群中的第二个应用副本容器",
+    "scope": "应用层",
+    "aliases": [
+      "PaymentAppInstance2"
+    ],
+    "evidence_refs": [
+      "ev-cluster-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "app:instance-3",
+    "name": "payment-app 副本 #3",
+    "type": "entity",
+    "definition": "集群中的第三个应用副本容器",
+    "scope": "应用层",
+    "aliases": [
+      "PaymentAppInstance3"
+    ],
+    "evidence_refs": [
+      "ev-cluster-topology"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "env:gateway",
+    "name": "应用层网关 cc-app-gateway",
+    "type": "entity",
+    "definition": "Nginx 负载均衡网关，对外唯一入口 :8080，least_conn 策略 + Docker DNS 发现副本；副本全健康但网关挂掉时对外仍完全不可用",
+    "scope": "运行环境层",
+    "aliases": [
+      "AppGateway",
+      "LoadBalancer"
+    ],
+    "evidence_refs": [
+      "ev-cluster-topology",
+      "ev-cluster-blackbox"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "网关",
+      "gateway",
+      "负载均衡",
+      "入口",
+      "lb"
+    ],
+    "negative_keywords": [
+      "副本丢失",
+      "行锁",
+      "复制延迟"
+    ],
+    "scoring_rationale": "网关是入口组件；它的故障模式是『外部打不进来』。",
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:replica-healthy-count",
+    "name": "在册健康副本数",
+    "type": "metric",
+    "definition": "count(up{job=\"payment-app\"} == 1)：集群可用副本数，低于期望副本数即容量下降",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "HealthyReplicaCount"
+    ],
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:gateway-probe",
+    "name": "网关黑盒探活成功率",
+    "type": "metric",
+    "definition": "probe_success{job=\"blackbox-gateway\"}：从外部视角判断入口是否可用——副本自报的 /metrics 无法证明这一点",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "GatewayProbeSuccess"
+    ],
+    "evidence_refs": [
+      "ev-cluster-blackbox"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:http-error-rate",
+    "name": "HTTP 5xx 错误率",
+    "type": "metric",
+    "definition": "sum(rate(cc_http_requests_total{status=~\"5..\"}[5m])) / sum(rate(...))，写路径被拒绝时的最直接表征",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "HttpErrorRate"
+    ],
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:cpu-throttle",
+    "name": "容器 CPU 配额节流",
+    "type": "metric",
+    "definition": "cc_container_cpu_nr_throttled_total / cc_container_cpu_throttled_seconds_total：cgroup cpu quota 把进程强制排队，CPU/内存指标却可能都不高",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "CpuThrottle",
+      "CpuQuotaThrottle"
+    ],
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:mem-pressure",
+    "name": "容器内存压力",
+    "type": "metric",
+    "definition": "cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes：逼近 1.0 时容器随时被内核 OOM Killer 杀死",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "MemPressure",
+      "ContainerMemRatio"
+    ],
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:net-delay",
+    "name": "副本网络延迟",
+    "type": "metric",
+    "definition": "probe_duration_seconds / netem 注入后的端到端延迟：容器资源指标正常但链路变慢",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "NetDelay"
+    ],
+    "evidence_refs": [
+      "ev-cluster-blackbox"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:net-loss",
+    "name": "副本网络丢包率",
+    "type": "metric",
+    "definition": "netem loss 造成的丢包：TCP 重传→长尾延迟与探活失败",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "NetLoss"
+    ],
+    "evidence_refs": [
+      "ev-cluster-blackbox"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "rc:replica-loss",
+    "name": "根因：应用副本丢失",
+    "type": "entity",
+    "definition": "某个应用副本容器被终止/崩溃（docker kill、OOMKill、退出），集群在册副本数下降，剩余副本承接全部流量",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootReplicaLoss"
+    ],
+    "evidence_refs": [
+      "ev-cluster-topology",
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "副本丢失",
+      "副本数下降",
+      "在册副本",
+      "副本减少",
+      "被杀",
+      "被终止",
+      "退出",
+      "崩溃",
+      "killed",
+      "terminated",
+      "replica loss",
+      "replicas 不足",
+      "容器消失"
+    ],
+    "negative_keywords": [
+      "假死",
+      "挂起",
+      "pause",
+      "节流",
+      "throttle",
+      "内存",
+      "oom",
+      "延迟",
+      "丢包",
+      "锁"
+    ],
+    "scoring_rationale": "副本丢失与其他副本类故障共享『副本』一词，必须用排除词把假死/节流/OOM/网络/锁区分开，否则它会在所有副本类告警里排第一。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "列出全部副本（含已退出）并查看缺失副本的退出码 / OOMKilled",
+        "command": "docker ps -a --filter name=payment-app",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "查看缺失副本的最后日志，区分崩溃、被杀与 OOMKill",
+        "command": "docker logs --tail 100 <replica>",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "恢复该副本；若因 OOMKill 反复重启，则上调内存限额或增加副本数",
+        "command": "docker start <replica>",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:replica-hang",
+    "name": "根因：应用副本假死",
+    "type": "entity",
+    "definition": "副本进程被挂起（pause/长 GC/死锁）：容器状态仍是 Up、端口仍在监听，但请求永不返回——比崩溃更难识别",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootReplicaHang"
+    ],
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "假死",
+      "挂起",
+      "pause",
+      "无响应",
+      "不响应",
+      "僵尸",
+      "hang",
+      "端口在但不返回",
+      "探活失败"
+    ],
+    "negative_keywords": [
+      "被杀",
+      "终止",
+      "退出",
+      "killed",
+      "内存",
+      "oom",
+      "节流",
+      "throttle"
+    ],
+    "scoring_rationale": "假死的判别特征是『进程还在但完全不返回』，与『被杀/退出』互斥。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "对比「容器 Up」与「健康探针失败」，确认是进程在但不干活（假死而非崩溃）",
+        "command": "docker inspect -f '{{.State.Status}}' <replica>",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "确认该副本是否仍在承接流量（假死副本会造成部分请求永久挂起）",
+        "command": "max by (app_instance) (histogram_quantile(0.99, sum by (le, app_instance) (rate(cc_http_request_duration_seconds_bucket[5m]))))",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "先摘流量再重启该副本（假死进程无法自行恢复）",
+        "command": "docker restart <replica>",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:oom-kill",
+    "name": "根因：容器内存超限被 OOM Kill",
+    "type": "entity",
+    "definition": "容器 cgroup 内存用量触顶，内核 OOM Killer 终止容器内进程；docker inspect 的 OOMKilled=true / RestartCount 递增是直接证据",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootOomKill"
+    ],
+    "evidence_refs": [
+      "ev-cluster-quota",
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "oom",
+      "oomkill",
+      "oom kill",
+      "oom killed",
+      "内存超限",
+      "被内核杀死",
+      "内存不足",
+      "内存压力",
+      "内存逼近",
+      "mem_limit",
+      "memory limit",
+      "内存使用率"
+    ],
+    "negative_keywords": [
+      "cpu",
+      "节流",
+      "throttle",
+      "网络",
+      "丢包",
+      "延迟",
+      "锁等待",
+      "复制"
+    ],
+    "scoring_rationale": "OOMKill 的证据是内存用量触顶 + 容器重启，与 CPU/网络/锁类故障的指标正交。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "确认 OOM 证据：OOMKilled 标志与 RestartCount",
+        "command": "docker inspect -f '{{.State.OOMKilled}} {{.RestartCount}}' <container>",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "对比 cgroup 内存上限与实际用量峰值，判断是限额过低还是内存泄漏",
+        "command": "cc_container_memory_working_set_bytes / _limit_bytes",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "上调 mem_limit，或定位并修复内存增长点（二者选一，避免掩盖泄漏）",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:cpu-throttle",
+    "name": "根因：容器 CPU 配额节流",
+    "type": "entity",
+    "definition": "副本 CPU 需求超过 cpus 配额，cgroup 每周期强制限流；表现为单副本延迟明显高于其他副本（副本间不均衡）",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootCpuThrottle"
+    ],
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "cpu 节流",
+      "节流",
+      "throttle",
+      "cpu quota",
+      "cpu 配额",
+      "cpu 不足",
+      "cpu 饱和",
+      "nr_throttled",
+      "cpu 资源"
+    ],
+    "negative_keywords": [
+      "内存",
+      "oom",
+      "网络",
+      "丢包",
+      "锁等待",
+      "复制延迟",
+      "置为只读",
+      "read_only"
+    ],
+    "scoring_rationale": "CPU 节流由 cgroup 配额造成，必须排除内存/网络/锁等同类关键词。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "读 cgroup 节流计数确认被限流，而不是单纯压力大",
+        "command": "rate(cc_container_cpu_throttled_seconds_total[5m])",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "确认是否只有单个副本延迟偏高（配额问题 → 副本间不均衡）",
+        "command": "max by (app_instance) (histogram_quantile(0.99, sum by (le, app_instance) (rate(cc_http_request_duration_seconds_bucket[5m]))))",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "提高 cpus 配额；或在配额不变的前提下增加副本数分摊负载",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:gateway-down",
+    "name": "根因：应用网关不可用",
+    "type": "entity",
+    "definition": "负载均衡入口不可用：全部副本健康、副本指标正常，仅外部可达性为 0",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootGatewayDown"
+    ],
+    "evidence_refs": [
+      "ev-cluster-blackbox"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "网关",
+      "gateway",
+      "负载均衡",
+      "入口",
+      "lb ",
+      "502",
+      "503",
+      "外部不可达",
+      "探活失败",
+      "打不进来"
+    ],
+    "negative_keywords": [
+      "副本丢失",
+      "oom",
+      "行锁",
+      "复制延迟",
+      "临时表"
+    ],
+    "scoring_rationale": "入口不可用与业务副本故障的判别点是『副本指标全绿但外部探活为 0』。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "绕过网关直接探活各副本 :8080/health，区分「入口挂」与「后端挂」",
+        "command": "probe_success{job=\"blackbox-app-replica\"}",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "确认网关容器状态与上游配置（副本 IP 变化后 upstream 可能失效）",
+        "command": "docker inspect cc-app-gateway",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "恢复网关入口；并评估多实例或健康检查自动重启，消除单点",
+        "command": "docker start cc-app-gateway",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:net-fault",
+    "name": "根因：网络延迟/丢包",
+    "type": "entity",
+    "definition": "副本所在链路质量故障（延迟或丢包），CPU/内存指标全部正常",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootNetFault"
+    ],
+    "evidence_refs": [
+      "ev-cluster-blackbox"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "网络",
+      "延迟",
+      "丢包",
+      "netem",
+      "network",
+      "rtt",
+      "packet loss",
+      "链路",
+      "重传"
+    ],
+    "negative_keywords": [
+      "行锁",
+      "复制",
+      "临时表",
+      "置为只读",
+      "read_only",
+      "oom"
+    ],
+    "scoring_rationale": "网络类故障的特征是资源指标正常但链路耗时/丢包异常。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "对比 blackbox 探活延迟/丢包与副本自身延迟，确认瓶颈在链路而非应用",
+        "command": "max(probe_duration_seconds{job=\"blackbox-app-replica\"})",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "确认 CPU/内存等资源指标正常（网络类故障的特征是资源全绿）",
+        "command": "max(cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes)",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "检查容器网络与 tc/netem 规则，清理注入残留",
+        "command": "docker exec <c> tc qdisc show",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:cluster-capacity",
+    "name": "根因：集群整体容量不足",
+    "type": "entity",
+    "definition": "全部/多数副本同时资源受限：不是单副本故障，而是副本数或配额相对于流量不足",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootClusterCapacity"
+    ],
+    "evidence_refs": [
+      "ev-cluster-quota",
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "集群容量",
+      "整体资源不足",
+      "容量不足",
+      "全部副本",
+      "多副本同时",
+      "副本数不足",
+      "整体 cpu",
+      "整体内存"
+    ],
+    "negative_keywords": [
+      "单副本",
+      "置为只读",
+      "read_only",
+      "行锁",
+      "复制延迟"
+    ],
+    "scoring_rationale": "集群容量不足强调『多点同时受限』，与单点故障互斥。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "核对在册副本数与单副本配额是否与当前 QPS 匹配（多数副本同时受限=整体容量不足）",
+        "command": "count(up{job=\"payment-app\"} == 1)",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "扩容：增加副本数，或上调单副本配额",
+        "command": "deploy.replicas / cpus",
+        "needs_approval": true
+      },
+      {
+        "urgency": "P2",
+        "action": "评估入口限流与排队策略，避免容量不足时雪崩",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "db:mysql-cluster",
+    "name": "creditcard MySQL 集群",
+    "type": "entity",
+    "definition": "1 主 2 只读副本的 GTID 异步复制集群；写只在主库、读可走副本；集群健康需同时看主库与副本（复制延迟/中断/副本丢失）",
+    "scope": "数据库层",
+    "aliases": [
+      "MysqlCluster",
+      "cc-mysql-cluster"
+    ],
+    "evidence_refs": [
+      "ev-cluster-replication",
+      "ev-cluster-prometheus-targets"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "db:primary",
+    "name": "MySQL 主库节点",
+    "type": "entity",
+    "definition": "cc-mysql-core：server_id=1，read_only=0，承担全部写入并产生 binlog",
+    "scope": "数据库层",
+    "aliases": [
+      "MysqlPrimary",
+      "cc-mysql-core"
+    ],
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "主库",
+      "primary",
+      "主节点",
+      "写入",
+      "binlog"
+    ],
+    "negative_keywords": [
+      "只读副本",
+      "副本节点",
+      "副本丢失",
+      "副本不可用",
+      "replica down",
+      "复制中断"
+    ],
+    "scoring_rationale": "主库的判别词是『写入/binlog/主节点』；『只读副本』指的是副本，必须用负向词排除，否则 con:db-role 的『只读』关键词会污染主库。",
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "db:mysql-replica",
+    "name": "MySQL 只读副本节点",
+    "type": "entity",
+    "definition": "cc-mysql-replica-1/2：server_id=11/12，read_only=ON，通过 GTID 异步复制回放主库事务；读路径依赖它",
+    "scope": "数据库层",
+    "aliases": [
+      "MysqlReplica",
+      "cc-mysql-replica"
+    ],
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "只读副本",
+      "replica",
+      "副本节点",
+      "从库",
+      "回放"
+    ],
+    "negative_keywords": [
+      "主库",
+      "primary",
+      "写入失败"
+    ],
+    "scoring_rationale": "只读副本的判别词是『只读副本/节点/回放』。",
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:replica-lag",
+    "name": "复制延迟 Seconds_Behind_Master",
+    "type": "metric",
+    "definition": "mysql_slave_status_seconds_behind_master：副本回放落后主库的秒数；阈值 5s，超过即读路径返回陈旧数据",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "ReplicaLag",
+      "SecondsBehindMaster"
+    ],
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:replica-io-running",
+    "name": "副本复制线程状态",
+    "type": "metric",
+    "definition": "mysql_slave_status_slave_io_running / slave_sql_running：任一为 0 即复制中断，副本数据永久停止更新",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "ReplicaIoRunning",
+      "ReplicationThreadState"
+    ],
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:db-cpu",
+    "name": "数据库并发执行线程",
+    "type": "metric",
+    "definition": "mysql_global_status_threads_running：数据库侧 CPU 资源不足时持续偏高",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "DbThreadsRunning"
+    ],
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:db-tmp-disk",
+    "name": "磁盘临时表速率",
+    "type": "metric",
+    "definition": "rate(mysql_global_status_created_tmp_disk_tables[5m])：排序/分组内存不足被迫落盘，磁盘 IO 成为瓶颈",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "TmpDiskTables"
+    ],
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "rc:row-lock",
+    "name": "根因：InnoDB 行锁等待",
+    "type": "entity",
+    "definition": "长事务持有 t_txn 的 next-key 锁（全表 FOR UPDATE），阻塞其他写入并逐级占满应用连接池",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootRowLock"
+    ],
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "行锁",
+      "锁等待",
+      "lock wait",
+      "长事务",
+      "阻塞写入",
+      "排他锁",
+      "innodb_row_lock",
+      "等锁"
+    ],
+    "negative_keywords": [
+      "复制延迟",
+      "replica lag",
+      "临时表",
+      "落盘",
+      "置为只读",
+      "read_only",
+      "内存"
+    ],
+    "scoring_rationale": "行锁等待是 InnoDB 事务层面的证据（innodb_row_lock_*），与复制/内存类问题不共享指标。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "找出持锁者与等待者（长事务的 trx_query / trx_rows_locked）",
+        "command": "SELECT * FROM information_schema.innodb_trx; SELECT * FROM performance_schema.data_lock_waits",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "注意别只看 Innodb_row_lock_current_waits：会话被 kill 时它漏减，会永久卡在非 0（须用 rate(Innodb_row_lock_waits[2m]) 判断）",
+        "command": "rate(mysql_global_status_innodb_row_lock_waits[2m])",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "终止长事务会话释放锁",
+        "command": "KILL <trx_mysql_thread_id>",
+        "needs_approval": true
+      },
+      {
+        "urgency": "P1",
+        "action": "把全表 FOR UPDATE 收窄为主键/索引范围锁，并缩短事务持有时间",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:conn-exhaust",
+    "name": "根因：数据库连接资源耗尽",
+    "type": "entity",
+    "definition": "threads_connected 逼近 max_connections=200，新连接被拒绝（Too many connections / Aborted_connects 上升）",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootConnExhaust"
+    ],
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "连接耗尽",
+      "连接数",
+      "max_connections",
+      "too many connections",
+      "连接资源",
+      "连接被拒",
+      "threads_connected"
+    ],
+    "negative_keywords": [
+      "行锁",
+      "复制延迟",
+      "临时表",
+      "置为只读",
+      "read_only",
+      "cpu"
+    ],
+    "scoring_rationale": "连接耗尽的证据是 threads_connected/max_connections 逼近 1，且新连接被拒（Too many connections）。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "对比 threads_connected / max_connections 与连接池上限，确认是谁在占连接",
+        "command": "SHOW STATUS LIKE 'Threads_connected'; SHOW VARIABLES LIKE 'max_connections'",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "按 user/host/时间列出长 Sleep 连接，定位连接泄漏来源",
+        "command": "SELECT user, host, time, command FROM information_schema.processlist WHERE command='Sleep' ORDER BY time DESC",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "清理空闲会话并修复泄漏；必要时收敛连接池上限",
+        "command": "KILL <id>",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:db-cpu-starve",
+    "name": "根因：数据库 CPU 资源不足",
+    "type": "entity",
+    "definition": "交叉连接/聚合类重查询把 DB CPU 打满，所有查询排队",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootDbCpuStarve"
+    ],
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "threads_running",
+      "数据库 cpu",
+      "db cpu",
+      "并发线程",
+      "cpu 资源",
+      "计算资源",
+      "查询排队"
+    ],
+    "negative_keywords": [
+      "行锁",
+      "复制延迟",
+      "置为只读",
+      "read_only",
+      "内存",
+      "临时表"
+    ],
+    "scoring_rationale": "数据库 CPU 不足的证据是并发执行线程持续偏高、查询排队。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "确认数据库并发执行线程高企（排队而非单条慢）",
+        "command": "SHOW STATUS LIKE 'Threads_running'",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "找出消耗 CPU 最重的语句（交叉连接 / 无谓笛卡尔积是典型）",
+        "command": "SELECT DIGEST_TEXT, COUNT_STAR FROM performance_schema.events_statements_summary_by_digest ORDER BY SUM_TIMER_WAIT DESC LIMIT 5",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "终止重查询，并改写为可下推的关联查询",
+        "command": "KILL <id>",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:tmp-disk",
+    "name": "根因：排序内存不足导致磁盘临时表",
+    "type": "entity",
+    "definition": "tmp_table_size / sort_buffer 偏小，GROUP BY/ORDER BY 溢出到磁盘临时表",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootTmpDisk"
+    ],
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "临时表",
+      "tmp_disk",
+      "落盘",
+      "排序",
+      "filesort",
+      "磁盘临时",
+      "created_tmp_disk_tables",
+      "tmp_table_size"
+    ],
+    "negative_keywords": [
+      "行锁",
+      "复制延迟",
+      "置为只读",
+      "read_only",
+      "oom",
+      "cpu 节流"
+    ],
+    "scoring_rationale": "磁盘临时表由排序/分组内存不足造成，证据是 created_tmp_disk_tables 速率。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "确认磁盘临时表速率与内存临时表阈值的当前值（判断是排序内存不足而非磁盘故障）",
+        "command": "rate(mysql_global_status_created_tmp_disk_tables[2m]); SHOW VARIABLES LIKE 'tmp_table_size'; SHOW VARIABLES LIKE 'sort_buffer_size'",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "对触发落盘的语句做 EXPLAIN，确认 GROUP BY / ORDER BY 是否 Using filesort",
+        "command": "EXPLAIN <slow-sql>",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "上调 tmp_table_size / sort_buffer_size（可先在会话级验证再改全局）",
+        "command": "SET SESSION tmp_table_size=...",
+        "needs_approval": true
+      },
+      {
+        "urgency": "P1",
+        "action": "改写 GROUP BY / ORDER BY 使其命中索引，从根上消除 filesort 落盘",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:primary-readonly",
+    "name": "根因：主库被置为只读",
+    "type": "entity",
+    "definition": "配置漂移：主库 read_only=ON 后写请求全部失败（1290），读请求走副本依旧成功——健康检查全绿但交易全失败",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootPrimaryReadonly"
+    ],
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "置为只读",
+      "read_only",
+      "read_only",
+      "super_read_only",
+      "写入失败",
+      "配置漂移",
+      "1290",
+      "写请求失败",
+      "写路径失败"
+    ],
+    "negative_keywords": [
+      "副本丢失",
+      "行锁",
+      "复制延迟",
+      "cpu",
+      "内存"
+    ],
+    "scoring_rationale": "主库只读的特征是『写全失败但读成功、健康检查全绿』，错误码 1290 是直接证据。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "确认主库是否被置为只读（健康检查会全绿，但写入全部 1290 失败）",
+        "command": "SELECT @@read_only, @@super_read_only",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "确认写入失败的报错码与影响面（交易是否全部失败而读仍成功）",
+        "command": "",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "复位 read_only=OFF 恢复写入",
+        "command": "SET GLOBAL read_only=OFF",
+        "needs_approval": true
+      },
+      {
+        "urgency": "P1",
+        "action": "把 read_only / super_read_only 纳入配置巡检，防止再次漂移",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:replica-lag",
+    "name": "根因：主从复制延迟",
+    "type": "entity",
+    "definition": "副本回放落后（SOURCE_DELAY 或回放能力不足），IO/SQL 线程都 Running，但读到的数据是旧的",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootReplicaLag"
+    ],
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "复制延迟",
+      "主从延迟",
+      "replica lag",
+      "replication lag",
+      "seconds_behind",
+      "数据陈旧",
+      "副本滞后",
+      "读到旧数据"
+    ],
+    "negative_keywords": [
+      "副本丢失",
+      "行锁",
+      "临时表",
+      "置为只读",
+      "read_only",
+      "cpu"
+    ],
+    "scoring_rationale": "复制延迟发生在回放链路上（两个线程都 Running），与『复制中断/副本丢失』（线程停止或节点消失）互斥。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "确认复制线程状态与落后量（IO/SQL 都 Running 也可能在落后）",
+        "command": "SHOW REPLICA STATUS",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "确认读到的数据是否过期（副本回放能力不足导致读到旧值）",
+        "command": "SELECT MAX(txn_id) FROM t_txn",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "弱化对副本的一致性依赖：强一致读切回主库",
+        "command": "",
+        "needs_approval": true
+      },
+      {
+        "urgency": "P1",
+        "action": "若为回放能力不足，降低主库批量写入或提升副本资源",
+        "command": "",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "rc:db-replica-loss",
+    "name": "根因：数据库只读副本丢失",
+    "type": "entity",
+    "definition": "副本节点不可达或复制线程停止：读容量下降，主库失去冗余",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "RootDbReplicaLoss"
+    ],
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ],
+    "role": "root_cause",
+    "scoring_keywords": [
+      "副本丢失",
+      "副本不可用",
+      "replica down",
+      "复制中断",
+      "io thread",
+      "sql thread",
+      "副本节点不可达",
+      "复制停止"
+    ],
+    "negative_keywords": [
+      "复制延迟",
+      "数据陈旧",
+      "行锁",
+      "临时表",
+      "置为只读",
+      "read_only"
+    ],
+    "scoring_rationale": "副本丢失/复制中断的判别点是复制线程或节点本身消失。",
+    "lifecycle": {
+      "state": "active"
+    },
+    "remediation": [
+      {
+        "urgency": "P0",
+        "action": "确认复制线程是否停止与副本节点是否可达",
+        "command": "SHOW REPLICA STATUS",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P0",
+        "action": "确认读路径是否会真的打到该副本（读轮转是否把它计入）",
+        "command": "SELECT COUNT(*) FROM information_schema.processlist WHERE user='appuser'",
+        "needs_approval": false
+      },
+      {
+        "urgency": "P1",
+        "action": "把读流量从该副本摘除，避免继续读到旧数据",
+        "command": "",
+        "needs_approval": true
+      },
+      {
+        "urgency": "P1",
+        "action": "恢复复制（修 SOURCE_HOST / START REPLICA），并确认只读副本重新在册",
+        "command": "START REPLICA",
+        "needs_approval": true
+      }
+    ]
+  },
+  {
+    "id": "metric:uptime-since-deploy",
+    "name": "距最近一次发布/重启的时长",
+    "type": "metric",
+    "definition": "now - 容器 State.StartedAt：判断故障是否落在发布后的敏感窗口内。这是『变更关联』里唯一可离线复算的时间依据（模拟环境没有 CI 事件源）。",
+    "scope": "RCA 支撑",
+    "aliases": [
+      "UptimeSinceDeploy",
+      "DeployWindow"
+    ],
+    "evidence_refs": [
+      "ev-deploy-source"
+    ],
+    "role": "observation",
+    "scoring_keywords": [
+      "发布后时长",
+      "启动时长",
+      "uptime",
+      "since deploy",
+      "发布窗口"
+    ],
+    "negative_keywords": [],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "idx:txn-created",
+    "name": "t_txn 时间索引 idx_txn_created",
+    "type": "entity",
+    "definition": "t_txn(created_at) 索引，cardinality=20。慢查询若未命中该索引（EXPLAIN type=ALL / Using filesort）即判定索引未生效。",
+    "scope": "数据库层",
+    "aliases": [
+      "IdxTxnCreated"
+    ],
+    "evidence_refs": [
+      "ev-mysql-indexes"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "idx_txn_created",
+      "created_at 索引",
+      "时间索引",
+      "idx txn created"
+    ],
+    "negative_keywords": [
+      "idx_txn_customer"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "idx:txn-customer",
+    "name": "t_txn 客户索引 idx_txn_customer",
+    "type": "entity",
+    "definition": "t_txn(customer_id) 索引，cardinality=3。按客户维度查询应命中该索引。",
+    "scope": "数据库层",
+    "aliases": [
+      "IdxTxnCustomer"
+    ],
+    "evidence_refs": [
+      "ev-mysql-indexes"
+    ],
+    "role": "component",
+    "scoring_keywords": [
+      "idx_txn_customer",
+      "customer_id 索引",
+      "客户索引",
+      "idx txn customer"
+    ],
+    "negative_keywords": [
+      "idx_txn_created"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "rc:mem-pressure",
+    "name": "根因：容器内存压力逼近上限（未被 OOM Kill）",
+    "type": "entity",
+    "scope": "RCA 支撑",
+    "definition": "容器 cgroup 内存用量持续逼近限额（working_set/limit → 1.0），但 **cgroup memory.events 的 oom_kill 计数未增加** —— 也就是内存被压到极限、随时可能被杀，却还没有真的被杀。与 rc:oom-kill 的区别是**是否已发生杀死**：判据看 `increase(cc_container_oom_kill_total[5m])`，为 0 即属本术语。",
+    "aliases": [
+      "RootMemPressure",
+      "MemPressureNotKilled"
+    ],
+    "evidence_refs": [
+      "ev-cgroup-memory-events"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  },
+  {
+    "id": "metric:oom-kill-count",
+    "name": "容器 OOM Kill 计数",
+    "type": "metric",
+    "scope": "RCA 支撑",
+    "definition": "`cc_container_oom_kill_total`：cgroup v2 `memory.events` 的 oom_kill 字段，**只增计数器**。`increase(...[5m]) > 0` 是「这个容器真的被内核 OOM Killer 杀过」的直接证据；恒为 0 则说明只有压力、没有杀死。",
+    "aliases": [
+      "OomKillTotal",
+      "CgroupOomKillCounter"
+    ],
+    "evidence_refs": [
+      "ev-cgroup-memory-events"
+    ],
+    "lifecycle": {
+      "state": "active"
+    }
+  }
+]

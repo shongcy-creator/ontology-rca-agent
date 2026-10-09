@@ -1,0 +1,84 @@
+
+# =====================================================================
+# 拓扑关系（Topology edges）—— 来自 Docker 模拟环境
+# =====================================================================
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix :     <https://sapiens.ai/ontology/credit-card-ops#> .
+
+# ---- 应用 -> 容器 ---------------------------------------------
+:PaymentApp :runsOn :PayContainer .
+:PayContainer :deployedOn :HostWsl .
+:HostWsl :hosts :PayContainer .
+
+# 物理宿主机（宿主机承载 Docker 引擎，逻辑上承载容器）
+:HostWsl a :HostMachine ;
+  :hostName "docker-desktop-wsl" ;
+  :osVersion "Microsoft Windows 11 专业版 (build 26200)" .
+:HostPhys :hosts :PayContainer .
+
+# ---- 应用 -> 数据库 ---------------------------------------------
+:PaymentApp :accesses :MysqlCore .
+:PaymentApp :hasDataSource :PayDataSource .
+:PayDataSource :dataSourceOf :MysqlCore .
+
+# ---- 数据库 -> 表 -----------------------------------------------
+:MysqlCore :containsTable :TCustomer .
+:MysqlCore :containsTable :TTxn .
+:MysqlCore :containsTable :TAudit .
+
+# ---- 表 -> 索引 --------------------------------------------------
+:TTxn :hasIndex :IdxTxnCustomer .
+:TTxn :hasIndex :IdxTxnCreated .
+
+# ---- 集群管理 ----------------------------------------------------
+:PayContainer :managedBy :DockerCluster .
+
+# ---- RCA 支撑链 --------------------------------------------------
+:PaymentApp :produces :MysqlLatencyP99 .
+:PaymentApp :produces :ConnExhaustion .
+:PaymentApp :generatesEvent :DeployEvent .
+:PaymentApp :raises :AlertP99 .
+:AlertP99 :triggers :IncPaymentTimeout .
+:IncPaymentTimeout :hasRootCause :RootSlowSql .
+:RootSlowSql :attributedTo :TTxn .
+:RootSlowSql :evidencedBy :MysqlLatencyP99 .
+:RootSlowSql :evidencedBy :ConnExhaustion .
+
+# ==================================================================
+# v1 增量：集群拓扑边
+# ==================================================================
+
+# ---- 应用集群 <-> 副本 / 网关 -------------------------------------
+:PaymentApp :memberOf :PaymentAppCluster .
+:PaymentAppCluster :hasInstance :PaymentAppInstance1 , :PaymentAppInstance2 , :PaymentAppInstance3 .
+:PaymentAppCluster :loadBalancedBy :AppGateway .
+:AppGateway :routesTo :PaymentAppCluster .
+:PaymentAppInstance1 :runsOn :PayContainer .
+:PaymentAppCluster :observedBy :HealthyReplicaCount .
+:AppGateway :observedBy :GatewayProbeSuccess .
+
+# ---- 配额 ---------------------------------------------------------
+:PaymentAppCluster :hasQuota :AppResourceQuota .
+:AppResourceQuota :throttledBy :CpuThrottleSeconds .
+:AppResourceQuota :throttledBy :ContainerMemRatio .
+:MysqlPrimary :hasQuota :DbPrimaryQuota .
+:MysqlReplica1 :hasQuota :DbReplicaQuota .
+:MysqlReplica2 :hasQuota :DbReplicaQuota .
+
+# ---- 数据库集群 <-> 主从 / 复制 -----------------------------------
+:MysqlCore :memberOf :MysqlCluster .
+:MysqlCluster :hasNode :MysqlPrimary , :MysqlReplica1 , :MysqlReplica2 .
+:MysqlPrimary :replicatesTo :MysqlReplica1 .
+:MysqlPrimary :replicatesTo :MysqlReplica2 .
+:ReplicationLink1 :runsOn :MysqlReplica1 .
+:ReplicationLink2 :runsOn :MysqlReplica2 .
+:PaymentApp :readsFrom :MysqlReplica1 .
+:PaymentApp :readsFrom :MysqlReplica2 .
+:MysqlReplica1 :observedBy :ReplicationLagSeconds .
+:MysqlReplica2 :observedBy :ReplicationLagSeconds .
+:MysqlReplica1 :observedBy :ReplicationThreadState .
+:MysqlReplica2 :observedBy :ReplicationThreadState .
+:MysqlPrimary :observedBy :DbTmpDiskTables .

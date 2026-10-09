@@ -1,0 +1,305 @@
+[
+  {
+    "id": "con:pool-exhaust",
+    "target": "metric:conn-exhaust",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "连接池",
+      "exhausted",
+      "maxPool",
+      "connection limit"
+    ],
+    "severity": "block",
+    "scope": "ds:pay",
+    "confidence": "high",
+    "description": "当活跃连接数逼近 poolLimit(10) 时判定连接池耗尽，RCA 优先定位 t_txn 慢 SQL",
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "con:p99-threshold",
+    "target": "metric:mysql-p99",
+    "constraint_type": "threshold",
+    "trigger_keywords": [
+      "p99",
+      "latency",
+      "延迟",
+      "timeout"
+    ],
+    "severity": "warn",
+    "scope": "db:mysql-core",
+    "confidence": "high",
+    "description": "MySQL P99 延迟阈值 100ms，超限 5m 触发 P1 告警",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ]
+  },
+  {
+    "id": "con:db-maxconn",
+    "target": "db:mysql-core",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "max_connections",
+      "连接数",
+      "capacity"
+    ],
+    "severity": "warn",
+    "scope": "db:mysql-core",
+    "description": "MySQL max_connections=200，应用池上限 10，需预留管理连接",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ]
+  },
+  {
+    "id": "con:app-replica-quorum",
+    "target": "metric:replica-healthy-count",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "副本",
+      "replica",
+      "replicas",
+      "集群",
+      "cluster",
+      "quorum",
+      "在册副本"
+    ],
+    "severity": "block",
+    "scope": "app:payment-app-cluster",
+    "confidence": "high",
+    "description": "期望副本数 3；在册健康副本数 < 3 即容量不足，= 0 即整层不可用",
+    "evidence_refs": [
+      "ev-cluster-topology"
+    ]
+  },
+  {
+    "id": "con:gateway-availability",
+    "target": "metric:gateway-probe",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "网关",
+      "gateway",
+      "负载均衡",
+      "loadbalancer",
+      "入口",
+      "502",
+      "503"
+    ],
+    "severity": "block",
+    "scope": "env:gateway",
+    "confidence": "high",
+    "description": "网关黑盒探活 probe_success=0 持续 2m 判定入口不可用（副本健康不能替代此判定）",
+    "evidence_refs": [
+      "ev-cluster-blackbox"
+    ]
+  },
+  {
+    "id": "con:app-mem-limit",
+    "target": "metric:mem-pressure",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "内存",
+      "memory",
+      "oom",
+      "OOMKill",
+      "mem_limit",
+      "内存不足"
+    ],
+    "severity": "block",
+    "scope": "app:payment-app-cluster",
+    "confidence": "high",
+    "description": "容器 mem_limit=256MB；working_set/limit > 0.85 持续 1m 即 OOMKill 前兆",
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ]
+  },
+  {
+    "id": "con:app-cpu-throttle",
+    "target": "metric:cpu-throttle",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "cpu",
+      "节流",
+      "throttle",
+      "quota",
+      "配额",
+      "cpu 不足"
+    ],
+    "severity": "warn",
+    "scope": "app:payment-app-cluster",
+    "confidence": "high",
+    "description": "容器 cpus=0.5；cgroup 节流周期速率 > 0.1/s 持续 2m 即 CPU 配额不足",
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ]
+  },
+  {
+    "id": "con:replica-lag",
+    "target": "metric:replica-lag",
+    "constraint_type": "threshold",
+    "trigger_keywords": [
+      "复制延迟",
+      "replica lag",
+      "replication lag",
+      "lag",
+      "主从",
+      "陈旧",
+      "延迟"
+    ],
+    "severity": "block",
+    "scope": "db:mysql-replica",
+    "confidence": "high",
+    "description": "Seconds_Behind_Master > 5s 判定复制延迟，读路径数据陈旧",
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ]
+  },
+  {
+    "id": "con:replica-down",
+    "target": "metric:replica-io-running",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "复制中断",
+      "replication broken",
+      "io thread",
+      "sql thread",
+      "副本丢失",
+      "replica down"
+    ],
+    "severity": "block",
+    "scope": "db:mysql-replica",
+    "confidence": "high",
+    "description": "副本 IO/SQL 线程任一为 0，或副本 exporter 不可达，判定复制中断/副本丢失",
+    "evidence_refs": [
+      "ev-cluster-replication"
+    ]
+  },
+  {
+    "id": "con:db-availability",
+    "target": "db:mysql-cluster",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "数据库不可用",
+      "mysql down",
+      "数据库挂了"
+    ],
+    "severity": "block",
+    "scope": "db:mysql-cluster",
+    "confidence": "high",
+    "description": "任一 MySQL 节点 mysql_up=0 持续 1m 判定该节点不可达",
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ]
+  },
+  {
+    "id": "con:db-role",
+    "target": "db:primary",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "只读",
+      "read_only",
+      "super_read_only",
+      "写失败",
+      "配置漂移"
+    ],
+    "severity": "block",
+    "scope": "db:primary",
+    "confidence": "high",
+    "description": "主库 read_only=ON 时写请求返回 1290 → 应用 5xx；此约束用于把\"健康检查正常但交易失败\"导向主库角色配置",
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ]
+  },
+  {
+    "id": "con:row-lock",
+    "target": "rc:row-lock",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "行锁",
+      "lock wait",
+      "锁等待",
+      "长事务",
+      "innodb_row_lock"
+    ],
+    "severity": "block",
+    "scope": "db:primary",
+    "confidence": "high",
+    "description": "Innodb_row_lock_current_waits > 0 持续 1m 判定存在行锁等待（长事务持锁）",
+    "evidence_refs": [
+      "ev-cluster-fault-catalog"
+    ]
+  },
+  {
+    "id": "con:pool-waiting",
+    "target": "metric:conn-exhaust",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "排队",
+      "waiting",
+      "queue",
+      "连接池等待"
+    ],
+    "severity": "warn",
+    "scope": "ds:pay",
+    "confidence": "high",
+    "description": "应用连接池出现排队（waiting > 0）即池容量不足，通常由上游 DB 变慢（锁/慢查询）级联导致",
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ]
+  },
+  {
+    "id": "con:db-tmp-table",
+    "target": "metric:db-tmp-disk",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "临时表",
+      "tmp_table",
+      "tmp_disk_tables",
+      "排序落盘",
+      "filesort"
+    ],
+    "severity": "warn",
+    "scope": "db:primary",
+    "confidence": "high",
+    "description": "磁盘临时表速率 > 1/s 持续 3m 判定排序内存不足（tmp_table_size 偏小）",
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ]
+  },
+  {
+    "id": "con:app-error-budget",
+    "target": "metric:http-error-rate",
+    "constraint_type": "threshold",
+    "trigger_keywords": [
+      "5xx",
+      "错误率",
+      "error rate",
+      "失败率"
+    ],
+    "severity": "block",
+    "scope": "app:payment-app-cluster",
+    "confidence": "high",
+    "description": "应用 5xx 错误率 > 5% 持续 2m 判定写路径/依赖故障",
+    "evidence_refs": [
+      "ev-cluster-prometheus-targets"
+    ]
+  },
+  {
+    "id": "con:cluster-cpu-capacity",
+    "target": "metric:cpu-throttle",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "集群容量",
+      "cluster capacity",
+      "整体资源不足",
+      "容量不足"
+    ],
+    "severity": "warn",
+    "scope": "app:payment-app-cluster",
+    "confidence": "high",
+    "description": "多数副本同时出现 CPU 节流/内存压力时，判定为集群整体容量不足（应扩副本或提高配额），而非单副本故障",
+    "evidence_refs": [
+      "ev-cluster-quota"
+    ]
+  }
+]

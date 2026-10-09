@@ -1,0 +1,17 @@
+apiVersion: 1
+
+# ⚠ 必须显式写死 uid。
+#
+# 踩过的坑：不写 uid 时 Grafana 会自动生成一个（实测 `PBFA97CFB590B2093`），
+# 而所有 dashboard 面板里引用的是 `"datasource": {"type":"prometheus","uid":"prometheus"}` →
+# 数据源解析不到 → **每个面板都显示 "No data" 并带红色报错三角**。
+# 面板文件合法、数据源也在，但两者对不上 —— 这类问题只表现为"监控没有数据"，
+# 很容易被误判成"服务没上报"，实际是接线错了。
+datasources:
+  - name: Prometheus
+    uid: prometheus          # ← 必须与 dashboards/*.json 里引用的 uid 一致
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false

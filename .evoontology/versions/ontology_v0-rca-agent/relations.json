@@ -1,0 +1,220 @@
+[
+  {
+    "id": "rel:app-runs-on-container",
+    "source": "app:payment-app",
+    "relation_type": "composition",
+    "target": "env:container",
+    "connection_condition": "runsOn: 应用部署运行在容器内",
+    "description": "payment-app 运行于 cc-credit-card-app 容器",
+    "evidence_refs": [
+      "ev-docker-ps",
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "rel:container-deployed-on-host",
+    "source": "env:container",
+    "relation_type": "composition",
+    "target": "env:host-wsl",
+    "connection_condition": "deployedOn: 容器被调度到 WSL2 宿主",
+    "description": "cc-credit-card-app 容器部署于 Docker Desktop WSL2 宿主",
+    "evidence_refs": [
+      "ev-docker-ps"
+    ]
+  },
+  {
+    "id": "rel:host-wsl-hosts-container",
+    "source": "env:host-wsl",
+    "relation_type": "composition",
+    "target": "env:container",
+    "connection_condition": "hosts: 宿主机承载容器（deployedOn 逆向）",
+    "description": "WSL2 宿主机承载支付容器",
+    "evidence_refs": [
+      "ev-docker-ps"
+    ]
+  },
+  {
+    "id": "rel:db-contains-txn",
+    "source": "db:mysql-core",
+    "relation_type": "composition",
+    "target": "table:t_txn",
+    "connection_condition": "containsTable: 库内表",
+    "description": "creditcard 库包含 t_txn 表",
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  },
+  {
+    "id": "rel:db-contains-customer",
+    "source": "db:mysql-core",
+    "relation_type": "composition",
+    "target": "table:t_customer",
+    "connection_condition": "containsTable: 库内表",
+    "description": "creditcard 库包含 t_customer 表",
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  },
+  {
+    "id": "rel:db-contains-audit",
+    "source": "db:mysql-core",
+    "relation_type": "composition",
+    "target": "table:t_audit",
+    "connection_condition": "containsTable: 库内表",
+    "description": "creditcard 库包含 t_audit 表",
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  },
+  {
+    "id": "rel:app-exposes-api",
+    "source": "app:payment-app",
+    "relation_type": "composition",
+    "target": "api:auth",
+    "connection_condition": "exposes: 应用暴露接口",
+    "description": "payment-app 暴露授权接口",
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "rel:app-has-fn",
+    "source": "app:payment-app",
+    "relation_type": "composition",
+    "target": "fn:auth",
+    "connection_condition": "hasComponent: 应用包含业务功能",
+    "description": "payment-app 包含授权功能",
+    "evidence_refs": []
+  },
+  {
+    "id": "rel:app-accesses-db",
+    "source": "app:payment-app",
+    "relation_type": "association",
+    "target": "db:mysql-core",
+    "connection_condition": "accesses: 应用通过数据源访问数据库",
+    "description": "payment-app 访问 creditcard 库",
+    "evidence_refs": [
+      "ev-app-topology",
+      "ev-db-probe"
+    ]
+  },
+  {
+    "id": "rel:app-datasource",
+    "source": "app:payment-app",
+    "relation_type": "association",
+    "target": "ds:pay",
+    "connection_condition": "hasDataSource: 应用引用数据源",
+    "description": "payment-app 使用支付数据源",
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "rel:ds-points-db",
+    "source": "ds:pay",
+    "relation_type": "association",
+    "target": "db:mysql-core",
+    "connection_condition": "dataSourceOf: 数据源指向数据库",
+    "description": "支付数据源指向 mysql:3306",
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "rel:incident-rc",
+    "source": "incident:payment-timeout",
+    "relation_type": "association",
+    "target": "rc:slow-sql",
+    "connection_condition": "hasRootCause: 故障的根因",
+    "description": "支付超时故障的根因为 t_txn 慢查询",
+    "evidence_refs": [
+      "ev-db-probe"
+    ]
+  },
+  {
+    "id": "rel:rc-attr-table",
+    "source": "rc:slow-sql",
+    "relation_type": "association",
+    "target": "table:t_txn",
+    "connection_condition": "attributedTo: 根因归因到实体",
+    "description": "根因归因到 t_txn 表（索引缺失/慢 SQL）",
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  },
+  {
+    "id": "rel:rc-evidence-p99",
+    "source": "rc:slow-sql",
+    "relation_type": "association",
+    "target": "metric:mysql-p99",
+    "connection_condition": "evidencedBy: 根因由指标证据支撑",
+    "description": "P99 延迟指标佐证慢查询",
+    "evidence_refs": [
+      "ev-db-probe"
+    ]
+  },
+  {
+    "id": "rel:rc-evidence-conn",
+    "source": "rc:slow-sql",
+    "relation_type": "association",
+    "target": "metric:conn-exhaust",
+    "connection_condition": "evidencedBy: 根因由指标证据支撑",
+    "description": "连接池耗尽指标佐证连接泄漏",
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "rel:alert-triggers-incident",
+    "source": "alert:p99",
+    "relation_type": "association",
+    "target": "incident:payment-timeout",
+    "connection_condition": "triggers: 告警升级为故障",
+    "description": "P99 告警触发支付超时故障",
+    "evidence_refs": []
+  },
+  {
+    "id": "rel:app-produces-metric",
+    "source": "app:payment-app",
+    "relation_type": "association",
+    "target": "metric:mysql-p99",
+    "connection_condition": "produces: 组件产出指标",
+    "description": "payment-app 产出 MySQL P99 延迟指标",
+    "evidence_refs": [
+      "ev-db-probe"
+    ]
+  },
+  {
+    "id": "rel:host-wsl-equiv-phys",
+    "source": "env:host-wsl",
+    "relation_type": "equivalence",
+    "target": "env:host-phys",
+    "connection_condition": "同机等价：WSL2 虚拟宿主与物理主机同指一台机器",
+    "description": "Docker Desktop WSL2 宿主与 Windows 物理主机指向同一台硬件",
+    "evidence_refs": [
+      "ev-host-facts"
+    ]
+  },
+  {
+    "id": "rel:app-derives-host",
+    "source": "app:payment-app",
+    "relation_type": "derivation",
+    "target": "env:host-wsl",
+    "connection_condition": "runsOn o deployedOn: 应用->容器->宿主机 传递路径",
+    "description": "由 runsOn+deployedOn 派生 payment-app 最终运行于宿主机",
+    "evidence_refs": [
+      "ev-docker-ps"
+    ]
+  },
+  {
+    "id": "rel:db-derives-tables",
+    "source": "db:mysql-core",
+    "relation_type": "derivation",
+    "target": "table:t_txn",
+    "connection_condition": "containsTable: 库派生到表（定位慢 SQL）",
+    "description": "数据库故障可派生定位到具体表",
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ]
+  }
+]

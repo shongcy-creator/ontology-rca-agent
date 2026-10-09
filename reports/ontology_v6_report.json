@@ -1,0 +1,250 @@
+{
+  "ok": true,
+  "parent_version": "ontology_v5",
+  "candidate_version": "ontology_v6-memory",
+  "published_version": "ontology_v6",
+  "run_id": "run_8",
+  "run_status": "accepted",
+  "gate": {
+    "accept": true,
+    "parent_score": 0.0,
+    "candidate_score": 1.0,
+    "delta": 1.0,
+    "protocol": "ground_truth"
+  },
+  "delta": {
+    "deltas": {
+      "terms": {
+        "added": 2,
+        "updated": 2
+      },
+      "mappings": {
+        "added": 0,
+        "updated": 0
+      },
+      "relations": {
+        "added": 5,
+        "updated": 0
+      },
+      "constraints": {
+        "added": 1,
+        "updated": 1
+      },
+      "evidence": {
+        "added": 1,
+        "updated": 0
+      }
+    },
+    "counts": {
+      "terms": 56,
+      "mappings": 20,
+      "relations": 87,
+      "constraints": 30,
+      "evidence": 22
+    }
+  },
+  "parent_eval": {
+    "metric": "memory_semantics",
+    "version": "ontology_v5",
+    "n": 9,
+    "score": 0.0,
+    "mean": 0.0,
+    "passed": 0,
+    "full_credit": 0,
+    "zero_credit": 9,
+    "case_ids": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8",
+      "C9"
+    ],
+    "scores": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_case": [
+      {
+        "case_id": "C1",
+        "score": 0.0,
+        "detail": "候选里缺少 rc:mem-pressure；候选里缺少 metric:oom-kill-count"
+      },
+      {
+        "case_id": "C2",
+        "score": 0.0,
+        "detail": "rc:mem-pressure 没有任何出边（会是游离术语）"
+      },
+      {
+        "case_id": "C3",
+        "score": 0.0,
+        "detail": "con:oom-detection 仍把症状词当作 OOM 证据：['内存压力', '内存不足']"
+      },
+      {
+        "case_id": "C4",
+        "score": 0.0,
+        "detail": "没有以 rc:mem-pressure 为 target 的约束 → 引擎无法给它打分关键词"
+      },
+      {
+        "case_id": "C5",
+        "score": 0.0,
+        "detail": "rc:oom-kill 没有连到 metric:oom-kill-count → 无法在指标上判别是否被杀"
+      },
+      {
+        "case_id": "C6",
+        "score": 0.0,
+        "detail": "api:auth 的 lifecycle.state 仍是 active（应为 draft）"
+      },
+      {
+        "case_id": "C7",
+        "score": 0.0,
+        "detail": "rc:row-lock 的处置命令仍引用 sys.innodb_lock_waits ——只读账号 rca_readonly 无 sys 库权限（实测 ERROR 1142）；rc:row-lock 缺少基于 performance_schema.data_lock_waits 的可执行查锁命令"
+      },
+      {
+        "case_id": "C8",
+        "score": 0.0,
+        "detail": "这些根因在 2 跳内到不了任何集群/环境锚点（答不出「该找谁」）：['rc:row-lock']"
+      },
+      {
+        "case_id": "C9",
+        "score": 0.0,
+        "detail": "没有任何关系连到 metric:oom-kill-count → 「是否已被 OOM Kill」无法判别"
+      }
+    ],
+    "problems": [
+      "候选里缺少 rc:mem-pressure",
+      "候选里缺少 metric:oom-kill-count",
+      "rc:mem-pressure 没有任何出边（会是游离术语）",
+      "con:oom-detection 仍把症状词当作 OOM 证据：['内存压力', '内存不足']",
+      "没有以 rc:mem-pressure 为 target 的约束 → 引擎无法给它打分关键词",
+      "rc:oom-kill 没有连到 metric:oom-kill-count → 无法在指标上判别是否被杀",
+      "api:auth 的 lifecycle.state 仍是 active（应为 draft）",
+      "rc:row-lock 的处置命令仍引用 sys.innodb_lock_waits ——只读账号 rca_readonly 无 sys 库权限（实测 ERROR 1142）",
+      "rc:row-lock 缺少基于 performance_schema.data_lock_waits 的可执行查锁命令",
+      "这些根因在 2 跳内到不了任何集群/环境锚点（答不出「该找谁」）：['rc:row-lock']",
+      "没有任何关系连到 metric:oom-kill-count → 「是否已被 OOM Kill」无法判别"
+    ]
+  },
+  "candidate_eval": {
+    "metric": "memory_semantics",
+    "version": "ontology_v6-memory",
+    "n": 9,
+    "score": 1.0,
+    "mean": 1.0,
+    "passed": 9,
+    "full_credit": 9,
+    "zero_credit": 0,
+    "case_ids": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8",
+      "C9"
+    ],
+    "scores": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "per_case": [
+      {
+        "case_id": "C1",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C2",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C3",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C4",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C5",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C6",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C7",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C8",
+        "score": 1.0,
+        "detail": ""
+      },
+      {
+        "case_id": "C9",
+        "score": 1.0,
+        "detail": ""
+      }
+    ],
+    "problems": []
+  },
+  "improved_cases": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9"
+  ],
+  "regressed_cases": [],
+  "mean_delta": 1.0,
+  "visualization": "<repo>/.evoontology\\visualizations\\ontology-layer-explorer.html",
+  "versions": [
+    "ontology_v0",
+    "ontology_v0-rca",
+    "ontology_v0-rca-agent",
+    "ontology_v1",
+    "ontology_v1-cluster",
+    "ontology_v2",
+    "ontology_v2-scoring",
+    "ontology_v3",
+    "ontology_v3-hygiene",
+    "ontology_v4",
+    "ontology_v4-remediation",
+    "ontology_v5",
+    "ontology_v5-command-targets",
+    "ontology_v6",
+    "ontology_v6-memory"
+  ],
+  "project_mode": "rolling_trajectory"
+}

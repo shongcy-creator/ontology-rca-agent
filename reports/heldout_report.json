@@ -1,0 +1,261 @@
+{
+  "phrasings": {
+    "n": 10,
+    "top1": 4,
+    "topk": 5,
+    "rows": [
+      {
+        "id": "ho-01",
+        "for_fault": "app_cpu_stress",
+        "text": "订单服务的处理线程被操作系统限速了，单台机器的算力被压到配额上限，请求排队变长",
+        "expected": [
+          "rc:cpu-throttle"
+        ],
+        "top1": "rc:cpu-throttle",
+        "top1_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:cpu-throttle",
+          "rc:mem-pressure",
+          "metric:cpu-throttle",
+          "metric:db-cpu",
+          "metric:replica-io-running"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-02",
+        "for_fault": "app_kill_replica",
+        "text": "支付集群里有一台机器不见了，负载均衡把流量分给了剩下的两台",
+        "expected": [
+          "rc:replica-loss"
+        ],
+        "top1": "rc:cluster-capacity",
+        "top1_hit": false,
+        "topk_hit": false,
+        "top5": [
+          "rc:cluster-capacity",
+          "app:payment-app-cluster",
+          "rc:gateway-down",
+          "env:container",
+          "env:cluster"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-03",
+        "for_fault": "app_gateway_stop",
+        "text": "外部用户报告网站打不开，入口那一层返回 502，后端服务本身是活的",
+        "expected": [
+          "rc:gateway-down"
+        ],
+        "top1": "rc:gateway-down",
+        "top1_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:gateway-down",
+          "metric:gateway-probe",
+          "env:gateway"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-04",
+        "for_fault": "db_slow_query_flood",
+        "text": "数据库里有一批语句扫描了整个表，没有走索引，执行时间从毫秒涨到了秒级",
+        "expected": [
+          "rc:slow-sql"
+        ],
+        "top1": "rc:db-replica-loss",
+        "top1_hit": false,
+        "topk_hit": false,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:conn-exhaust",
+          "rc:db-cpu-starve",
+          "idx:txn-created",
+          "idx:txn-customer"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-05",
+        "for_fault": "db_row_lock_hold",
+        "text": "某个事务一直不提交，它锁住的那几行别人改不了，写入都在等",
+        "expected": [
+          "rc:row-lock"
+        ],
+        "top1": "db:primary",
+        "top1_hit": false,
+        "topk_hit": false,
+        "top5": [
+          "db:primary"
+        ],
+        "role": "component"
+      },
+      {
+        "id": "ho-06",
+        "for_fault": "db_primary_readonly",
+        "text": "下单接口全部报错，但查询接口正常；数据库那边说这台机器不允许写",
+        "expected": [
+          "rc:primary-readonly"
+        ],
+        "top1": "rc:db-replica-loss",
+        "top1_hit": false,
+        "topk_hit": false,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:conn-exhaust",
+          "rc:db-cpu-starve",
+          "rc:slow-sql",
+          "metric:db-cpu"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-07",
+        "for_fault": "db_replica_lag",
+        "text": "从库追不上主库，报表读到的数据比实际晚了一分钟左右",
+        "expected": [
+          "rc:replica-lag"
+        ],
+        "top1": "rc:db-replica-loss",
+        "top1_hit": false,
+        "topk_hit": false,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:primary-readonly",
+          "ds:pay",
+          "db:primary",
+          "rc:conn-exhaust"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-08",
+        "for_fault": "db_conn_saturation",
+        "text": "应用拿不到新的数据库会话，池子已经满了，等待队列在涨",
+        "expected": [
+          "rc:conn-exhaust"
+        ],
+        "top1": "rc:db-replica-loss",
+        "top1_hit": false,
+        "topk_hit": true,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:conn-exhaust",
+          "rc:db-cpu-starve",
+          "rc:replica-loss",
+          "rc:replica-hang"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-09",
+        "for_fault": "app_oom_kill",
+        "text": "这台机器的内存用量顶到了上限，内核把它里面的进程干掉了，容器重启了一次",
+        "expected": [
+          "rc:oom-kill"
+        ],
+        "top1": "rc:oom-kill",
+        "top1_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:oom-kill",
+          "rc:tmp-disk",
+          "metric:mem-pressure",
+          "rc:mem-pressure",
+          "env:container"
+        ],
+        "role": "root_cause"
+      },
+      {
+        "id": "ho-10",
+        "for_fault": "res_db_memory",
+        "text": "排序和分组需要的空间超过了内存配置，结果写到了磁盘上，查询因此变慢",
+        "expected": [
+          "rc:tmp-disk"
+        ],
+        "top1": "rc:tmp-disk",
+        "top1_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:tmp-disk",
+          "rc:oom-kill",
+          "rc:slow-sql",
+          "metric:mem-pressure",
+          "metric:db-tmp-disk"
+        ],
+        "role": "root_cause"
+      }
+    ]
+  },
+  "faults": [
+    {
+      "id": "ho-fault-cpu-quota",
+      "title": "压低单副本 CPU 配额（docker update，而非跑压测打满）",
+      "expected": [
+        "rc:cpu-throttle"
+      ],
+      "pre_firing": [
+        "MySQLDiskTempTables",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "detail": "rca-agent-payment-app-2\n"
+      },
+      "alerts_firing": [
+        "AppContainerOOMKilled"
+      ],
+      "residual_alerts": [
+        "MySQLSlowQueries"
+      ],
+      "alert_text": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高",
+      "top1": "rc:oom-kill",
+      "top1_hit": false,
+      "mode": "deterministic",
+      "recover": {
+        "ok": true
+      }
+    },
+    {
+      "id": "ho-fault-maxconn",
+      "title": "调小 max_connections（而非灌入 170 个连接）",
+      "expected": [
+        "rc:conn-exhaust"
+      ],
+      "pre_firing": [
+        "AppContainerOOMKilled",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "detail": {
+          "max_connections": 60,
+          "extra_sessions": 30
+        }
+      },
+      "alerts_firing": [
+        "AppContainerCpuThrottled"
+      ],
+      "residual_alerts": [
+        "AppContainerOOMKilled",
+        "MySQLSlowQueries"
+      ],
+      "alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+      "top1": "rc:cpu-throttle",
+      "top1_hit": false,
+      "mode": "deterministic",
+      "recover": {
+        "ok": true,
+        "detail": {
+          "ok": true,
+          "killed": 30,
+          "rc": 0,
+          "stderr": ""
+        }
+      }
+    }
+  ]
+}

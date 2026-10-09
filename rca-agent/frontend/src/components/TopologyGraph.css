@@ -1,0 +1,86 @@
+.topo-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.topo-empty .hint {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.topo-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.topo-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.topo-stat {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.topo-path {
+  background: rgba(88, 166, 255, 0.07);
+  border: 1px solid rgba(88, 166, 255, 0.22);
+  border-radius: 6px;
+  padding: 8px 10px;
+  flex-shrink: 0;
+}
+.topo-path-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.topo-path-chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+.topo-path-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.topo-path-arrow {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+.topo-path-root {
+  background: rgba(248, 81, 73, 0.16);
+  color: #f85149;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+.topo-path-node {
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+.topo-path-hint {
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.topo-svg {
+  width: 100%;
+  display: block;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+}

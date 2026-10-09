@@ -1,0 +1,38 @@
+.metrics-empty { padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+.metrics-empty .hint { font-size: 12px; margin-top: 8px; margin-bottom: 12px; }
+
+.metrics-panel { padding: 0 0 16px 0; }
+.metrics-section { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.metrics-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+.metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.metric-card { background: var(--surface2); border-radius: 6px; padding: 8px 6px; text-align: center; }
+.metric-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.metric-value { font-size: 14px; font-weight: 600; font-family: monospace; }
+/* 面板底部的口径说明（例如"最差来自哪个副本/路径、忽略了多少条 NaN"）——
+   只给一个孤零零的数字，读者无法判断它是否可信 */
+.metrics-hint {
+  margin-top: 8px; font-size: 11px; color: var(--text-muted);
+  border-left: 2px solid var(--border); padding-left: 8px; line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.metrics-hint.warn { color: var(--yellow); border-color: var(--yellow); }
+.metrics-sub { font-size: 10px; color: var(--text-muted); text-transform: none; letter-spacing: 0; }
+.metrics-sub.warn { color: var(--yellow); }
+
+/* Targets */
+.target-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; }
+.t-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.target-row.up .t-dot { background: #3fb950; }
+.target-row.down .t-dot { background: #f85149; }
+.t-job { flex: 1; font-size: 12px; }
+.t-status { font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+.t-status.up { background: rgba(63,185,80,0.15); color: #3fb950; }
+.t-status.down { background: rgba(248,81,73,0.15); color: #f85149; }
+
+/* Bucket */
+.bucket-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 12px; }
+.bucket-le { width: 36px; font-size: 11px; color: var(--text-muted); flex-shrink: 0; font-family: monospace; }
+.bucket-bar-bg { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.bucket-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+.bucket-count { width: 32px; text-align: right; font-size: 11px; color: var(--text-muted); font-family: monospace; }

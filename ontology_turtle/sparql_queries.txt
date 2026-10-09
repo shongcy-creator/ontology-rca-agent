@@ -1,0 +1,144 @@
+
+PREFIX : <https://sapiens.ai/ontology/credit-card-ops#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# ------------------------------------------------------------------
+# Q1  逆向遍历：从告警/故障 -> 根因 -> 实体 + 证据链（RCA 入口）
+# ------------------------------------------------------------------
+SELECT ?incident ?rootCause ?entity ?evidence ?confidence WHERE {{
+  ?incident :triggers ?alert .   # 占位：实际方向是 alert->incident，这里反向查询
+  ?incident :hasRootCause ?rootCause .
+  ?rootCause :attributedTo ?entity .
+  ?rootCause :evidencedBy ?evidence .
+  ?rootCause :confidence ?confidence .
+}}
+
+# ------------------------------------------------------------------
+# Q2  跨层拓扑展开：应用 -> 容器 -> 宿主机（RCA 上溯路径）
+# ------------------------------------------------------------------
+SELECT ?app ?container ?host ?db ?table WHERE {{
+  ?app :runsOn ?container .
+  ?container :deployedOn ?host .
+  OPTIONAL {{ ?app :accesses ?db }}
+  OPTIONAL {{ ?db :containsTable ?table }}
+}}
+
+# ------------------------------------------------------------------
+# Q3  数据库连接耗尽定位：找出访问该 DB 的全部应用与数据源
+# ------------------------------------------------------------------
+SELECT ?app ?dataSource ?poolLimit ?db WHERE {{
+  ?db a :Database .
+  ?app :accesses ?db .
+  ?app :hasDataSource ?dataSource .
+  ?dataSource :poolLimit ?poolLimit .
+  ?dataSource :dataSourceOf ?db .
+}}
+
+# ------------------------------------------------------------------
+# Q4  变更关联：在故障时间窗口内查找 deploy 事件
+# ------------------------------------------------------------------
+SELECT ?event ?eventType ?eventTime ?incident WHERE {{
+  ?incident :detectedAt ?detectedAt .
+  ?event a :Event ; :eventType ?eventType ; :eventTime ?eventTime .
+  FILTER (?eventType = "deploy" || ?eventType = "scale")
+  FILTER (?eventTime <= ?detectedAt)
+}}
+
+# ------------------------------------------------------------------
+# Q5  故障传播影响分析：宿主机故障会影响哪些应用
+# ------------------------------------------------------------------
+SELECT ?host ?container ?app WHERE {{
+  ?host a :HostMachine .
+  ?host :hosts ?container .
+  ?app :runsOn ?container .
+}}
+
+# ------------------------------------------------------------------
+# Q6  表级定位：找出热点表 + 慢查询证据
+# ------------------------------------------------------------------
+SELECT ?table ?db ?rowcount ?hot ?index WHERE {{
+  ?db :containsTable ?table .
+  ?table :rowCount ?rowcount .
+  OPTIONAL {{ ?table :isHot ?hot }}
+  OPTIONAL {{ ?table :hasIndex ?index }}
+  ?rootCause :attributedTo ?table .
+  ?rootCause :evidencedBy ?metric .
+}}
+
+# ==================================================================
+# v1 增量：集群化查询（应用集群 / 网关 / 主从复制 / 配额）
+# ==================================================================
+
+# ------------------------------------------------------------------
+# Q7  集群健康度：期望副本数 vs 健康副本数 + 观测指标
+#     —— 回答"是整层坏了还是某个副本坏了"
+# ------------------------------------------------------------------
+SELECT ?cluster ?desired ?healthy ?metric ?threshold WHERE {{
+  ?cluster a :ApplicationCluster ;
+           :desiredReplicas ?desired ;
+           :healthyReplicas ?healthy ;
+           :observedBy ?metric .
+  ?metric :threshold ?threshold .
+}}
+
+# ------------------------------------------------------------------
+# Q8  外部可达性链路：入口是否可用（不能用副本自报指标替代）
+# ------------------------------------------------------------------
+SELECT ?gateway ?probe ?probeThreshold ?cluster WHERE {{
+  ?gateway a :Gateway ;
+           :routesTo ?cluster ;
+           :observedBy ?probe .
+  ?probe :threshold ?probeThreshold .
+}}
+
+# ------------------------------------------------------------------
+# Q9  复制拓扑：主库 → 副本 + 复制延迟/线程状态证据
+#     —— 回答"读到的数据为什么是旧的"
+# ------------------------------------------------------------------
+SELECT ?cluster ?primary ?replica ?lag ?ioState ?delaySeconds WHERE {{
+  ?cluster a :DatabaseCluster ; :hasNode ?primary , ?replica .
+  ?primary :nodeRole "primary" .
+  ?replica :nodeRole "replica" .
+  ?primary :replicatesTo ?replica .
+  OPTIONAL {{ ?replica :observedBy ?lag . ?lag :metricName ?lagName .
+              FILTER (CONTAINS(?lagName, "seconds_behind")) }}
+  OPTIONAL {{ ?replica :observedBy ?ioState . ?ioState :metricName ?ioName .
+              FILTER (CONTAINS(?ioName, "io_running")) }}
+  OPTIONAL {{ ?link a :ReplicationLink ; :runsOn ?replica ;
+                     :replicationDelaySeconds ?delaySeconds }}
+}}
+
+# ------------------------------------------------------------------
+# Q10 资源配额 → 节流/OOM 证据：回答"是不是资源不足"
+# ------------------------------------------------------------------
+SELECT ?holder ?quota ?cpuQuota ?memQuotaMB ?metric WHERE {{
+  ?holder :hasQuota ?quota .
+  OPTIONAL {{ ?quota :cpuQuota ?cpuQuota }}
+  OPTIONAL {{ ?quota :memQuotaMB ?memQuotaMB }}
+  OPTIONAL {{ ?quota :throttledBy ?metric }}
+}}
+
+# ------------------------------------------------------------------
+# Q11 集群级根因传播路径：根因 → 归因实体 → 集群 → 网关（跨层上溯）
+# ------------------------------------------------------------------
+SELECT ?rootCause ?entity ?cluster ?gateway WHERE {{
+  ?rootCause a :RootCause ;
+             :attributedTo ?entity .
+  ?cluster :hasInstance ?entity .
+  ?cluster :loadBalancedBy ?gateway .
+}}
+
+# ------------------------------------------------------------------
+# Q12 读写分离一致性风险：写主库 / 读副本 + 复制延迟阈值
+# ------------------------------------------------------------------
+SELECT ?app ?primary ?replica ?lagMetric ?lagThreshold WHERE {{
+  ?app :readsFrom ?replica .
+  ?app :accesses ?primary .
+  ?replica :observedBy ?lagMetric .
+  ?lagMetric :metricName ?n .
+  FILTER (CONTAINS(?n, "seconds_behind"))
+  ?lagMetric :threshold ?lagThreshold .
+}}
+

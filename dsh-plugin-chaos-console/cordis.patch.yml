@@ -1,0 +1,11 @@
+# cc-ops-chaos-console bundle patch
+#
+# 作为**一个 insert 层**插到 profile 根上：只加一行（本插件），
+# 不改动任何既有行 —— 插件的 UI 通过 Slots 注册（sidebar.panellist + main），
+# 属于"新增座位"而不是"替换现有 UI"，所以这里不需要动别的配置。
+#
+# 行 id 用 `cc-ops-chaos-console`：可在 profile 的 cordis.patch.yml 里按此 id
+# 覆盖 config 或 disable（例如想临时关掉它：config.enabled: false）。
+- insert:
+    - id: cc-ops-chaos-console
+      name: 'cc-ops-dsh-plugin-chaos-console'

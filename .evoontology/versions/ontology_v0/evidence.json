@@ -1,0 +1,58 @@
+[
+  {
+    "id": "ev-docker-ps",
+    "source": "docker-compose",
+    "query": "docker ps --format 'table {{.Names}}\\t{{.Status}}'",
+    "result": "cc-credit-card-app: Up (healthy); cc-mysql-core: Up (healthy)",
+    "validation_method": "read-only docker CLI",
+    "timestamp": "2026-10-02T15:13:03+00:00"
+  },
+  {
+    "id": "ev-app-topology",
+    "source": "http://cc-credit-card-app:8080/topology/raw",
+    "query": "GET /topology/raw",
+    "result": "{\"app\": {\"name\": \"payment-app\", \"version\": \"1.8.2\", \"containerName\": \"3177c9796e5c\", \"pid\": 1}, \"containerIP\": \"172.18.0.3\", \"db\": {\"endpoint\": \"mysql:3306\", \"reachable\": true, \"version\": \"8.0.46\", \"maxConn\": 200}}",
+    "validation_method": "http probe",
+    "timestamp": "2026-10-02T15:13:03+00:00"
+  },
+  {
+    "id": "ev-mysql-vars",
+    "source": "mysql:creditcard",
+    "query": "SELECT @@version, @@max_connections, @@wait_timeout",
+    "result": "8.0.46, 200, 28800",
+    "validation_method": "MySQL @@ variables",
+    "timestamp": "2026-10-02T15:13:03+00:00"
+  },
+  {
+    "id": "ev-mysql-tables",
+    "source": "mysql:creditcard",
+    "query": "SELECT table_name, table_rows FROM information_schema.tables WHERE table_schema='creditcard'",
+    "result": "t_customer=3, t_txn=3, t_audit=0",
+    "validation_method": "information_schema",
+    "timestamp": "2026-10-02T15:13:03+00:00"
+  },
+  {
+    "id": "ev-host-facts",
+    "source": "windows-host",
+    "query": "Get-CimInstance Win32_Processor / Win32_OperatingSystem / Win32_PhysicalMemory",
+    "result": "遥遥领先: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz 4C/8T, 16GB RAM, Microsoft Windows 11 专业版 (build 26200)",
+    "validation_method": "WMI",
+    "timestamp": "2026-10-02T15:13:03+00:00"
+  },
+  {
+    "id": "ev-db-probe",
+    "source": "http://cc-credit-card-app:8080/topology/raw",
+    "query": "GET /topology/raw -> db.probe",
+    "result": "reachable=true, latency=5ms",
+    "validation_method": "app-side JDBC probe",
+    "timestamp": "2026-10-02T15:13:03+00:00"
+  },
+  {
+    "id": "ev-mysql-indexes",
+    "source": "mysql:information_schema.statistics",
+    "query": "SELECT INDEX_NAME, SEQ_IN_INDEX, COLUMN_NAME, NON_UNIQUE, CARDINALITY FROM information_schema.statistics WHERE TABLE_SCHEMA='creditcard' AND TABLE_NAME='t_txn'",
+    "result": "idx_txn_created(created_at), idx_txn_customer(customer_id), PRIMARY(txn_id) —— 用于判断慢查询是否命中索引（配合 EXPLAIN type=ALL / Using filesort）",
+    "validation_method": "MySQL information_schema.statistics 只读查询",
+    "timestamp": "2026-10-02T15:13:03+00:00"
+  }
+]

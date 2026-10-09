@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "evo-semantic": {
+      "command": "./scripts/launch_evo_semantic_mcp",
+      "args": [],
+      "cwd": "."
+    }
+  }
+}

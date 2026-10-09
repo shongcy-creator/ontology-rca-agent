@@ -1,0 +1,93 @@
+/* 聊天框内嵌的推理过程 —— 与气泡同宽、可折叠、实时增长 */
+.ri {
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.ri-live { border-left-color: var(--yellow); }
+
+.ri-head {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; text-align: left;
+  background: var(--surface2); border: none; border-radius: 0;
+  padding: 7px 10px; font-size: 12px; color: var(--text);
+}
+.ri-head:hover { background: #262c34; color: var(--text); }
+.ri-toggle { color: var(--text-muted); width: 10px; }
+.ri-title { font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+.ri-dots { display: inline-flex; gap: 3px; }
+.ri-dots i {
+  width: 4px; height: 4px; border-radius: 50%; background: var(--yellow);
+  animation: ri-blink 1.2s infinite ease-in-out;
+}
+.ri-dots i:nth-child(2) { animation-delay: .2s; }
+.ri-dots i:nth-child(3) { animation-delay: .4s; }
+@keyframes ri-blink { 0%,80%,100% { opacity: .25 } 40% { opacity: 1 } }
+
+.ri-chip {
+  font-size: 10px; padding: 1px 7px; border-radius: 10px;
+  border: 1px solid var(--border); color: var(--text-muted);
+}
+.ri-chip.deterministic { color: var(--green); border-color: rgba(63,185,80,.5); }
+.ri-chip.agentic { color: var(--purple); border-color: rgba(188,140,255,.5); }
+.ri-chip.warn { color: var(--yellow); border-color: rgba(210,153,34,.5); }
+.ri-chip.muted { color: var(--text-muted); }
+
+.ri-body { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+.ri-route {
+  font-size: 11px; color: var(--text-muted);
+  border-left: 2px solid var(--border); padding-left: 8px;
+}
+
+.ri-steps { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ri-step { display: flex; gap: 8px; font-size: 12px; line-height: 1.55; }
+/* 文字徽章（不用 emoji：无 emoji 字体时会渲染成小点/方块） */
+.ri-badge {
+  flex: 0 0 30px; text-align: center; font-size: 9px; line-height: 15px;
+  height: 15px; margin-top: 2px; border-radius: 3px;
+  border: 1px solid var(--border); color: var(--text-muted);
+  background: var(--surface2);
+}
+.ri-step.reason .ri-badge { color: var(--purple); border-color: rgba(188,140,255,.45); }
+.ri-step.act .ri-badge { color: var(--yellow); border-color: rgba(210,153,34,.45); }
+.ri-step.observe .ri-badge { color: var(--accent); border-color: rgba(88,166,255,.45); }
+.ri-step-main { flex: 1; min-width: 0; }
+.ri-reason { color: #c9d1d9; white-space: pre-wrap; word-break: break-word; }
+.ri-tool { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+.ri-tool code {
+  font-size: 11px; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; color: var(--accent);
+}
+.ri-args {
+  font-size: 11px; color: var(--text-muted);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+.ri-obs {
+  margin-top: 3px; font-size: 11px; border-radius: 4px;
+  padding: 3px 7px; background: #0b0e13; border: 1px solid var(--border);
+  color: #b9c2cc; overflow-wrap: anywhere;
+}
+.ri-obs.ok { border-color: rgba(63,185,80,.35); }
+.ri-obs.bad { border-color: rgba(248,81,73,.45); color: #ffb3ae; }
+.ri-lat { color: var(--text-muted); }
+
+.ri-wait { font-size: 12px; color: var(--text-muted); }
+
+.ri-conclusion {
+  border-top: 1px dashed var(--border); padding-top: 8px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px 12px;
+}
+.ri-row { display: flex; gap: 8px; font-size: 11px; }
+.ri-k { color: var(--text-muted); flex: 0 0 62px; }
+.ri-v { color: var(--text); }
+.ri-row code { font-size: 11px; color: var(--accent); }
+
+.ri-error {
+  font-size: 12px; color: var(--red);
+  background: rgba(248,81,73,.08); border: 1px solid rgba(248,81,73,.4);
+  border-radius: 6px; padding: 6px 8px;
+}

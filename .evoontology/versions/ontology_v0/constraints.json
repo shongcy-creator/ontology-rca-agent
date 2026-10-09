@@ -1,0 +1,54 @@
+[
+  {
+    "id": "con:pool-exhaust",
+    "target": "metric:conn-exhaust",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "连接池",
+      "exhausted",
+      "maxPool",
+      "connection limit"
+    ],
+    "severity": "block",
+    "scope": "ds:pay",
+    "confidence": "high",
+    "description": "当活跃连接数逼近 poolLimit(10) 时判定连接池耗尽，RCA 优先定位 t_txn 慢 SQL",
+    "evidence_refs": [
+      "ev-app-topology"
+    ]
+  },
+  {
+    "id": "con:p99-threshold",
+    "target": "metric:mysql-p99",
+    "constraint_type": "threshold",
+    "trigger_keywords": [
+      "p99",
+      "latency",
+      "延迟",
+      "timeout"
+    ],
+    "severity": "warn",
+    "scope": "db:mysql-core",
+    "confidence": "high",
+    "description": "MySQL P99 延迟阈值 100ms，超限 5m 触发 P1 告警",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ]
+  },
+  {
+    "id": "con:db-maxconn",
+    "target": "db:mysql-core",
+    "constraint_type": "capacity",
+    "trigger_keywords": [
+      "max_connections",
+      "连接数",
+      "capacity"
+    ],
+    "severity": "warn",
+    "scope": "db:mysql-core",
+    "description": "MySQL max_connections=200，应用池上限 10，需预留管理连接",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ]
+  }
+]

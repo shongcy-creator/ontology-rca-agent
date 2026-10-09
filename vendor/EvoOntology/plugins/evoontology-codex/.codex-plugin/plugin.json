@@ -1,0 +1,39 @@
+{
+  "name": "evoontology-codex",
+  "version": "1.1.1+codex.20260928144739",
+  "description": "Build, evolve and explore evidence-grounded ontologies from analytical goals and project tasks.",
+  "author": {
+    "name": "Meiduo Chong"
+  },
+  "homepage": "https://github.com/ruc-datalab/EvoOntology",
+  "repository": "https://github.com/ruc-datalab/EvoOntology",
+  "license": "MIT",
+  "keywords": [
+    "ontology",
+    "ontology-layer",
+    "data-agent",
+    "self-evolution"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "EvoOntology",
+    "shortDescription": "Build · Evolve · Explore：从分析目标到语义层与效果展示",
+    "longDescription": "Prepare questions from user needs, relevant project history and grounded exploration. Build an ontology, record real tasks, validate evolution and explore outcomes with evidence and version comparisons.",
+    "developerName": "Meiduo Chong",
+    "category": "Productivity",
+    "composerIcon": "./assets/evoontology.png",
+    "logo": "./assets/evoontology.png",
+    "logoDark": "./assets/evoontology.png",
+    "brandColor": "#3941EA",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Build an ontology for this data project and show the result.",
+      "Improve this ontology using recent project tasks and show validated changes.",
+      "Explore ontology questions, evidence and version outcomes."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

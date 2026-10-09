@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "mode": "rolling_trajectory",
+  "data_source": {
+    "type": "docker-compose-cluster",
+    "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+    "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+  },
+  "workload_source": {
+    "type": "rca-scenarios",
+    "description": "集群化信用卡运维根因分析场景：副本故障、网关故障、资源耗尽、连接耗尽、锁与慢查询、复制延迟/中断、配置漂移",
+    "seed_questions": [
+      "支付交易超时，沿拓扑上溯定位根因",
+      "MySQL P99 突增，是慢 SQL 还是连接耗尽？",
+      "某容器 OOM 重启，哪些业务受影响？",
+      "应用集群里只有一台副本变慢，是 CPU 节流还是网络问题？",
+      "副本全健康但外部请求打不进来，问题在网关还是应用？",
+      "只读副本数据陈旧，是复制延迟还是复制中断？",
+      "健康检查全绿但交易全部失败，主库是不是被置为只读了？",
+      "数据库排序落盘、磁盘临时表激增，是内存配置不足吗？"
+    ]
+  },
+  "evaluation": {
+    "type": "paired_ground_truth",
+    "description": "Rolling 模式累积任务轨迹作为演化证据；演化闸门用同一批故障场景在父版本/候选版本上成对计算本体可诊断性得分（术语存在 + 传播路径建模 + 可观测性），由 EvaluationGate.decide_gt 判定是否接受"
+  },
+  "boundary": {
+    "type": "rolling",
+    "construction_scope": "rca-agent/docker-compose.yml（集群拓扑）+ demo/app（多副本应用与 cgroup 指标）+ rca-agent/monitoring（DNS-SD 抓取、blackbox 探活、集群告警规则）+ tools/fault_injector.py + tools/stress_harness.py + .chaos/（注入与压测产物）",
+    "notes": "RCA 场景不划分 held-out，轨迹持续累积"
+  },
+  "evolution": {
+    "max_rounds": 3,
+    "min_rejects_before_incomplete": 2
+  }
+}

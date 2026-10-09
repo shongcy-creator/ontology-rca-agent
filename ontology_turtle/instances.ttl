@@ -1,0 +1,304 @@
+
+# =====================================================================
+# 个体实例（Individuals）—— 来自 Docker 模拟环境
+# =====================================================================
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix :     <https://sapiens.ai/ontology/credit-card-ops#> .
+
+# ---- 应用层个体 -------------------------------------------------
+:PaymentApp a :Application ;
+  rdfs:label "支付交易应用"@zh ;
+  :appName "payment-app" ;
+  :appVersion "1.8.2" ;
+  :language "nodejs" ;
+  :owner "credit-card-team" .
+
+:AuthFunc a :BusinessFunction ;
+  rdfs:label "授权"@zh ;
+  :criticality 5 ;
+  :slaLevel "P0" ;
+  :qps 1200 .
+
+:AuthAPI a :Interface ;
+  rdfs:label "授权接口"@zh ;
+  :protocol "RPC" ;
+  :timeout 500 ;
+  :retryPolicy "3x-exponential" .
+
+# ---- 运行环境层个体 ---------------------------------------------
+:PayContainer a :Container ;
+  rdfs:label "支付容器"@zh ;
+  :containerId "3177c9796e5c" ;
+  :containerName "cc-credit-card-app" ;
+  :image "demo-app (from node:20-alpine + mysql2)" ;
+  :cpuLimit 2.0 ;
+  :memLimit 4.0 ;
+  :replicas 1 ;
+  :restartCount 0 ;
+  :containerIP "172.18.0.3" ;
+  :containerHostname "3177c9796e5c" .
+
+:HostWsl a :HostMachine ;
+  rdfs:label "宿主机（Docker Desktop WSL2 虚拟主机）"@zh ;
+  :hostName "docker-desktop (WSL2 virtual host on 遥遥领先)" ;
+  :hostIP "172.28.0.1 (vEthernet WSL Hyper-V firewall)" ;
+  :cpuCores 4 ;
+  :memoryGB 16 ;
+  :region "local" ;
+  :osVersion "Microsoft Windows 11 专业版 (build 26200)" .
+
+:HostPhys a :HostMachine ;
+  rdfs:label "物理宿主机（遥遥领先）"@zh ;
+  :hostName "遥遥领先" ;
+  :hostIP "192.168.1.106" ;
+  :cpuCores 4 ;
+  :memoryGB 16 ;
+  :region "local" ;
+  :osVersion "Microsoft Windows 11 专业版 (build 26200)" .
+
+:DockerCluster a :Cluster ;
+  rdfs:label "Docker Desktop 集群"@zh ;
+  :clusterName "Docker Desktop 4.93.0 (WSL2 backend)" ;
+  :version "29.8.1" ;
+  :cpus 8 ;
+  :memoryGB 7.66 .
+
+# ---- 数据库层个体 -----------------------------------------------
+:MysqlCore a :Database ;
+  rdfs:label "核心账务库"@zh ;
+  :dbId "mysql-a3240dd35197" ;
+  :dbType "mysql" ;
+  :dbVersion "8.0.46" ;
+  :endpoint "mysql:3306" ;
+  :shardPolicy "none" ;
+  :maxConnections 200 ;
+  :waitTimeout 28800 .
+
+:PayDataSource a :DataSource ;
+  rdfs:label "支付数据源"@zh ;
+  :url "jdbc:mysql://mysql:3306" ;
+  :user "appuser" ;
+  :poolLimit 10 .
+
+:TCustomer a :Table ;
+  rdfs:label "客户表"@zh ;
+  :tableName "t_customer" ;
+  :rowCount 3 ;
+  :indexCount 2 ;
+  :isHot false .
+
+:TTxn a :Table ;
+  rdfs:label "交易表"@zh ;
+  :tableName "t_txn" ;
+  :rowCount 3 ;
+  :indexCount 3 ;
+  :isHot true .
+
+:TAudit a :Table ;
+  rdfs:label "审计表"@zh ;
+  :tableName "t_audit" ;
+  :rowCount 0 ;
+  :indexCount 1 ;
+  :isHot false .
+
+:IdxTxnCustomer a :Index ;
+  rdfs:label "t_txn 客户索引"@zh ;
+  :indexName "idx_txn_customer" ;
+  :column "customer_id" .
+
+:IdxTxnCreated a :Index ;
+  rdfs:label "t_txn 时间索引"@zh ;
+  :indexName "idx_txn_created" ;
+  :column "created_at" .
+
+# ---- RCA 支撑个体（示例故障 + 根因 + 指标） ---------------------
+:MysqlLatencyP99 a :Metric ;
+  rdfs:label "MySQL P99 延迟"@zh ;
+  :metricName "mysql.latency.p99" ;
+  :unit "ms" ;
+  :sampleInterval 15 ;
+  :threshold 100 .
+
+:ConnExhaustion a :Metric ;
+  rdfs:label "连接池耗尽信号"@zh ;
+  :metricName "db.connection.exhausted" ;
+  :unit "count" ;
+  :sampleInterval 5 ;
+  :threshold 180 .
+
+:DeployEvent a :Event ;
+  rdfs:label "支付应用发布事件"@zh ;
+  :eventId "deploy-payment-v1.8.2" ;
+  :eventTime "2026-01-12T03:00:00Z"^^xsd:dateTime ;
+  :eventType "deploy" ;
+  :source "ci-cd" .
+
+:AlertP99 a :Alert ;
+  rdfs:label "MySQL P99 超阈值告警"@zh ;
+  :alertId "ALERT-P99-001" ;
+  :severity "P1" ;
+  :triggerRule "mysql.latency.p99 > 100 for 5m" .
+
+:IncPaymentTimeout a :Incident ;
+  rdfs:label "支付交易超时故障"@zh ;
+  :incidentId "INC-20260112-001" ;
+  :detectedAt "2026-01-12T03:10:00Z"^^xsd:dateTime ;
+  :resolvedAt "2026-01-12T04:30:00Z"^^xsd:dateTime ;
+  :impact "P0, payment success rate -12%" .
+
+:RootSlowSql a :RootCause ;
+  rdfs:label "t_txn 慢查询致连接耗尽"@zh ;
+  :rootCauseId "RC-001" ;
+  :category "data" ;
+  :confidence 0.86 ;
+  :evidenceRef "slow-query-log-20260112" .
+
+# ==================================================================
+# v1 增量：集群化个体（应用集群 / 数据库集群 / 配额 / 故障注入）
+# ==================================================================
+
+# ---- 应用层集群 ---------------------------------------------------
+:PaymentAppCluster a :ApplicationCluster ;
+  rdfs:label "支付应用集群"@zh ;
+  :clusterName "payment-app-cluster" ;
+  :desiredReplicas 3 ;
+  :healthyReplicas 3 ;
+  :appVersion "1.8.3" .
+
+:PaymentAppInstance1 a :ApplicationInstance ;
+  rdfs:label "payment-app 副本 #1"@zh ;
+  :instanceId "rca-agent-payment-app-1" ;
+  :containerName "rca-agent-payment-app-1" .
+
+:PaymentAppInstance2 a :ApplicationInstance ;
+  rdfs:label "payment-app 副本 #2"@zh ;
+  :instanceId "rca-agent-payment-app-2" ;
+  :containerName "rca-agent-payment-app-2" .
+
+:PaymentAppInstance3 a :ApplicationInstance ;
+  rdfs:label "payment-app 副本 #3"@zh ;
+  :instanceId "rca-agent-payment-app-3" ;
+  :containerName "rca-agent-payment-app-3" .
+
+:AppGateway a :Gateway ;
+  rdfs:label "应用层网关"@zh ;
+  :containerName "cc-app-gateway" ;
+  :lbStrategy "least_conn + docker-dns" ;
+  :endpoint "http://localhost:8080" .
+
+:AppResourceQuota a :ResourceQuota ;
+  rdfs:label "应用副本资源配额"@zh ;
+  :cpuQuota 0.5 ;
+  :memQuotaMB 256 .
+
+# ---- 数据库层集群 -------------------------------------------------
+:MysqlCluster a :DatabaseCluster ;
+  rdfs:label "creditcard 主从集群"@zh ;
+  :clusterName "creditcard-cluster" ;
+  :gtidMode "ON" ;
+  :dbType "mysql" ;
+  :dbVersion "8.0.46" .
+
+:MysqlPrimary a :DatabaseNode ;
+  rdfs:label "MySQL 主库节点"@zh ;
+  :containerName "cc-mysql-core" ;
+  :nodeRole "primary" ;
+  :serverId 1 ;
+  :readOnly false ;
+  :maxConnections 200 .
+
+:MysqlReplica1 a :DatabaseNode ;
+  rdfs:label "MySQL 只读副本 #1"@zh ;
+  :containerName "cc-mysql-replica-1" ;
+  :nodeRole "replica" ;
+  :serverId 11 ;
+  :readOnly true ;
+  :maxConnections 200 .
+
+:MysqlReplica2 a :DatabaseNode ;
+  rdfs:label "MySQL 只读副本 #2"@zh ;
+  :containerName "cc-mysql-replica-2" ;
+  :nodeRole "replica" ;
+  :serverId 12 ;
+  :readOnly true ;
+  :maxConnections 200 .
+
+:ReplicationLink1 a :ReplicationLink ;
+  rdfs:label "主库 → 副本 #1 复制链路"@zh ;
+  :replicationDelaySeconds 0 .
+
+:ReplicationLink2 a :ReplicationLink ;
+  rdfs:label "主库 → 副本 #2 复制链路"@zh ;
+  :replicationDelaySeconds 0 .
+
+:DbPrimaryQuota a :ResourceQuota ;
+  rdfs:label "MySQL 主库资源配额"@zh ;
+  :memQuotaMB 1024 .
+
+:DbReplicaQuota a :ResourceQuota ;
+  rdfs:label "MySQL 副本资源配额"@zh ;
+  :memQuotaMB 768 .
+
+# ---- 集群相关指标 -------------------------------------------------
+:HealthyReplicaCount a :Metric ;
+  rdfs:label "在册健康副本数"@zh ;
+  :metricName "count(up{job=\"payment-app\"} == 1)" ;
+  :unit "count" ;
+  :sampleInterval 15 ;
+  :threshold 3 .
+
+:GatewayProbeSuccess a :Metric ;
+  rdfs:label "网关黑盒探活成功率"@zh ;
+  :metricName "probe_success{job=\"blackbox-gateway\"}" ;
+  :unit "bool" ;
+  :sampleInterval 15 ;
+  :threshold 1 .
+
+:CpuThrottleSeconds a :Metric ;
+  rdfs:label "容器 CPU 节流计数"@zh ;
+  :metricName "cc_container_cpu_nr_throttled_total" ;
+  :unit "periods" ;
+  :sampleInterval 15 ;
+  :threshold 0 .
+
+:ContainerMemRatio a :Metric ;
+  rdfs:label "容器内存使用率"@zh ;
+  :metricName "cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes" ;
+  :unit "ratio" ;
+  :sampleInterval 15 ;
+  :threshold 0.85 .
+
+:ReplicationLagSeconds a :Metric ;
+  rdfs:label "复制延迟"@zh ;
+  :metricName "mysql_slave_status_seconds_behind_master" ;
+  :unit "s" ;
+  :sampleInterval 15 ;
+  :threshold 5 .
+
+:ReplicationThreadState a :Metric ;
+  rdfs:label "副本复制线程状态"@zh ;
+  :metricName "mysql_slave_status_slave_io_running" ;
+  :unit "bool" ;
+  :sampleInterval 15 ;
+  :threshold 1 .
+
+:DbTmpDiskTables a :Metric ;
+  rdfs:label "磁盘临时表速率"@zh ;
+  :metricName "rate(mysql_global_status_created_tmp_disk_tables[5m])" ;
+  :unit "per_s" ;
+  :sampleInterval 15 ;
+  :threshold 1 .
+
+# ---- 故障注入个体（自演化证据来源）-------------------------------
+:FaultInjectorTool a :FailureInjection ;
+  rdfs:label "故障注入器（21 场景）"@zh ;
+  :faultLayer "application|database|resource" ;
+  :source "tools/fault_injector.py" .
+
+:StressHarnessTool a :FailureInjection ;
+  rdfs:label "压力测试台（资源耗尽构造）"@zh ;
+  :faultLayer "resource" ;
+  :source "tools/stress_harness.py" .

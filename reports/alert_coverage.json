@@ -1,0 +1,507 @@
+{
+  "hold_s": 240.0,
+  "max_for_s": 180.0,
+  "results": [
+    {
+      "scenario": "app_cpu_stress",
+      "layer": "runtime",
+      "title": "单副本 CPU 打满（触发 cgroup CPU 配额节流）",
+      "declared": [
+        "AppContainerCpuThrottled",
+        "AppReplicaLatencySkew"
+      ],
+      "firing": [
+        "AppContainerCpuThrottled",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppContainerCpuThrottled"
+      ],
+      "hit": [
+        "AppContainerCpuThrottled"
+      ],
+      "declared_but_silent": [
+        "AppReplicaLatencySkew"
+      ],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_gateway_stop",
+      "layer": "application",
+      "title": "停掉应用层网关（整个应用入口不可用）",
+      "declared": [
+        "AppGatewayUnreachable"
+      ],
+      "firing": [
+        "AppContainerCpuThrottled",
+        "AppGatewayUnreachable",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppGatewayUnreachable"
+      ],
+      "hit": [
+        "AppGatewayUnreachable"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_kill_replica",
+      "layer": "application",
+      "title": "强杀一个应用副本（模拟容器崩溃/OOM 后消失）",
+      "declared": [
+        "AppReplicaCountLow"
+      ],
+      "firing": [
+        "AppReplicaCountLow",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppReplicaCountLow"
+      ],
+      "hit": [
+        "AppReplicaCountLow"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_memory_stress",
+      "layer": "runtime",
+      "title": "单副本容器内存耗尽（逼近 cgroup 上限，OOM 前兆）",
+      "declared": [
+        "AppContainerMemoryPressure"
+      ],
+      "firing": [
+        "AppContainerMemoryPressure",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppContainerMemoryPressure"
+      ],
+      "hit": [
+        "AppContainerMemoryPressure"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_network_delay",
+      "layer": "application",
+      "title": "单副本网络延迟注入（tc netem 300ms）",
+      "declared": [
+        "AppReplicaLatencySkew"
+      ],
+      "firing": [
+        "AppReplicaLatencySkew",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppReplicaLatencySkew"
+      ],
+      "hit": [
+        "AppReplicaLatencySkew"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_network_loss",
+      "layer": "application",
+      "title": "单副本网络丢包注入（tc netem loss 40%）",
+      "declared": [
+        "AppReplicaLatencySkew"
+      ],
+      "firing": [
+        "AppReplicaLatencySkew",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [],
+      "hit": [
+        "AppReplicaLatencySkew"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_oom_kill",
+      "layer": "runtime",
+      "title": "构造真实容器 OOMKill（内存上限低于实际用量 + 内存申请）",
+      "declared": [
+        "AppContainerOOMKilled",
+        "AppContainerMemoryPressure",
+        "AppReplicaCountLow"
+      ],
+      "firing": [
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [],
+      "hit": [],
+      "declared_but_silent": [
+        "AppContainerMemoryPressure",
+        "AppContainerOOMKilled",
+        "AppReplicaCountLow"
+      ],
+      "firing_but_undeclared": [],
+      "covered": false,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_pause_replica",
+      "layer": "application",
+      "title": "暂停一个应用副本（假死：进程在但完全不响应）",
+      "declared": [
+        "AppReplicaProbeFailing"
+      ],
+      "firing": [
+        "AppReplicaProbeFailing",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppReplicaProbeFailing"
+      ],
+      "hit": [
+        "AppReplicaProbeFailing"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "app_stop_replica",
+      "layer": "application",
+      "title": "优雅下线一个应用副本",
+      "declared": [
+        "AppReplicaCountLow"
+      ],
+      "firing": [
+        "AppReplicaCountLow",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppReplicaCountLow"
+      ],
+      "hit": [
+        "AppReplicaCountLow"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_conn_saturation",
+      "layer": "database",
+      "title": "耗尽 MySQL max_connections（连接数打满）",
+      "declared": [
+        "MySQLTooManyConnections",
+        "MySQLConnectionRefused",
+        "MySQLThreadsRunningHigh"
+      ],
+      "firing": [
+        "MySQLSlowQueries",
+        "MySQLThreadsRunningHigh",
+        "MySQLTooManyConnections"
+      ],
+      "new_firing": [
+        "MySQLThreadsRunningHigh",
+        "MySQLTooManyConnections"
+      ],
+      "hit": [
+        "MySQLThreadsRunningHigh",
+        "MySQLTooManyConnections"
+      ],
+      "declared_but_silent": [
+        "MySQLConnectionRefused"
+      ],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_cpu_stress",
+      "layer": "database",
+      "title": "数据库 CPU 压力（交叉连接放大查询）",
+      "declared": [
+        "MySQLThreadsRunningHigh"
+      ],
+      "firing": [
+        "MySQLSlowQueries",
+        "MySQLThreadsRunningHigh"
+      ],
+      "new_firing": [],
+      "hit": [
+        "MySQLThreadsRunningHigh"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_disk_temp_tables",
+      "layer": "database",
+      "title": "排序/分组内存不足落盘（磁盘临时表激增）",
+      "declared": [
+        "MySQLDiskTempTables"
+      ],
+      "firing": [
+        "MySQLDiskTempTables",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "MySQLDiskTempTables"
+      ],
+      "hit": [
+        "MySQLDiskTempTables"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_primary_readonly",
+      "layer": "database",
+      "title": "主库被置为只读（读写分离下最隐蔽的配置漂移）",
+      "declared": [
+        "MySQLPrimaryReadOnly"
+      ],
+      "firing": [
+        "AppHighErrorRate",
+        "MySQLPrimaryReadOnly",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppHighErrorRate",
+        "MySQLPrimaryReadOnly"
+      ],
+      "hit": [
+        "MySQLPrimaryReadOnly"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [
+        "AppHighErrorRate"
+      ],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_replica_io_stop",
+      "layer": "database",
+      "title": "停止副本 IO 线程（复制中断）",
+      "declared": [
+        "MySQLReplicationBroken"
+      ],
+      "firing": [
+        "AppHighErrorRate",
+        "MySQLReplicationBroken",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "MySQLReplicationBroken"
+      ],
+      "hit": [
+        "MySQLReplicationBroken"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_replica_kill",
+      "layer": "database",
+      "title": "杀掉一个只读副本容器",
+      "declared": [
+        "MySQLReplicaDown",
+        "MySQLDown"
+      ],
+      "firing": [
+        "MySQLDown"
+      ],
+      "new_firing": [
+        "MySQLDown"
+      ],
+      "hit": [
+        "MySQLDown"
+      ],
+      "declared_but_silent": [
+        "MySQLReplicaDown"
+      ],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_replica_lag",
+      "layer": "database",
+      "title": "只读副本复制延迟（SOURCE_DELAY）",
+      "declared": [
+        "MySQLReplicationLag"
+      ],
+      "firing": [
+        "MySQLReplicationLag",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "MySQLReplicationLag",
+        "MySQLSlowQueries"
+      ],
+      "hit": [
+        "MySQLReplicationLag"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [
+        "MySQLSlowQueries"
+      ],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_row_lock_hold",
+      "layer": "database",
+      "title": "持有 t_txn 排他行锁（写事务被阻塞）",
+      "declared": [
+        "MySQLRowLockContention",
+        "MySQLConnectionPoolExhausted"
+      ],
+      "firing": [
+        "AppHighErrorRate",
+        "AppHighLatencyP99",
+        "MySQLConnectionPoolExhausted",
+        "MySQLPoolQueueBacklog",
+        "MySQLRowLockContention",
+        "MySQLSlowQueries",
+        "MySQLThreadsRunningHigh"
+      ],
+      "new_firing": [
+        "AppHighErrorRate",
+        "AppHighLatencyP99",
+        "MySQLConnectionPoolExhausted",
+        "MySQLPoolQueueBacklog",
+        "MySQLRowLockContention",
+        "MySQLThreadsRunningHigh"
+      ],
+      "hit": [
+        "MySQLConnectionPoolExhausted",
+        "MySQLRowLockContention"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [
+        "AppHighErrorRate",
+        "AppHighLatencyP99",
+        "MySQLPoolQueueBacklog",
+        "MySQLThreadsRunningHigh"
+      ],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "db_slow_query_flood",
+      "layer": "database",
+      "title": "持续制造慢查询（全表扫描 + 连接放大）",
+      "declared": [
+        "MySQLSlowQueries",
+        "AppHighLatencyP99"
+      ],
+      "firing": [
+        "AppHighLatencyP99",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [],
+      "hit": [
+        "AppHighLatencyP99",
+        "MySQLSlowQueries"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "res_cluster_cpu",
+      "layer": "resource",
+      "title": "应用集群 CPU 全面耗尽（全副本 CPU 压力 + 压测）",
+      "declared": [
+        "AppContainerCpuThrottled",
+        "AppHighLatencyP99"
+      ],
+      "firing": [
+        "AppContainerCpuThrottled",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppContainerCpuThrottled"
+      ],
+      "hit": [
+        "AppContainerCpuThrottled"
+      ],
+      "declared_but_silent": [
+        "AppHighLatencyP99"
+      ],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "res_cluster_memory",
+      "layer": "resource",
+      "title": "应用集群内存全面耗尽",
+      "declared": [
+        "AppContainerMemoryPressure"
+      ],
+      "firing": [
+        "AppContainerCpuThrottled",
+        "AppContainerMemoryPressure",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "AppContainerMemoryPressure"
+      ],
+      "hit": [
+        "AppContainerMemoryPressure"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    },
+    {
+      "scenario": "res_db_memory",
+      "layer": "resource",
+      "title": "数据库内存/排序资源不足（大排序落盘）",
+      "declared": [
+        "MySQLDiskTempTables"
+      ],
+      "firing": [
+        "MySQLDiskTempTables",
+        "MySQLSlowQueries"
+      ],
+      "new_firing": [
+        "MySQLDiskTempTables"
+      ],
+      "hit": [
+        "MySQLDiskTempTables"
+      ],
+      "declared_but_silent": [],
+      "firing_but_undeclared": [],
+      "covered": true,
+      "hold_s": 240.0
+    }
+  ]
+}

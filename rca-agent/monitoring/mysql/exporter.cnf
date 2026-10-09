@@ -1,0 +1,6 @@
+﻿[client]
+user = appuser
+password = apppass
+host = mysql
+port = 3306
+database = creditcard

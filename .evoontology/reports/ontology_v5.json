@@ -1,0 +1,12 @@
+{
+  "summary": "打分消歧版本（反向迭代）：为 15 个根因术语补上 scoring_keywords 与 negative_keywords 两个字段，把『什么情况下不是我』这类消歧知识交还本体维护，并新增 con:fastpath-trust 约束，把『快路径采信条件』本身也登记进本体。目的：解决『副本丢失 / 副本假死 / 副本 OOM / 副本被节流』共享『副本』一词导致的关键词打分歧义，提升确定性快路径的 top1 精确率。",
+  "limitations": [
+    "scoring_keywords / negative_keywords 是本项目对 EvoOntology Term schema 的扩展（validate() 只强制 id，额外字段可安全共存；EvoOntology 运行时忽略未知字段）。若上游要正式支持，建议作为 Term 的一等字段纳入 schema 文档。",
+    "负向词是人工编写的，存在过拟合到当前 21 个场景的风险；需要用新场景（held-out）复验，避免变成「换个说法的硬编码」。",
+    "关键词消歧的上限是『同实体多故障模式』的语义边界；更细的区分仍需 LLM Agent 结合多源证据（指标/日志/容器状态）完成。"
+  ],
+  "links": [],
+  "questions": [],
+  "recorded_at": "2026-10-05T15:22:11.922729+00:00",
+  "version": "ontology_v5-command-targets"
+}

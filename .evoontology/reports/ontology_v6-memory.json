@@ -1,0 +1,12 @@
+{
+  "summary": "内存语义精确化版本：把『内存被压到极限但还没被杀』显式建模为 `rc:mem-pressure`，并新增 `metric:oom-kill-count`（cgroup v2 memory.events 的 oom_kill 只增计数器，由 payment-app exporter 暴露为 `cc_container_oom_kill_total`）。根因是本体自相矛盾：`rc:oom-kill` 的定义要求「OOMKilled=true / RestartCount 递增」这类**已被杀**的直接证据，而 `con:oom-detection` 的关键词却把「内存压力」「内存不足」也算成它的证据 —— 于是『压力』被当成『已杀』，`res_cluster_memory` 因此被判成 `rc:oom-kill`。本轮同时把 `api:auth` 改标 `lifecycle.state=draft`（卫生闸门的老 warning：声明 active 但无证据、环境里也没实现该接口），并修正 `rc:row-lock` 的 P0 排查命令 —— 它查的是 `sys.innodb_lock_waits`，而诊断用的只读账号 `rca_readonly` **没有 sys 库权限**（实测 `ERROR 1142`），这条「最紧急的动作」照着敲只会得到权限错误；已换成只读账号验证可读的 `performance_schema.data_lock_waits`。（该缺陷是**真跑一次处置动作**才发现的 —— 与第 5 轮靠真跑发现指标名写错同一路子。）目的：让『压力』与『杀死』在**语义与指标**两个层面都能区分，而不是靠措辞猜。",
+  "limitations": [
+    "`rc:mem-pressure` 的判别仍要求引擎/Agent 主动查 `cc_container_oom_kill_total`；若只看内存比值，`rc:oom-kill` 与 `rc:mem-pressure` 在文本上仍然相似（两者都由『内存压力』类告警触发）。本轮给 `rc:oom-kill` 补了指标佐证关系，但『先查计数器再下结论』这一步依赖调用方遵守 con:mem-pressure 的判据描述。",
+    "新增的 `metric:oom-kill-count` 没有 grounding mapping（与既有 rc:/metric: 派生术语一致）——它靠关系关联到真实指标，而不是直接接地；这是刻意的，不是遗漏。",
+    "`api:auth` 改为 draft 后不再参与语义检索；若将来真的实现该接口，需要改回 active 并补证据。"
+  ],
+  "links": [],
+  "questions": [],
+  "recorded_at": "2026-10-08T13:17:54.400408+00:00",
+  "version": "ontology_v6-memory"
+}

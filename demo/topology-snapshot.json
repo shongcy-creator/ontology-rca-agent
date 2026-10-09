@@ -1,0 +1,76 @@
+{
+  "capturedAt": "2026-10-01T02:04:04Z",
+  "source": "cc-credit-card-app /topology/raw + docker inspect + host facts",
+  "topologyBaseline": {
+    "app": "cc-credit-card-app",
+    "appImage": "demo-app (from node:20-alpine + mysql2)",
+    "appContainerHostname": "3177c9796e5c",
+    "containerIP": "172.18.0.3",
+    "networkCIDR": "172.18.0.0/16 (bridge ccdemo-net)",
+    "deployedOn": "docker-desktop (WSL2 virtual host on 遥遥领先)",
+    "database": {
+      "name": "creditcard",
+      "type": "mysql",
+      "version": "8.0.46",
+      "containerName": "cc-mysql-core",
+      "containerHostname": "a3240dd35197",
+      "containerIP": "172.18.0.2",
+      "endpoint": "mysql:3306",
+      "maxConnections": 200,
+      "waitTimeout": 28800,
+      "user": "appuser",
+      "appUserPoolLimit": 10
+    },
+    "tables": [
+      {"name": "t_customer", "rows": 3},
+      {"name": "t_txn", "rows": 3},
+      {"name": "t_audit", "rows": 0}
+    ]
+  },
+  "hostMachine": {
+    "name": "遥遥领先",
+    "os": "Microsoft Windows 11 专业版 (build 26200)",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "cpuCores": 4,
+    "logicalCores": 8,
+    "ramGB": 16,
+    "primaryBridgeIP": "172.28.0.1 (vEthernet WSL Hyper-V firewall)"
+  },
+  "docker": {
+    "engine": "Docker Desktop 4.93.0 (WSL2 backend)",
+    "serverVersion": "29.8.1",
+    "cpus": 8,
+    "memoryGB": 7.66,
+    "rootDir": "/var/lib/docker"
+  },
+  "rawProbe": {
+    "app": {
+      "name": "payment-app",
+      "version": "1.8.2",
+      "containerName": "3177c9796e5c",
+      "pid": 1
+    },
+    "network": {
+      "containerIP": "172.18.0.3",
+      "subnet": "172.28.0.0/16"
+    },
+    "db": {
+      "host": "mysql",
+      "port": 3306,
+      "user": "appuser",
+      "database": "creditcard",
+      "driverLoaded": true,
+      "probe": {
+        "reachable": true,
+        "latencyMs": 5,
+        "ping": {
+          "dbHost": "a3240dd35197",
+          "version": "8.0.46",
+          "maxConn": 200,
+          "waitTimeout": 28800,
+          "nowUtc": "2026-10-01T02:04:04.052Z"
+        }
+      }
+    }
+  }
+}

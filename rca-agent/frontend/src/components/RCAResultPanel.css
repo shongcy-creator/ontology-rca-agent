@@ -1,0 +1,228 @@
+.rca-empty {
+  padding: 30px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.rca-empty .hint { font-size: 12px; margin-top: 8px; }
+
+.rca-panel { padding: 0 0 20px 0; }
+
+.rca-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.incident-id { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+.incident-meta { display: flex; gap: 6px; align-items: center; }
+.severity-badge {
+  font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+}
+.sev-P0 { background: rgba(248,81,73,0.2); color: #f85149; }
+.sev-P1 { background: rgba(210,153,34,0.2); color: #d29922; }
+.sev-P2 { background: rgba(88,166,255,0.2); color: #58a6ff; }
+.sev-P3 { background: rgba(139,148,158,0.2); color: #8b949e; }
+.elapsed { font-size: 11px; color: var(--text-muted); }
+
+/* Confidence */
+.confidence-section { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.conf-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+.conf-pct { font-size: 18px; font-weight: 700; margin-left: 6px; }
+.conf-bar-bg { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.conf-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+
+/* Root cause card */
+.root-cause-card {
+  margin: 12px 14px;
+  padding: 12px;
+  background: rgba(88,166,255,0.08);
+  border: 1px solid rgba(88,166,255,0.2);
+  border-radius: 8px;
+}
+.rc-title { font-size: 12px; color: var(--accent); margin-bottom: 6px; }
+.rc-category { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+
+/* ── 让结论能自解释 ────────────────────────────────────────────────
+   原先卡片只有「类别 / rc:xxx / 一句话」，用户看不出：
+   这是什么、机制如何、落在哪个实例上、凭什么判的。
+   下面这些样式服务于"本体里本来就有、只是没展示"的那几类信息。 */
+.rc-name { font-size: 15px; font-weight: 600; line-height: 1.35; margin-bottom: 6px; }
+.rc-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.rc-chip {
+  font-size: 10px; padding: 1px 7px; border-radius: 10px;
+  border: 1px solid var(--border); color: var(--text-muted);
+}
+.rc-chip.mono code { color: var(--accent); }
+.rc-fact { display: flex; gap: 8px; margin-bottom: 5px; font-size: 12px; line-height: 1.5; }
+.rc-fact .rc-k, .rc-kw .rc-k {
+  flex: 0 0 56px; color: var(--text-muted); font-size: 11px; padding-top: 1px;
+}
+.rc-fact .rc-v { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.rc-ref code, .rc-cons code { color: var(--accent); }
+.rc-ref { display: inline; }
+.rc-cons { display: block; color: var(--text-muted); }
+.rc-kw { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 6px 0; }
+.kw-chip {
+  font-size: 10px; padding: 1px 6px; border-radius: 4px;
+  background: rgba(88,166,255,.12); color: var(--accent);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.rc-trace { margin-top: 6px; }
+.rc-trace > summary { cursor: pointer; font-size: 11px; color: var(--text-muted); user-select: none; }
+.rc-trace[open] > summary { margin-bottom: 4px; }
+
+/* 建议动作：本体 remediation + 紧急度 + 审批标记 */
+.act-source {
+  margin-left: auto; font-size: 10px; padding: 1px 7px; border-radius: 10px;
+  text-transform: none; letter-spacing: 0;
+}
+.act-source.ontology { color: var(--accent); border: 1px solid rgba(88,166,255,.5); }
+.act-source.fallback { color: var(--text-muted); border: 1px solid var(--border); }
+.action-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.action-row { display: flex; gap: 8px; align-items: flex-start; }
+.act-urgency {
+  flex: 0 0 28px; text-align: center; font-size: 10px; font-weight: 600;
+  border-radius: 4px; padding: 1px 0; margin-top: 1px;
+}
+.act-urgency.u-P0 { background: rgba(248,81,73,.18); color: var(--red); }
+.act-urgency.u-P1 { background: rgba(210,153,34,.18); color: var(--yellow); }
+.act-urgency.u-P2 { background: rgba(88,166,255,.14); color: var(--accent); }
+.act-body { flex: 1; min-width: 0; }
+.act-text { font-size: 12px; line-height: 1.5; }
+.act-cmd {
+  display: block; margin-top: 3px; font-size: 10px; color: var(--text-muted);
+  background: var(--surface2); border-radius: 4px; padding: 2px 6px;
+  overflow-wrap: anywhere;
+}
+.act-approval {
+  flex: 0 0 auto; font-size: 10px; padding: 1px 6px; border-radius: 4px; margin-top: 1px;
+}
+.act-approval.need { color: var(--yellow); border: 1px solid rgba(210,153,34,.5); }
+.act-approval.readonly { color: var(--green); border: 1px solid rgba(63,185,80,.4); }
+
+.rc-entity code {
+  display: inline-block;
+  font-size: 13px;
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.rc-reason { font-size: 12px; color: var(--text-muted); }
+
+/* Section */
+.section { margin-top: 4px; padding: 0 14px; }
+.section-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 0 6px; border-top: 1px solid var(--border); }
+
+/* Root cause path */
+.rc-path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+.rc-path-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.rc-path-arrow {
+  color: var(--text-muted);
+}
+.rc-path code {
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+.rc-path-root {
+  background: rgba(248, 81, 73, 0.16) !important;
+  color: #f85149;
+}
+
+/* Candidates */
+.candidate-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 0; font-size: 12px;
+}
+.cand-rank { width: 16px; height: 16px; background: var(--surface2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+.cand-cat { font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.cand-id { font-size: 11px; flex: 1; }
+.cand-conf { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+
+/* RCA Chain */
+.rca-chain { display: flex; flex-direction: column; gap: 4px; }
+.chain-step {
+  display: flex; gap: 8px; align-items: flex-start;
+  padding: 6px 8px; background: var(--surface2); border-radius: 6px;
+}
+.step-num {
+  width: 18px; height: 18px; background: var(--border); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; flex-shrink: 0; margin-top: 1px;
+}
+.step-type { font-size: 10px; color: var(--text-muted); text-transform: uppercase; display: block; }
+.step-desc { font-size: 12px; margin-top: 1px; }
+
+/* Thresholds */
+.threshold-row {
+  display: flex; align-items: center; gap: 6px; padding: 3px 0;
+  font-size: 12px;
+}
+.t-rule { flex: 1; }
+.t-value { font-size: 11px; color: var(--text-muted); }
+
+/* Chat messages */
+.chat-welcome {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 40px 30px; text-align: center; gap: 16px;
+}
+.welcome-icon { font-size: 48px; }
+.chat-welcome h2 { font-size: 18px; font-weight: 600; }
+.chat-welcome p { color: var(--text-muted); font-size: 14px; max-width: 400px; }
+.welcome-examples { text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; width: 100%; max-width: 500px; }
+.welcome-examples h3 { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.welcome-examples ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.welcome-examples li { font-size: 13px; }
+
+.chat-messages { flex: 1; overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; gap: 12px; }
+
+.message { display: flex; gap: 8px; }
+.message.user { flex-direction: row-reverse; }
+.message.assistant, .message.tool { flex-direction: row; }
+
+.bubble {
+  max-width: 80%; padding: 10px 14px; border-radius: 12px;
+  font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+}
+.user-bubble { background: var(--accent); color: #000; border-bottom-right-radius: 3px; }
+.assistant-bubble { background: var(--surface2); border-bottom-left-radius: 3px; }
+.tool-bubble { background: rgba(188,140,255,0.1); border: 1px solid rgba(188,140,255,0.3); font-size: 12px; }
+
+.timestamp { display: block; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+.tool-calls { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.tool-call-badge {
+  font-size: 11px; background: rgba(88,166,255,0.15); color: var(--accent);
+  padding: 2px 8px; border-radius: 10px;
+}
+
+.loading { display: flex; align-items: center; gap: 4px; color: var(--text-muted); }
+.dot {
+  width: 5px; height: 5px; background: var(--text-muted); border-radius: 50%;
+  animation: pulse 1.2s infinite;
+}
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* MD render */
+.md-render h2 { font-size: 15px; font-weight: 600; margin: 8px 0 4px; color: var(--accent); }
+.md-render h3 { font-size: 13px; font-weight: 600; margin: 6px 0 2px; }
+.md-render p { margin: 2px 0; }
+.md-render li { margin-left: 16px; list-style: disc; }
+.md-render pre.md-table { background: var(--surface2); padding: 4px 8px; border-radius: 4px; font-size: 11px; margin: 2px 0; overflow-x: auto; }

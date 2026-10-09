@@ -1,0 +1,3080 @@
+{
+  "total": 21,
+  "attempted": 21,
+  "passed": 21,
+  "failed": 0,
+  "passed_meaning": "注入成功且回滚成功（不要求声明信号全部成立）",
+  "signals_observed_full": 20,
+  "signals_observed_none": 0,
+  "scope": "full",
+  "fault_ids": [
+    "app_cpu_stress",
+    "app_gateway_stop",
+    "app_kill_replica",
+    "app_memory_stress",
+    "app_network_delay",
+    "app_network_loss",
+    "app_oom_kill",
+    "app_pause_replica",
+    "app_stop_replica",
+    "db_conn_saturation",
+    "db_cpu_stress",
+    "db_disk_temp_tables",
+    "db_primary_readonly",
+    "db_replica_io_stop",
+    "db_replica_kill",
+    "db_replica_lag",
+    "db_row_lock_hold",
+    "db_slow_query_flood",
+    "res_cluster_cpu",
+    "res_cluster_memory",
+    "res_db_memory"
+  ],
+  "stopped_early": false,
+  "stopped_at": "",
+  "results": [
+    {
+      "fault_id": "app_cpu_stress",
+      "started_at": 1791545404.3032863,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_cpu_stress",
+        "layer": "runtime",
+        "title": "单副本 CPU 打满（触发 cgroup CPU 配额节流）",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-2"
+        ],
+        "params": {
+          "workers": 4,
+          "seconds": 900
+        },
+        "injected_at": "2026-10-09T11:30:04Z",
+        "expected_root_cause": "应用副本容器 CPU 资源不足，被 cgroup cpu quota 节流",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "metric:cpu-throttle",
+          "rc:cpu-throttle"
+        ],
+        "blast_radius": "仅该副本变慢（集群内延迟不均衡）",
+        "needs_stress": true,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "cpu_workers": 4,
+            "seconds": 900
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "max(rate(cc_container_cpu_throttled_seconds_total[1m])) > 0.1",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791545413.921,
+                  "0.27678327662888463"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(rate(cc_container_cpu_throttled_seconds_total[1m])) > 0.1",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.2881308565822128,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(rate(cc_container_cpu_nr_throttled_total[1m])) > 1",
+          "samples": []
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(rate(cc_container_cpu_throttled_seconds_total[1m])) > 0.1",
+          "samples": [
+            {
+              "labels": {},
+              "value": 3.6491318280812477,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(rate(cc_container_cpu_nr_throttled_total[1m])) > 1",
+          "samples": [
+            {
+              "labels": {},
+              "value": 9.978221254277967,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:30:14\r\n  wall_seconds           : 21.038\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.704\r\n  bytes_per_sec          : 519.071\r\n  latency_ms.min         : 2016.317\r\n  latency_ms.p50         : 2048.148\r\n  latency_ms.p90         : 2136.148\r\n  latency_ms.p95         : 2178.241\r\n  latency_ms.p99         : 2338.908\r\n  latency_ms.max         : 2340.084\r\n  latency_ms.mean        : 2068.297\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2340.084\r\n       2        12       0     2158.55\r\n       4        12       0    2136.148\r\n       6        12       0     2088.86\r\n       8        12       0    2178.241\r\n      10        12       0    2165.209\r\n      12        12       0    2188.417\r\n      14        12       0    2179.965\r\n      16        12       0     2107.93\r\n      18        12       0    2093.626\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_cpu_stress",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-2"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-2": {
+                "ok": true,
+                "killed": 5,
+                "rc": 0,
+                "stderr": ""
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(rate(cc_container_cpu_throttled_seconds_total[1m])) > 0.1",
+          "waited_s": 51.3,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791545533.7543175,
+      "scenario_seconds": 129.5,
+      "title": "单副本 CPU 打满（触发 cgroup CPU 配额节流）",
+      "layer": "runtime",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器 CPU 资源不足，被 cgroup cpu quota 节流"
+    },
+    {
+      "fault_id": "app_gateway_stop",
+      "started_at": 1791545553.7565207,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_gateway_stop",
+        "layer": "application",
+        "title": "停掉应用层网关（整个应用入口不可用）",
+        "category": "依赖",
+        "targets": [
+          "cc-app-gateway"
+        ],
+        "params": {},
+        "injected_at": "2026-10-09T11:32:33Z",
+        "expected_root_cause": "应用层网关（负载均衡入口）不可用，而非业务副本故障",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:gateway",
+          "rc:gateway-down"
+        ],
+        "blast_radius": "整个应用层对外不可用（P0），但副本自身指标全部正常",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "stopped": "cc-app-gateway"
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "count(probe_success{job=\"blackbox-gateway\"} == 0) > 0",
+            "ok": true,
+            "waited_s": 16.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791545570.32,
+                  "1"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "count(probe_success{job=\"blackbox-gateway\"} == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "count(probe_success{job=\"blackbox-gateway\"} == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:32:50\r\n  wall_seconds           : 20.452\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 60\r\n  success                : 0\r\n  error                  : 60\r\n  success_rate           : 0.00%\r\n  requests_per_sec       : 2.934\r\n  bytes_per_sec          : 0.0\r\n  latency_ms.min         : 4018.732\r\n  latency_ms.p50         : 4065.404\r\n  latency_ms.p90         : 4099.199\r\n  latency_ms.p95         : 4166.506\r\n  latency_ms.p99         : 4169.01\r\n  latency_ms.max         : 4169.01\r\n  latency_ms.mean        : 4074.037\r\n  latency_ms.samples     : 60\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  no-response            :       60  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  connection_refused     :       60  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12      12     4169.01\r\n       4        12      12    4062.313\r\n       8        12      12     4038.27\r\n      12        12      12    4085.722\r\n      16        12      12    4099.882\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_gateway_stop",
+        "results": [
+          {
+            "targets": [
+              "cc-app-gateway"
+            ],
+            "ok": true,
+            "detail": {
+              "name": "cc-app-gateway",
+              "exists": true,
+              "status": "running",
+              "oom_killed": false,
+              "restart_count": 0,
+              "exit_code": "0",
+              "memory_limit_mb": 128.0,
+              "nano_cpus": "0",
+              "started_at": "2026-10-09T11:33:54.53283512Z"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(probe_success{job=\"blackbox-gateway\"} == 0) > 0",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791545636.9213085,
+      "scenario_seconds": 83.2,
+      "title": "停掉应用层网关（整个应用入口不可用）",
+      "layer": "application",
+      "category": "依赖",
+      "expected_root_cause": "应用层网关（负载均衡入口）不可用，而非业务副本故障"
+    },
+    {
+      "fault_id": "app_kill_replica",
+      "started_at": 1791545656.9228172,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_kill_replica",
+        "layer": "application",
+        "title": "强杀一个应用副本（模拟容器崩溃/OOM 后消失）",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-3"
+        ],
+        "params": {},
+        "injected_at": "2026-10-09T11:34:17Z",
+        "expected_root_cause": "应用层某个副本容器被强制终止（崩溃/OOM Kill），集群副本数下降",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "rc:replica-loss"
+        ],
+        "blast_radius": "该副本承载的请求被 LB 转移到其余副本；集群吞吐下降约 1/3",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "recover_hint": {
+            "prev_status": {
+              "rca-agent-payment-app-3": "running"
+            }
+          },
+          "detail": {
+            "killed": [
+              "rca-agent-payment-app-3"
+            ]
+          }
+        },
+        "recover_hint": {
+          "prev_status": {
+            "rca-agent-payment-app-3": "running"
+          }
+        },
+        "signal_checks": [
+          {
+            "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+            "ok": true,
+            "waited_s": 23.2,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791545680.552,
+                  "2"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "samples": [
+            {
+              "labels": {},
+              "value": 2.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "samples": [
+            {
+              "labels": {},
+              "value": 2.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "samples": []
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:34:40\r\n  wall_seconds           : 20.669\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.806\r\n  bytes_per_sec          : 528.339\r\n  latency_ms.min         : 2019.11\r\n  latency_ms.p50         : 2050.926\r\n  latency_ms.p90         : 2078.703\r\n  latency_ms.p95         : 2093.176\r\n  latency_ms.p99         : 2181.344\r\n  latency_ms.max         : 2183.788\r\n  latency_ms.mean        : 2056.466\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2183.788\r\n       2        12       0    2078.703\r\n       4        12       0    2045.873\r\n       6        12       0    2077.235\r\n       8        12       0    2054.278\r\n      10        12       0    2062.795\r\n      12        12       0    2061.119\r\n      14        12       0    2059.101\r\n      16        12       0    2061.432\r\n      18        12       0    2055.097\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_kill_replica",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-3": {
+                "name": "rca-agent-payment-app-3",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000",
+                "started_at": "2026-10-09T11:35:48.802913785Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "waited_s": 23.2,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791545772.3312817,
+      "scenario_seconds": 115.4,
+      "title": "强杀一个应用副本（模拟容器崩溃/OOM 后消失）",
+      "layer": "application",
+      "category": "资源",
+      "expected_root_cause": "应用层某个副本容器被强制终止（崩溃/OOM Kill），集群副本数下降"
+    },
+    {
+      "fault_id": "app_memory_stress",
+      "started_at": 1791545792.3335311,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_memory_stress",
+        "layer": "runtime",
+        "title": "单副本容器内存耗尽（逼近 cgroup 上限，OOM 前兆）",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-3"
+        ],
+        "params": {
+          "mb": 200,
+          "seconds": 900
+        },
+        "injected_at": "2026-10-09T11:36:32Z",
+        "expected_root_cause": "应用副本容器内存不足（内存泄漏/大对象），逼近 cgroup 内存上限",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "metric:mem-pressure",
+          "rc:oom-kill"
+        ],
+        "blast_radius": "该副本随时被 OOM Kill，进而退化为副本丢失",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "vm_bytes_mb": 200,
+            "seconds": 900
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+            "ok": true,
+            "waited_s": 16.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791545808.698,
+                  "0.9654693603515625"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.9654693603515625,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.976959228515625,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:36:48\r\n  wall_seconds           : 20.534\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.844\r\n  bytes_per_sec          : 531.798\r\n  latency_ms.min         : 2021.037\r\n  latency_ms.p50         : 2042.708\r\n  latency_ms.p90         : 2058.858\r\n  latency_ms.p95         : 2065.503\r\n  latency_ms.p99         : 2155.748\r\n  latency_ms.max         : 2157.722\r\n  latency_ms.mean        : 2046.303\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2157.722\r\n       2        12       0    2059.674\r\n       4        12       0    2053.808\r\n       6        12       0     2059.62\r\n       8        12       0    2043.681\r\n      10        12       0    2067.616\r\n      12        12       0    2044.813\r\n      14        12       0    2036.966\r\n      16        12       0    2056.896\r\n      18        12       0    2049.179\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_memory_stress",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-3": {
+                "ok": true,
+                "killed": 3,
+                "rc": 0,
+                "stderr": ""
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "waited_s": 9.1,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791545881.974157,
+      "scenario_seconds": 89.6,
+      "title": "单副本容器内存耗尽（逼近 cgroup 上限，OOM 前兆）",
+      "layer": "runtime",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器内存不足（内存泄漏/大对象），逼近 cgroup 内存上限"
+    },
+    {
+      "fault_id": "app_network_delay",
+      "started_at": 1791545901.9770565,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_network_delay",
+        "layer": "application",
+        "title": "单副本网络延迟注入（tc netem 300ms）",
+        "category": "依赖",
+        "targets": [
+          "rca-agent-payment-app-2"
+        ],
+        "params": {
+          "delay_ms": 300,
+          "jitter_ms": 30
+        },
+        "injected_at": "2026-10-09T11:38:22Z",
+        "expected_root_cause": "应用副本网络链路延迟异常（网络/中间设备），非资源不足",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "metric:net-delay",
+          "rc:net-fault"
+        ],
+        "blast_radius": "经过该副本的请求端到端延迟 +300ms×往返次数",
+        "needs_stress": true,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "delay_ms": 300,
+            "jitter_ms": 30
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.2",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791545911.362,
+                  "0.601256632"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.2",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.601256632,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(histogram_quantile(0.99, sum(rate(cc_http_request_duration_seconds_bucket[2m])) by (le, app_instance))) > 0.25",
+          "samples": []
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.2",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.608114468,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(histogram_quantile(0.99, sum(rate(cc_http_request_duration_seconds_bucket[2m])) by (le, app_instance))) > 0.25",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.49525,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.2,
+        "stdout_tail": "================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:38:31\r\n  wall_seconds           : 21.832\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 114\r\n  success                : 114\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.222\r\n  bytes_per_sec          : 475.172\r\n  latency_ms.min         : 2022.35\r\n  latency_ms.p50         : 2051.908\r\n  latency_ms.p90         : 2711.134\r\n  latency_ms.p95         : 2976.484\r\n  latency_ms.p99         : 3118.079\r\n  latency_ms.max         : 3146.223\r\n  latency_ms.mean        : 2191.77\r\n  latency_ms.samples     : 114\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      114  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    3146.223\r\n       2         8       0    3000.088\r\n       3         4       0    2051.027\r\n       4         6       0    2621.418\r\n       5         6       0    2683.615\r\n       6         6       0    2687.348\r\n       7         6       0    2920.886\r\n       8         6       0    2962.325\r\n       9         5       0    2646.328\r\n      10         5       0    2630.697\r\n      11         7       0    2931.363\r\n      12         4       0    2711.134\r\n      13         7       0    2063.409\r\n      14         4       0    2976.484\r\n      15         7       0    2668.795\r\n      16         4       0    2920.045\r\n      17         6       0    2669.993\r\n      18         5       0    2072.715\r\n      19         6       0    2663.207\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_network_delay",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-2"
+            ],
+            "ok": true
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.2",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791545981.728929,
+      "scenario_seconds": 79.8,
+      "title": "单副本网络延迟注入（tc netem 300ms）",
+      "layer": "application",
+      "category": "依赖",
+      "expected_root_cause": "应用副本网络链路延迟异常（网络/中间设备），非资源不足"
+    },
+    {
+      "fault_id": "app_network_loss",
+      "started_at": 1791546001.730438,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_network_loss",
+        "layer": "application",
+        "title": "单副本网络丢包注入（tc netem loss 40%）",
+        "category": "依赖",
+        "targets": [
+          "rca-agent-payment-app-2"
+        ],
+        "params": {
+          "loss_pct": 40
+        },
+        "injected_at": "2026-10-09T11:40:01Z",
+        "expected_root_cause": "应用副本网络丢包严重，链路质量故障",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "metric:net-loss",
+          "rc:net-fault"
+        ],
+        "blast_radius": "该副本成功率骤降，LB 视情况摘除",
+        "needs_stress": true,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "loss_pct": 40
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.3",
+            "ok": true,
+            "waited_s": 30.3,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791546032.334,
+                  "1.024189076"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.3",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.024189076,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "samples": []
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.3",
+          "samples": [
+            {
+              "labels": {},
+              "value": 2.430835427,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "samples": []
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.2,
+        "stdout_tail": "==========================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:40:32\r\n  wall_seconds           : 22.321\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 113\r\n  success                : 112\r\n  error                  : 1\r\n  success_rate           : 99.12%\r\n  requests_per_sec       : 5.063\r\n  bytes_per_sec          : 456.615\r\n  latency_ms.min         : 2021.636\r\n  latency_ms.p50         : 2046.293\r\n  latency_ms.p90         : 2253.382\r\n  latency_ms.p95         : 2877.241\r\n  latency_ms.p99         : 5020.635\r\n  latency_ms.max         : 12126.31\r\n  latency_ms.mean        : 2218.301\r\n  latency_ms.samples     : 113\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      112   99.12%  ##################################################\r\n  no-response            :        1    0.88%  \r\n----------------------------------------------------------------\r\n错误类型计数\r\n  timeout                :        1  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       1    12126.31\r\n       2        10       0    2879.632\r\n       4         9       0    2877.241\r\n       5         2       0    2062.196\r\n       6         8       0    2056.485\r\n       7         3       0    2047.683\r\n       8         8       0    2569.454\r\n       9         3       0     2068.96\r\n      10         8       0    2056.226\r\n      11         3       0    2255.523\r\n      12         9       0    3346.832\r\n      13         3       0    2055.715\r\n      14         8       0    2066.374\r\n      15         4       0    2501.486\r\n      16         8       0    2286.417\r\n      17         3       0    2253.382\r\n      18         9       0    2701.046\r\n      19         3       0    2889.304\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_network_loss",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-2"
+            ],
+            "ok": true
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546102.7652004,
+      "scenario_seconds": 101.0,
+      "title": "单副本网络丢包注入（tc netem loss 40%）",
+      "layer": "application",
+      "category": "依赖",
+      "expected_root_cause": "应用副本网络丢包严重，链路质量故障"
+    },
+    {
+      "fault_id": "app_oom_kill",
+      "started_at": 1791546122.7668538,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_oom_kill",
+        "layer": "runtime",
+        "title": "构造真实容器 OOMKill（内存上限低于实际用量 + 内存申请）",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-3"
+        ],
+        "params": {
+          "shrink_mb": 32,
+          "vm_mb": 512
+        },
+        "injected_at": "2026-10-09T11:42:02Z",
+        "expected_root_cause": "应用副本容器被内核 OOM Kill 后重启（内存超限）",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "rc:oom-kill",
+          "rc:replica-loss"
+        ],
+        "blast_radius": "该副本重启期间流量转移到其余副本；重启后连接池/缓存冷启动",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "error": "",
+          "recover_hint": {
+            "prev": {
+              "rca-agent-payment-app-3": {
+                "restart_count": 0,
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000"
+              }
+            }
+          },
+          "detail": {
+            "shrunk_to_mb": 32,
+            "vm_bytes_mb": 512,
+            "docker_update": {
+              "rca-agent-payment-app-3": {
+                "rc": 0,
+                "error": "",
+                "limit_after_mb": 32.0,
+                "applied": true
+              }
+            },
+            "observation": {
+              "rca-agent-payment-app-3": {
+                "status": "running",
+                "oom_killed": true,
+                "restart_count_before": 0,
+                "restart_count_now": 0,
+                "restarted_after_oom": false,
+                "exit_code": "0"
+              }
+            },
+            "oom_observed": true,
+            "limit_applied": true
+          }
+        },
+        "recover_hint": {
+          "prev": {
+            "rca-agent-payment-app-3": {
+              "restart_count": 0,
+              "memory_limit_mb": 256.0,
+              "nano_cpus": "500000000"
+            }
+          }
+        },
+        "signal_checks": [
+          {
+            "expr": "increase(cc_container_restart_count{container=~\"rca-agent-payment-app-.*\"}[5m]) > 0",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {
+                  "container": "rca-agent-payment-app-3",
+                  "instance": "container-exporter:9105",
+                  "job": "container-exporter"
+                },
+                "value": [
+                  1791546132.425,
+                  "1.0032598778861674"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "increase(cc_container_restart_count{container=~\"rca-agent-payment-app-.*\"}[5m]) > 0",
+          "samples": [
+            {
+              "labels": {
+                "instance": "container-exporter:9105"
+              },
+              "value": 1.010530563548319,
+              "key": "container-exporter:9105"
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "increase(cc_container_restart_count{container=~\"rca-agent-payment-app-.*\"}[5m]) > 0",
+          "samples": [
+            {
+              "labels": {
+                "instance": "container-exporter:9105"
+              },
+              "value": 1.0177766860832338,
+              "key": "container-exporter:9105"
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:42:12\r\n  wall_seconds           : 20.799\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.769\r\n  bytes_per_sec          : 525.023\r\n  latency_ms.min         : 2014.232\r\n  latency_ms.p50         : 2045.16\r\n  latency_ms.p90         : 2064.557\r\n  latency_ms.p95         : 2187.994\r\n  latency_ms.p99         : 2391.659\r\n  latency_ms.max         : 2394.272\r\n  latency_ms.mean        : 2058.924\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2394.272\r\n       2        12       0    2058.917\r\n       4        12       0    2035.103\r\n       6        12       0    2064.557\r\n       8        12       0    2053.528\r\n      10        12       0    2063.029\r\n      12        12       0    2054.281\r\n      14        12       0    2068.192\r\n      16        12       0    2054.143\r\n      18        12       0    2062.248\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_oom_kill",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-3": {
+                "name": "rca-agent-payment-app-3",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 1,
+                "exit_code": "0",
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000",
+                "started_at": "2026-10-09T11:42:03.490464548Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546198.8889868,
+      "scenario_seconds": 76.1,
+      "title": "构造真实容器 OOMKill（内存上限低于实际用量 + 内存申请）",
+      "layer": "runtime",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器被内核 OOM Kill 后重启（内存超限）"
+    },
+    {
+      "fault_id": "app_pause_replica",
+      "started_at": 1791546218.8905797,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_pause_replica",
+        "layer": "application",
+        "title": "暂停一个应用副本（假死：进程在但完全不响应）",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-3"
+        ],
+        "params": {},
+        "injected_at": "2026-10-09T11:43:38Z",
+        "expected_root_cause": "应用副本容器被挂起（假死），进程存在但无法处理请求",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "rc:replica-hang",
+          "rc:replica-loss"
+        ],
+        "blast_radius": "LB 健康检查超时后摘除该副本；期间经过该后端的请求超时",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "paused": [
+              "rca-agent-payment-app-3"
+            ]
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791546228.139,
+                  "1"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "count(up{job=\"payment-app\"} == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "count(up{job=\"payment-app\"} == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.2,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:43:48\r\n  wall_seconds           : 22.426\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 92\r\n  success                : 86\r\n  error                  : 6\r\n  success_rate           : 93.48%\r\n  requests_per_sec       : 4.102\r\n  bytes_per_sec          : 348.973\r\n  latency_ms.min         : 2033.172\r\n  latency_ms.p50         : 2049.15\r\n  latency_ms.p90         : 2153.342\r\n  latency_ms.p95         : 12056.122\r\n  latency_ms.p99         : 12150.346\r\n  latency_ms.max         : 12150.346\r\n  latency_ms.mean        : 2709.253\r\n  latency_ms.samples     : 92\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :       86   93.48%  ###############################################\r\n  no-response            :        6    6.52%  ###\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  timeout                :        6  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       4   12150.346\r\n       2         8       0    2069.104\r\n       4         8       0    2056.367\r\n       6         8       0    2044.095\r\n       8         8       0    2069.349\r\n      10         8       2   12069.058\r\n      12        10       0    2047.516\r\n      14        10       0    2055.099\r\n      16        10       0    2075.728\r\n      18        10       0    2066.228\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_pause_replica",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "unpaused": [
+                "rca-agent-payment-app-3"
+              ]
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546298.5164478,
+      "scenario_seconds": 79.6,
+      "title": "暂停一个应用副本（假死：进程在但完全不响应）",
+      "layer": "application",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器被挂起（假死），进程存在但无法处理请求"
+    },
+    {
+      "fault_id": "app_stop_replica",
+      "started_at": 1791546318.5194166,
+      "inject": {
+        "ok": true,
+        "fault_id": "app_stop_replica",
+        "layer": "application",
+        "title": "优雅下线一个应用副本",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-3"
+        ],
+        "params": {},
+        "injected_at": "2026-10-09T11:45:18Z",
+        "expected_root_cause": "应用副本因发布/缩容下线，集群副本数不足",
+        "ontology_terms": [
+          "app:payment-app",
+          "env:container",
+          "rc:replica-loss"
+        ],
+        "blast_radius": "集群容量下降 1/3",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "stopped": [
+              "rca-agent-payment-app-3"
+            ]
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+            "ok": true,
+            "waited_s": 23.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791546341.958,
+                  "2"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "samples": [
+            {
+              "labels": {},
+              "value": 2.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "samples": [
+            {
+              "labels": {},
+              "value": 2.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:45:42\r\n  wall_seconds           : 20.586\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.829\r\n  bytes_per_sec          : 530.452\r\n  latency_ms.min         : 2030.666\r\n  latency_ms.p50         : 2048.514\r\n  latency_ms.p90         : 2061.517\r\n  latency_ms.p95         : 2072.555\r\n  latency_ms.p99         : 2140.57\r\n  latency_ms.max         : 2140.603\r\n  latency_ms.mean        : 2052.13\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2140.603\r\n       2        12       0    2053.423\r\n       4        12       0     2056.25\r\n       6        12       0    2072.555\r\n       8        12       0    2050.065\r\n      10        12       0    2057.416\r\n      12        12       0    2063.404\r\n      14        12       0    2056.452\r\n      16        12       0    2048.689\r\n      18        12       0    2050.782\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "app_stop_replica",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-3": {
+                "name": "rca-agent-payment-app-3",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000",
+                "started_at": "2026-10-09T11:46:46.13371497Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "waited_s": 30.2,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546436.5518534,
+      "scenario_seconds": 118.0,
+      "title": "优雅下线一个应用副本",
+      "layer": "application",
+      "category": "资源",
+      "expected_root_cause": "应用副本因发布/缩容下线，集群副本数不足"
+    },
+    {
+      "fault_id": "db_conn_saturation",
+      "started_at": 1791546456.5543716,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_conn_saturation",
+        "layer": "database",
+        "title": "耗尽 MySQL max_connections（连接数打满）",
+        "category": "配置",
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "params": {
+          "connections": 170
+        },
+        "injected_at": "2026-10-09T11:47:36Z",
+        "expected_root_cause": "MySQL 连接资源耗尽（max_connections 打满），新连接被拒绝",
+        "ontology_terms": [
+          "db:mysql-core",
+          "ds:pay",
+          "rc:conn-exhaust",
+          "metric:conn-exhaust"
+        ],
+        "blast_radius": "所有需要新建连接的应用副本受影响；已建立连接的应用不受影响",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "recover_hint": {
+            "node": "cc-mysql-core"
+          },
+          "detail": {
+            "requested": 170,
+            "total_connections": "186",
+            "max_connections": "200"
+          }
+        },
+        "recover_hint": {
+          "node": "cc-mysql-core"
+        },
+        "signal_checks": [
+          {
+            "expr": "mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85",
+            "ok": true,
+            "waited_s": 2.1,
+            "result": [
+              {
+                "metric": {
+                  "db_cluster": "creditcard",
+                  "db_node": "primary",
+                  "db_role": "primary",
+                  "instance": "primary",
+                  "job": "mysql-primary",
+                  "layer": "database"
+                },
+                "value": [
+                  1791546476.935,
+                  "0.925"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 0.925,
+              "key": "primary"
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 0.945,
+              "key": "primary"
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:47:57\r\n  wall_seconds           : 20.589\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.828\r\n  bytes_per_sec          : 530.387\r\n  latency_ms.min         : 2025.447\r\n  latency_ms.p50         : 2045.496\r\n  latency_ms.p90         : 2071.689\r\n  latency_ms.p95         : 2093.674\r\n  latency_ms.p99         : 2164.389\r\n  latency_ms.max         : 2186.964\r\n  latency_ms.mean        : 2052.446\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2186.964\r\n       2        12       0    2054.754\r\n       4        12       0    2041.737\r\n       6        12       0    2054.622\r\n       8        12       0    2045.044\r\n      10        12       0    2059.608\r\n      12        12       0    2048.808\r\n      14        12       0    2056.387\r\n      16        12       0    2075.154\r\n      18        12       0    2059.441\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_conn_saturation",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed_processes": 171,
+              "killed_sessions": 170,
+              "connections_left": "20"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546561.5441813,
+      "scenario_seconds": 105.0,
+      "title": "耗尽 MySQL max_connections（连接数打满）",
+      "layer": "database",
+      "category": "配置",
+      "expected_root_cause": "MySQL 连接资源耗尽（max_connections 打满），新连接被拒绝"
+    },
+    {
+      "fault_id": "db_cpu_stress",
+      "started_at": 1791546581.5458987,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_cpu_stress",
+        "layer": "database",
+        "title": "数据库 CPU 压力（交叉连接放大查询）",
+        "category": "资源",
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "params": {
+          "loops": 300
+        },
+        "injected_at": "2026-10-09T11:49:41Z",
+        "expected_root_cause": "数据库服务器 CPU 资源不足，查询排队等待 CPU",
+        "ontology_terms": [
+          "db:mysql-core",
+          "metric:db-cpu",
+          "rc:db-cpu-starve"
+        ],
+        "blast_radius": "主库所有查询变慢，读副本因复制单线程回放而延迟上升",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "loops": 300,
+            "parallel": 16,
+            "sql": "SELECT COUNT(*) /* chaos-db-cpu */ FROM t_txn a JOIN t_seq b ON b.n <= 8 WHERE a.amount > 0 AND a.status <> 'VOID'"
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "mysql_global_status_threads_running{db_node=\"primary\"} > 12",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {
+                  "__name__": "mysql_global_status_threads_running",
+                  "db_cluster": "creditcard",
+                  "db_node": "primary",
+                  "db_role": "primary",
+                  "instance": "primary",
+                  "job": "mysql-primary",
+                  "layer": "database"
+                },
+                "value": [
+                  1791546592.516,
+                  "20"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "mysql_global_status_threads_running{db_node=\"primary\"} > 12",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 20.0,
+              "key": "primary"
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "mysql_global_status_threads_running{db_node=\"primary\"} > 12",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 20.0,
+              "key": "primary"
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:49:52\r\n  wall_seconds           : 21.297\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.635\r\n  bytes_per_sec          : 512.74\r\n  latency_ms.min         : 2027.359\r\n  latency_ms.p50         : 2081.849\r\n  latency_ms.p90         : 2149.608\r\n  latency_ms.p95         : 2169.716\r\n  latency_ms.p99         : 2383.897\r\n  latency_ms.max         : 2411.374\r\n  latency_ms.mean        : 2098.48\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2411.374\r\n       2        12       0    2169.753\r\n       4        12       0    2087.697\r\n       6        12       0    2134.569\r\n       8        12       0    2138.057\r\n      10        12       0    2151.488\r\n      12        12       0    2098.937\r\n      14         4       0    2065.057\r\n      15         8       0    2106.555\r\n      16         4       0    2084.359\r\n      17         8       0    2083.491\r\n      18         1       0    2069.258\r\n      19        11       0    2081.849\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_cpu_stress",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "ok": true,
+              "killed": 33,
+              "rc": 0,
+              "stderr": "",
+              "sessions_killed": 13
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "mysql_global_status_threads_running{db_node=\"primary\"} > 12",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546663.6908503,
+      "scenario_seconds": 82.1,
+      "title": "数据库 CPU 压力（交叉连接放大查询）",
+      "layer": "database",
+      "category": "资源",
+      "expected_root_cause": "数据库服务器 CPU 资源不足，查询排队等待 CPU"
+    },
+    {
+      "fault_id": "db_disk_temp_tables",
+      "started_at": 1791546683.6937242,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_disk_temp_tables",
+        "layer": "database",
+        "title": "排序/分组内存不足落盘（磁盘临时表激增）",
+        "category": "配置",
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "params": {
+          "loops": 120
+        },
+        "injected_at": "2026-10-09T11:51:23Z",
+        "expected_root_cause": "数据库排序/分组内存配置过小（tmp_table_size），临时表落盘导致 IO 瓶颈",
+        "ontology_terms": [
+          "db:mysql-core",
+          "rc:tmp-disk",
+          "con:db-tmp-table"
+        ],
+        "blast_radius": "涉及排序/分组的查询整体变慢，磁盘 IO 与延迟上升",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "recover_hint": {
+            "node": "cc-mysql-core",
+            "tmp_table_size": "16777216",
+            "max_heap_table_size": "16777216",
+            "internal_tmp_mem_storage_engine": "TempTable"
+          },
+          "detail": {
+            "loops": 120,
+            "parallel": 4,
+            "tmp_table_size_forced_mb": 1,
+            "tmp_engine_forced": "MEMORY"
+          }
+        },
+        "recover_hint": {
+          "node": "cc-mysql-core",
+          "tmp_table_size": "16777216",
+          "max_heap_table_size": "16777216",
+          "internal_tmp_mem_storage_engine": "TempTable"
+        },
+        "signal_checks": [
+          {
+            "expr": "rate(mysql_global_status_created_tmp_disk_tables[30s]) > 0.05",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {
+                  "db_cluster": "creditcard",
+                  "db_node": "primary",
+                  "db_role": "primary",
+                  "instance": "primary",
+                  "job": "mysql-primary",
+                  "layer": "database"
+                },
+                "value": [
+                  1791546694.825,
+                  "0.3333555570371358"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "rate(mysql_global_status_created_tmp_disk_tables[30s]) > 0.05",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 0.3333555570371358,
+              "key": "primary"
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "rate(mysql_global_status_created_tmp_disk_tables[30s]) > 0.05",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 0.4,
+              "key": "primary"
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:51:35\r\n  wall_seconds           : 20.855\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.754\r\n  bytes_per_sec          : 523.628\r\n  latency_ms.min         : 2030.88\r\n  latency_ms.p50         : 2057.381\r\n  latency_ms.p90         : 2089.096\r\n  latency_ms.p95         : 2095.662\r\n  latency_ms.p99         : 2271.813\r\n  latency_ms.max         : 2278.215\r\n  latency_ms.mean        : 2066.963\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2278.215\r\n       2        12       0    2089.096\r\n       4        12       0    2064.741\r\n       6        12       0    2068.488\r\n       8        12       0    2090.308\r\n      10        12       0    2060.776\r\n      12        12       0    2067.223\r\n      14        12       0    2070.241\r\n      16        12       0    2069.447\r\n      18        12       0    2096.977\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_disk_temp_tables",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed": {
+                "ok": true,
+                "killed": 9,
+                "rc": 0,
+                "stderr": "",
+                "sessions_killed": 4
+              },
+              "restored": {
+                "tmp_table_size": "16777216",
+                "max_heap_table_size": "16777216",
+                "internal_tmp_mem_storage_engine": "TempTable"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "rate(mysql_global_status_created_tmp_disk_tables[1m]) > 0.05",
+          "waited_s": 37.3,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546797.6896944,
+      "scenario_seconds": 114.0,
+      "title": "排序/分组内存不足落盘（磁盘临时表激增）",
+      "layer": "database",
+      "category": "配置",
+      "expected_root_cause": "数据库排序/分组内存配置过小（tmp_table_size），临时表落盘导致 IO 瓶颈"
+    },
+    {
+      "fault_id": "db_primary_readonly",
+      "started_at": 1791546817.6927378,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_primary_readonly",
+        "layer": "database",
+        "title": "主库被置为只读（读写分离下最隐蔽的配置漂移）",
+        "category": "配置",
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "params": {},
+        "injected_at": "2026-10-09T11:53:37Z",
+        "expected_root_cause": "主库被置为只读（配置变更/切换未回滚），写路径全部失败而读路径正常",
+        "ontology_terms": [
+          "db:mysql-core",
+          "rc:primary-readonly",
+          "con:db-role"
+        ],
+        "blast_radius": "全部写交易失败（P0），但健康检查与读接口全部正常，极易误判",
+        "needs_stress": true,
+        "inject_result": {
+          "ok": true,
+          "recover_hint": {
+            "node": "cc-mysql-core",
+            "read_only": "0",
+            "super_read_only": "0"
+          },
+          "detail": {
+            "read_only_before": "0",
+            "read_only_now": "1"
+          }
+        },
+        "recover_hint": {
+          "node": "cc-mysql-core",
+          "read_only": "0",
+          "super_read_only": "0"
+        },
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signal_checks_under_load": [
+        {
+          "ok": true,
+          "expr": "rate(cc_http_requests_total{path=\"/txn\",status=\"503\"}[2m]) > 0",
+          "waited_s": 23.1,
+          "result": [
+            {
+              "metric": {
+                "app": "payment-app",
+                "app_instance": "177458b46bb0",
+                "component": "payment-app",
+                "instance": "172.18.0.2",
+                "job": "payment-app",
+                "layer": "application",
+                "method": "POST",
+                "path": "/txn",
+                "status": "503",
+                "version": "1.8.3"
+              },
+              "value": [
+                1791546841.304,
+                "0.35015833333333335"
+              ]
+            },
+            {
+              "metric": {
+                "app": "payment-app",
+                "app_instance": "4384b926a4a4",
+                "component": "payment-app",
+                "instance": "172.18.0.7",
+                "job": "payment-app",
+                "layer": "application",
+                "method": "POST",
+                "path": "/txn",
+                "status": "503",
+                "version": "1.8.3"
+              },
+              "value": [
+                1791546841.304,
+                "0.350255"
+              ]
+            }
+          ]
+        }
+      ],
+      "signals_peak": [
+        {
+          "expr": "rate(cc_http_requests_total{path=\"/txn\",status=\"503\"}[2m]) > 0",
+          "samples": [
+            {
+              "labels": {
+                "app_instance": "177458b46bb0",
+                "instance": "172.18.0.2"
+              },
+              "value": 0.38297666666666663,
+              "key": "177458b46bb0"
+            },
+            {
+              "labels": {
+                "app_instance": "4384b926a4a4",
+                "instance": "172.18.0.7"
+              },
+              "value": 0.3830733333333334,
+              "key": "4384b926a4a4"
+            }
+          ]
+        },
+        {
+          "expr": "rate(cc_txn_total{status=\"failed\"}[2m]) > 0",
+          "samples": [
+            {
+              "labels": {
+                "app_instance": "177458b46bb0",
+                "instance": "172.18.0.2"
+              },
+              "value": 0.4160366666666666,
+              "key": "177458b46bb0"
+            },
+            {
+              "labels": {
+                "app_instance": "4384b926a4a4",
+                "instance": "172.18.0.7"
+              },
+              "value": 0.41613333333333336,
+              "key": "4384b926a4a4"
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "rate(cc_http_requests_total{path=\"/txn\",status=\"503\"}[2m]) > 0",
+          "samples": [
+            {
+              "labels": {
+                "app_instance": "326244bd8003",
+                "instance": "172.18.0.15"
+              },
+              "value": 0.13536114305715283,
+              "key": "326244bd8003"
+            },
+            {
+              "labels": {
+                "app_instance": "177458b46bb0",
+                "instance": "172.18.0.2"
+              },
+              "value": 0.38354847814105636,
+              "key": "177458b46bb0"
+            },
+            {
+              "labels": {
+                "app_instance": "4384b926a4a4",
+                "instance": "172.18.0.7"
+              },
+              "value": 0.38357314612334875,
+              "key": "4384b926a4a4"
+            }
+          ]
+        },
+        {
+          "expr": "rate(cc_txn_total{status=\"failed\"}[2m]) > 0",
+          "samples": [
+            {
+              "labels": {
+                "app_instance": "326244bd8003",
+                "instance": "172.18.0.15"
+              },
+              "value": 0.11101206747116474,
+              "key": "326244bd8003"
+            },
+            {
+              "labels": {
+                "app_instance": "177458b46bb0",
+                "instance": "172.18.0.2"
+              },
+              "value": 0.3919397034508507,
+              "key": "177458b46bb0"
+            },
+            {
+              "labels": {
+                "app_instance": "4384b926a4a4",
+                "instance": "172.18.0.7"
+              },
+              "value": 0.39196437143314306,
+              "key": "4384b926a4a4"
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 91.3,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:53:38\r\n  wall_seconds           : 20.56\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 0\r\n  error                  : 120\r\n  success_rate           : 0.00%\r\n  requests_per_sec       : 5.836\r\n  bytes_per_sec          : 852.12\r\n  latency_ms.min         : 2016.166\r\n  latency_ms.p50         : 2039.707\r\n  latency_ms.p90         : 2052.772\r\n  latency_ms.p95         : 2067.145\r\n  latency_ms.p99         : 2120.359\r\n  latency_ms.max         : 2120.555\r\n  latency_ms.mean        : 2040.688\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  503                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  http_5xx               :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12      12    2120.555\r\n       2        12      12    2043.489\r\n       4        12      12    2058.124\r\n       6        12      12    2038.628\r\n       8        12      12    2049.476\r\n      10        12      12    2029.653\r\n      12        12      12    2070.585\r\n      14        12      12    2067.145\r\n      16        12      12    2061.951\r\n      18        12      12    2052.772\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_primary_readonly",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "read_only_now": "0"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "rate(cc_http_requests_total{path=\"/txn\",status=\"503\"}[1m]) > 0",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791546911.7085552,
+      "scenario_seconds": 94.0,
+      "title": "主库被置为只读（读写分离下最隐蔽的配置漂移）",
+      "layer": "database",
+      "category": "配置",
+      "expected_root_cause": "主库被置为只读（配置变更/切换未回滚），写路径全部失败而读路径正常"
+    },
+    {
+      "fault_id": "db_replica_io_stop",
+      "started_at": 1791546931.7099247,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_replica_io_stop",
+        "layer": "database",
+        "title": "停止副本 IO 线程（复制中断）",
+        "category": "依赖",
+        "targets": [
+          "cc-mysql-replica-1",
+          "cc-mysql-replica-2"
+        ],
+        "params": {},
+        "injected_at": "2026-10-09T11:55:31Z",
+        "expected_root_cause": "主从复制中断（IO 线程停止），副本数据停止同步",
+        "ontology_terms": [
+          "db:mysql-core",
+          "db:mysql-replica",
+          "con:replica-down",
+          "rc:db-replica-loss"
+        ],
+        "blast_radius": "副本数据永久滞后；主库故障时无法安全切换",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "io_thread_stopped": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ]
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "count(mysql_slave_status_slave_io_running == 0) > 0",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791546941.032,
+                  "1"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "count(mysql_slave_status_slave_io_running == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 1.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "count(mysql_slave_status_slave_io_running == 0) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 2.0,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:55:41\r\n  wall_seconds           : 20.651\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.811\r\n  bytes_per_sec          : 528.778\r\n  latency_ms.min         : 2018.243\r\n  latency_ms.p50         : 2049.383\r\n  latency_ms.p90         : 2065.132\r\n  latency_ms.p95         : 2068.278\r\n  latency_ms.p99         : 2162.704\r\n  latency_ms.max         : 2162.842\r\n  latency_ms.mean        : 2052.562\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2162.842\r\n       2        12       0    2055.644\r\n       4        12       0    2068.278\r\n       6        12       0    2066.436\r\n       8        12       0    2049.578\r\n      10        12       0    2056.388\r\n      12        12       0    2054.124\r\n      14        12       0    2066.495\r\n      16        12       0    2065.774\r\n      18        12       0     2050.75\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_replica_io_stop",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ],
+            "ok": true
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(mysql_slave_status_slave_io_running == 0) > 0",
+          "waited_s": 16.1,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547021.4848967,
+      "scenario_seconds": 89.8,
+      "title": "停止副本 IO 线程（复制中断）",
+      "layer": "database",
+      "category": "依赖",
+      "expected_root_cause": "主从复制中断（IO 线程停止），副本数据停止同步"
+    },
+    {
+      "fault_id": "db_replica_kill",
+      "started_at": 1791547041.487069,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_replica_kill",
+        "layer": "database",
+        "title": "杀掉一个只读副本容器",
+        "category": "资源",
+        "targets": [
+          "cc-mysql-replica-1",
+          "cc-mysql-replica-2"
+        ],
+        "params": {},
+        "injected_at": "2026-10-09T11:57:21Z",
+        "expected_root_cause": "数据库只读副本节点丢失，读路径容量下降",
+        "ontology_terms": [
+          "db:mysql-replica",
+          "rc:db-replica-loss",
+          "con:replica-down",
+          "rc:replica-loss"
+        ],
+        "blast_radius": "读容量下降；若主库同时故障则失去冗余",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "killed": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ]
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "count(mysql_up{db_role=\"replica\"} == 1) < 2 or min(mysql_global_status_uptime{db_role=\"replica\"}) < 180",
+            "ok": true,
+            "waited_s": 16.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791547058.351,
+                  "1"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "count(mysql_up{db_role=\"replica\"} == 1) < 2 or min(mysql_global_status_uptime{db_role=\"replica\"}) < 180",
+          "samples": []
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "count(mysql_up{db_role=\"replica\"} == 1) < 2 or min(mysql_global_status_uptime{db_role=\"replica\"}) < 180",
+          "samples": []
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:57:38\r\n  wall_seconds           : 20.614\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.821\r\n  bytes_per_sec          : 529.729\r\n  latency_ms.min         : 2011.368\r\n  latency_ms.p50         : 2045.793\r\n  latency_ms.p90         : 2077.46\r\n  latency_ms.p95         : 2084.757\r\n  latency_ms.p99         : 2154.991\r\n  latency_ms.max         : 2155.895\r\n  latency_ms.mean        : 2050.089\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2155.895\r\n       2        12       0    2051.978\r\n       4        12       0    2049.197\r\n       6        12       0    2088.263\r\n       8        12       0    2064.126\r\n      10        12       0    2037.273\r\n      12        12       0    2051.909\r\n      14        12       0    2061.969\r\n      16        12       0    2057.971\r\n      18        12       0    2048.962\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_replica_kill",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ],
+            "ok": true,
+            "detail": {
+              "cc-mysql-replica-1": {
+                "name": "cc-mysql-replica-1",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 768.0,
+                "nano_cpus": "0",
+                "started_at": "2026-10-09T11:58:42.536189075Z"
+              },
+              "cc-mysql-replica-2": {
+                "name": "cc-mysql-replica-2",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 768.0,
+                "nano_cpus": "0",
+                "started_at": "2026-10-09T11:58:42.904648489Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(mysql_up{db_role=\"replica\"} == 1) < 2",
+          "waited_s": 9.1,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547132.3500535,
+      "scenario_seconds": 90.9,
+      "title": "杀掉一个只读副本容器",
+      "layer": "database",
+      "category": "资源",
+      "expected_root_cause": "数据库只读副本节点丢失，读路径容量下降"
+    },
+    {
+      "fault_id": "db_replica_lag",
+      "started_at": 1791547152.352267,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_replica_lag",
+        "layer": "database",
+        "title": "只读副本复制延迟（SOURCE_DELAY）",
+        "category": "依赖",
+        "targets": [
+          "cc-mysql-replica-1",
+          "cc-mysql-replica-2"
+        ],
+        "params": {
+          "delay_s": 60
+        },
+        "injected_at": "2026-10-09T11:59:12Z",
+        "expected_root_cause": "主从复制延迟过大，只读副本数据陈旧，读路径读到过期数据",
+        "ontology_terms": [
+          "db:mysql-core",
+          "db:mysql-replica",
+          "metric:replica-lag",
+          "con:replica-lag",
+          "rc:replica-lag"
+        ],
+        "blast_radius": "读路径返回陈旧数据（对账/查询不一致），写路径不受影响",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "recover_hint": {
+            "prev_delay": {
+              "cc-mysql-replica-1": "",
+              "cc-mysql-replica-2": ""
+            },
+            "writer_node": "cc-mysql-core"
+          },
+          "detail": {
+            "delay_s": 60,
+            "source_delay_now": {
+              "cc-mysql-replica-1": "60",
+              "cc-mysql-replica-2": "60"
+            },
+            "writer": "chaos-lag-writer"
+          }
+        },
+        "recover_hint": {
+          "prev_delay": {
+            "cc-mysql-replica-1": "",
+            "cc-mysql-replica-2": ""
+          },
+          "writer_node": "cc-mysql-core"
+        },
+        "signal_checks": [
+          {
+            "expr": "max(cc_mysql_replica_desired_delay) > 0",
+            "ok": true,
+            "waited_s": 16.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791547169.547,
+                  "60"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(cc_mysql_replica_desired_delay) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 60.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "mysql_slave_status_seconds_behind_master > 5",
+          "samples": [
+            {
+              "labels": {
+                "instance": "replica-1",
+                "db_node": "replica-1"
+              },
+              "value": 18.0,
+              "key": "replica-1"
+            },
+            {
+              "labels": {
+                "instance": "replica-2",
+                "db_node": "replica-2"
+              },
+              "value": 12.0,
+              "key": "replica-2"
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(cc_mysql_replica_desired_delay) > 0",
+          "samples": [
+            {
+              "labels": {},
+              "value": 60.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "mysql_slave_status_seconds_behind_master > 5",
+          "samples": [
+            {
+              "labels": {
+                "instance": "replica-1",
+                "db_node": "replica-1"
+              },
+              "value": 61.0,
+              "key": "replica-1"
+            },
+            {
+              "labels": {
+                "instance": "replica-2",
+                "db_node": "replica-2"
+              },
+              "value": 61.0,
+              "key": "replica-2"
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.2,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T19:59:29\r\n  wall_seconds           : 20.57\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.834\r\n  bytes_per_sec          : 530.862\r\n  latency_ms.min         : 2019.958\r\n  latency_ms.p50         : 2045.26\r\n  latency_ms.p90         : 2064.723\r\n  latency_ms.p95         : 2073.113\r\n  latency_ms.p99         : 2128.602\r\n  latency_ms.max         : 2131.928\r\n  latency_ms.mean        : 2047.815\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2131.928\r\n       2        12       0    2060.863\r\n       4        12       0    2064.534\r\n       6        12       0    2040.541\r\n       8        12       0    2050.828\r\n      10        12       0    2075.627\r\n      12        12       0    2064.207\r\n      14        12       0    2063.683\r\n      16        12       0    2073.278\r\n      18        12       0    2066.742\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_replica_lag",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ],
+            "ok": true,
+            "detail": {
+              "source_delay": {
+                "cc-mysql-replica-1": "0",
+                "cc-mysql-replica-2": "0"
+              },
+              "killed_writer_processes": 1,
+              "seconds_behind_after_catchup": {
+                "replica-1": 0.0,
+                "replica-2": 0.0
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(cc_mysql_replica_desired_delay) > 0",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547264.598155,
+      "scenario_seconds": 112.2,
+      "title": "只读副本复制延迟（SOURCE_DELAY）",
+      "layer": "database",
+      "category": "依赖",
+      "expected_root_cause": "主从复制延迟过大，只读副本数据陈旧，读路径读到过期数据"
+    },
+    {
+      "fault_id": "db_row_lock_hold",
+      "started_at": 1791547284.5997765,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_row_lock_hold",
+        "layer": "database",
+        "title": "持有 t_txn 排他行锁（写事务被阻塞）",
+        "category": "数据",
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "params": {
+          "seconds": 900,
+          "victims": 4
+        },
+        "injected_at": "2026-10-09T12:01:24Z",
+        "expected_root_cause": "InnoDB 行锁等待：长事务持有 t_txn 排他锁阻塞写入，连接池被占满",
+        "ontology_terms": [
+          "db:mysql-core",
+          "table:t_txn",
+          "ds:pay",
+          "rc:row-lock",
+          "metric:conn-exhaust"
+        ],
+        "blast_radius": "写路径全面变慢并级联到应用层 P99",
+        "needs_stress": true,
+        "inject_result": {
+          "ok": true,
+          "recover_hint": {
+            "node": "cc-mysql-core",
+            "victims": 4
+          },
+          "detail": {
+            "holder_sessions": "1",
+            "victims": 4,
+            "query_sessions": "2"
+          }
+        },
+        "recover_hint": {
+          "node": "cc-mysql-core",
+          "victims": 4
+        },
+        "signal_checks": [
+          {
+            "expr": "rate(mysql_global_status_innodb_row_lock_waits[1m]) > 0.02",
+            "ok": true,
+            "waited_s": 23.2,
+            "result": [
+              {
+                "metric": {
+                  "db_cluster": "creditcard",
+                  "db_node": "primary",
+                  "db_role": "primary",
+                  "instance": "primary",
+                  "job": "mysql-primary",
+                  "layer": "database"
+                },
+                "value": [
+                  1791547313.211,
+                  "0.2282729959775096"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "rate(mysql_global_status_innodb_row_lock_waits[1m]) > 0.02",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 0.2374024934995666,
+              "key": "primary"
+            }
+          ]
+        },
+        {
+          "expr": "max(cc_mysql_pool_active) > 4",
+          "samples": []
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "rate(mysql_global_status_innodb_row_lock_waits[1m]) > 0.02",
+          "samples": [
+            {
+              "labels": {
+                "instance": "primary",
+                "db_node": "primary"
+              },
+              "value": 0.26669037247755356,
+              "key": "primary"
+            }
+          ]
+        },
+        {
+          "expr": "max(cc_mysql_pool_active) > 4",
+          "samples": []
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T20:01:53\r\n  wall_seconds           : 24.214\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 24\r\n  success                : 0\r\n  error                  : 24\r\n  success_rate           : 0.00%\r\n  requests_per_sec       : 0.991\r\n  bytes_per_sec          : 0.0\r\n  latency_ms.min         : 12029.265\r\n  latency_ms.p50         : 12050.751\r\n  latency_ms.p90         : 12162.413\r\n  latency_ms.p95         : 12162.57\r\n  latency_ms.p99         : 12164.014\r\n  latency_ms.max         : 12164.014\r\n  latency_ms.mean        : 12072.143\r\n  latency_ms.samples     : 24\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  no-response            :       24  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  timeout                :       24  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12      12   12164.014\r\n      12        12      12   12050.751\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_row_lock_hold",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed_processes": 2,
+              "killed_waiting": 0,
+              "killed_stuck_trx": 1,
+              "killed_long_select": 0,
+              "innodb_trx_left": "0",
+              "data_lock_waits_left": "0"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "rate(mysql_global_status_innodb_row_lock_waits[1m]) > 0.02",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547384.2469304,
+      "scenario_seconds": 99.6,
+      "title": "持有 t_txn 排他行锁（写事务被阻塞）",
+      "layer": "database",
+      "category": "数据",
+      "expected_root_cause": "InnoDB 行锁等待：长事务持有 t_txn 排他锁阻塞写入，连接池被占满"
+    },
+    {
+      "fault_id": "db_slow_query_flood",
+      "started_at": 1791547404.2485728,
+      "inject": {
+        "ok": true,
+        "fault_id": "db_slow_query_flood",
+        "layer": "database",
+        "title": "持续制造慢查询（全表扫描 + 连接放大）",
+        "category": "数据",
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "params": {
+          "loops": 400
+        },
+        "injected_at": "2026-10-09T12:03:24Z",
+        "expected_root_cause": "t_txn 上存在无索引全表扫描的慢 SQL，数据库性能退化",
+        "ontology_terms": [
+          "db:mysql-core",
+          "table:t_txn",
+          "rc:slow-sql"
+        ],
+        "blast_radius": "主库 CPU/IO 上升，所有依赖该库的写入变慢并复制到副本",
+        "needs_stress": true,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "loops": 400,
+            "duration_s": 480.0,
+            "sql": "SELECT COUNT(*) /* chaos-slow-query */ FROM t_txn a JOIN t_seq s ON s.n <= 5 WHERE a.amount > 0 AND a.status <> 'VOID'"
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "max(rate(mysql_global_status_slow_queries{db_node=\"primary\"}[30s])) > 0.15",
+            "ok": true,
+            "waited_s": 23.2,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791547429.51,
+                  "0.400026668444563"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(rate(mysql_global_status_slow_queries{db_node=\"primary\"}[30s])) > 0.15",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.400026668444563,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(rate(mysql_global_status_slow_queries{db_node=\"primary\"}[30s])) > 0.15",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.3333777837044939,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T20:03:49\r\n  wall_seconds           : 20.783\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.774\r\n  bytes_per_sec          : 525.431\r\n  latency_ms.min         : 2017.8\r\n  latency_ms.p50         : 2052.684\r\n  latency_ms.p90         : 2089.743\r\n  latency_ms.p95         : 2102.419\r\n  latency_ms.p99         : 2235.211\r\n  latency_ms.max         : 2239.746\r\n  latency_ms.mean        : 2061.737\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2239.746\r\n       2        12       0    2079.485\r\n       4        12       0    2076.324\r\n       6        12       0    2071.142\r\n       8        12       0    2083.617\r\n      10        12       0    2065.322\r\n      12        12       0    2099.346\r\n      14        12       0    2061.894\r\n      16        12       0    2058.429\r\n      18        12       0    2053.397\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "db_slow_query_flood",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "ok": true,
+              "killed": 2,
+              "rc": 0,
+              "stderr": "",
+              "sessions_killed": 0
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(rate(mysql_global_status_slow_queries{db_node=\"primary\"}[1m])) > 0.45",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547495.9623992,
+      "scenario_seconds": 91.7,
+      "title": "持续制造慢查询（全表扫描 + 连接放大）",
+      "layer": "database",
+      "category": "数据",
+      "expected_root_cause": "t_txn 上存在无索引全表扫描的慢 SQL，数据库性能退化"
+    },
+    {
+      "fault_id": "res_cluster_cpu",
+      "started_at": 1791547515.9649048,
+      "inject": {
+        "ok": true,
+        "fault_id": "res_cluster_cpu",
+        "layer": "resource",
+        "title": "应用集群 CPU 全面耗尽（全副本 CPU 压力 + 压测）",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-1",
+          "rca-agent-payment-app-2",
+          "rca-agent-payment-app-3"
+        ],
+        "params": {
+          "workers": 4,
+          "seconds": 900
+        },
+        "injected_at": "2026-10-09T12:05:16Z",
+        "expected_root_cause": "应用集群整体 CPU 资源不足（副本数不足或 CPU 配额过低）",
+        "ontology_terms": [
+          "app:payment-app",
+          "metric:cpu-throttle",
+          "rc:cluster-capacity",
+          "rc:cpu-throttle"
+        ],
+        "blast_radius": "应用层整体（P1），延迟与错误率同时上升",
+        "needs_stress": true,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "replicas": [
+              "rca-agent-payment-app-1",
+              "rca-agent-payment-app-2",
+              "rca-agent-payment-app-3"
+            ],
+            "cpu_workers": 4
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "count(rate(cc_container_cpu_throttled_seconds_total[1m]) > 0.1) >= 2",
+            "ok": true,
+            "waited_s": 16.2,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791547532.776,
+                  "3"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "count(rate(cc_container_cpu_throttled_seconds_total[1m]) > 0.1) >= 2",
+          "samples": [
+            {
+              "labels": {},
+              "value": 3.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(rate(cc_container_cpu_nr_throttled_total[1m])) > 1",
+          "samples": [
+            {
+              "labels": {},
+              "value": 2.333385186337474,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "count(rate(cc_container_cpu_throttled_seconds_total[1m]) > 0.1) >= 2",
+          "samples": [
+            {
+              "labels": {},
+              "value": 3.0,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(rate(cc_container_cpu_nr_throttled_total[1m])) > 1",
+          "samples": [
+            {
+              "labels": {},
+              "value": 10.02266767411885,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.2,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T20:05:32\r\n  wall_seconds           : 21.298\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.634\r\n  bytes_per_sec          : 512.718\r\n  latency_ms.min         : 2022.382\r\n  latency_ms.p50         : 2098.306\r\n  latency_ms.p90         : 2152.927\r\n  latency_ms.p95         : 2184.649\r\n  latency_ms.p99         : 2207.347\r\n  latency_ms.max         : 2224.307\r\n  latency_ms.mean        : 2100.877\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2224.307\r\n       2        12       0    2183.974\r\n       4        12       0    2188.206\r\n       6        12       0    2184.649\r\n       8        12       0      2201.8\r\n      10        12       0    2127.278\r\n      12        12       0    2124.999\r\n      14        11       0    2207.347\r\n      15         1       0    2157.771\r\n      16        10       0    2159.545\r\n      17         2       0    2092.828\r\n      18         7       0    2105.199\r\n      19         5       0    2127.935\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "res_cluster_cpu",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1",
+              "rca-agent-payment-app-2",
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-1": {
+                "ok": true,
+                "killed": 5,
+                "rc": 0,
+                "stderr": ""
+              },
+              "rca-agent-payment-app-2": {
+                "ok": true,
+                "killed": 5,
+                "rc": 0,
+                "stderr": ""
+              },
+              "rca-agent-payment-app-3": {
+                "ok": true,
+                "killed": 5,
+                "rc": 0,
+                "stderr": ""
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(rate(cc_container_cpu_throttled_seconds_total[1m]) > 0.1) >= 2",
+          "waited_s": 58.5,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547661.3391318,
+      "scenario_seconds": 145.4,
+      "title": "应用集群 CPU 全面耗尽（全副本 CPU 压力 + 压测）",
+      "layer": "resource",
+      "category": "资源",
+      "expected_root_cause": "应用集群整体 CPU 资源不足（副本数不足或 CPU 配额过低）"
+    },
+    {
+      "fault_id": "res_cluster_memory",
+      "started_at": 1791547681.3422546,
+      "inject": {
+        "ok": true,
+        "fault_id": "res_cluster_memory",
+        "layer": "resource",
+        "title": "应用集群内存全面耗尽",
+        "category": "资源",
+        "targets": [
+          "rca-agent-payment-app-1",
+          "rca-agent-payment-app-2",
+          "rca-agent-payment-app-3"
+        ],
+        "params": {
+          "mb": 220,
+          "seconds": 900
+        },
+        "injected_at": "2026-10-09T12:08:01Z",
+        "expected_root_cause": "应用集群内存资源不足，全部副本面临 OOM Kill 风险",
+        "ontology_terms": [
+          "app:payment-app",
+          "metric:mem-pressure",
+          "rc:cluster-capacity"
+        ],
+        "blast_radius": "应用层整体（P1），可能全副本同时被 OOM Kill",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "detail": {
+            "replicas": [
+              "rca-agent-payment-app-1",
+              "rca-agent-payment-app-2",
+              "rca-agent-payment-app-3"
+            ],
+            "vm_bytes_mb": 220
+          }
+        },
+        "recover_hint": {},
+        "signal_checks": [
+          {
+            "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+            "ok": true,
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791547691.055,
+                  "0.9996185302734375"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.9996185302734375,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.9823760986328125,
+              "key": ""
+            }
+          ]
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 64.1,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T20:08:11\r\n  wall_seconds           : 20.543\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 120\r\n  success                : 120\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.841\r\n  bytes_per_sec          : 531.576\r\n  latency_ms.min         : 2017.917\r\n  latency_ms.p50         : 2040.572\r\n  latency_ms.p90         : 2062.984\r\n  latency_ms.p95         : 2117.281\r\n  latency_ms.p99         : 2191.494\r\n  latency_ms.max         : 2195.53\r\n  latency_ms.mean        : 2048.09\r\n  latency_ms.samples     : 120\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      120  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0     2195.53\r\n       2        12       0    2045.961\r\n       4        12       0    2045.493\r\n       6        12       0    2048.963\r\n       8        12       0    2051.576\r\n      10        12       0    2042.726\r\n      12        12       0    2057.727\r\n      14        12       0     2061.64\r\n      16        12       0    2045.067\r\n      18        12       0    2062.984\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "res_cluster_memory",
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1",
+              "rca-agent-payment-app-2",
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-1": {
+                "ok": true,
+                "killed": 3,
+                "rc": 0,
+                "stderr": ""
+              },
+              "rca-agent-payment-app-2": {
+                "ok": true,
+                "killed": 3,
+                "rc": 0,
+                "stderr": ""
+              },
+              "rca-agent-payment-app-3": {
+                "ok": true,
+                "killed": 3,
+                "rc": 0,
+                "stderr": ""
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "waited_s": 16.2,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547771.6289356,
+      "scenario_seconds": 90.3,
+      "title": "应用集群内存全面耗尽",
+      "layer": "resource",
+      "category": "资源",
+      "expected_root_cause": "应用集群内存资源不足，全部副本面临 OOM Kill 风险"
+    },
+    {
+      "fault_id": "res_db_memory",
+      "started_at": 1791547791.6313546,
+      "inject": {
+        "ok": true,
+        "fault_id": "res_db_memory",
+        "layer": "resource",
+        "title": "数据库内存/排序资源不足（大排序落盘）",
+        "category": "资源",
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "params": {
+          "loops": 800,
+          "parallel": 4
+        },
+        "injected_at": "2026-10-09T12:09:51Z",
+        "expected_root_cause": "数据库排序内存不足（sort_buffer/tmp_table 配置偏小），临时表落盘",
+        "ontology_terms": [
+          "db:mysql-core",
+          "rc:tmp-disk",
+          "con:db-tmp-table"
+        ],
+        "blast_radius": "数据库侧排序类查询全面变慢",
+        "needs_stress": false,
+        "inject_result": {
+          "ok": true,
+          "recover_hint": {
+            "node": "cc-mysql-core",
+            "orig": {
+              "sort_buffer_size": "262144",
+              "join_buffer_size": "262144",
+              "tmp_table_size": "16777216",
+              "max_heap_table_size": "16777216",
+              "internal_tmp_mem_storage_engine": "TempTable"
+            }
+          },
+          "detail": {
+            "loops": 800,
+            "parallel": 4,
+            "duration_s": 480.0,
+            "slow_query_logging": "long_query_time=1, min_examined_row_limit=10000"
+          }
+        },
+        "recover_hint": {
+          "node": "cc-mysql-core",
+          "orig": {
+            "sort_buffer_size": "262144",
+            "join_buffer_size": "262144",
+            "tmp_table_size": "16777216",
+            "max_heap_table_size": "16777216",
+            "internal_tmp_mem_storage_engine": "TempTable"
+          }
+        },
+        "signal_checks": [
+          {
+            "expr": "max(rate(mysql_global_status_created_tmp_disk_tables{db_node=\"primary\"}[30s])) > 0.03",
+            "ok": true,
+            "waited_s": 9.0,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791547802.819,
+                  "0.26666666666666666"
+                ]
+              }
+            ]
+          }
+        ],
+        "signal_observed": true
+      },
+      "stress_cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+      "signals_peak": [
+        {
+          "expr": "max(rate(mysql_global_status_created_tmp_disk_tables{db_node=\"primary\"}[30s])) > 0.03",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.2666666666666667,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(rate(mysql_global_status_slow_queries{db_node=\"primary\"}[30s])) > 0.2",
+          "samples": []
+        }
+      ],
+      "signals_end": [
+        {
+          "expr": "max(rate(mysql_global_status_created_tmp_disk_tables{db_node=\"primary\"}[30s])) > 0.03",
+          "samples": [
+            {
+              "labels": {},
+              "value": 0.13332444503699753,
+              "key": ""
+            }
+          ]
+        },
+        {
+          "expr": "max(rate(mysql_global_status_slow_queries{db_node=\"primary\"}[30s])) > 0.2",
+          "samples": []
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 20 --concurrency 12",
+        "elapsed_s": 68.2,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-09T20:10:03\r\n  wall_seconds           : 20.479\r\n  concurrency            : 12\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 108\r\n  success                : 108\r\n  error                  : 0\r\n  success_rate           : 100.00%\r\n  requests_per_sec       : 5.274\r\n  bytes_per_sec          : 479.907\r\n  latency_ms.min         : 2028.367\r\n  latency_ms.p50         : 2120.119\r\n  latency_ms.p90         : 3117.362\r\n  latency_ms.p95         : 3124.48\r\n  latency_ms.p99         : 3155.462\r\n  latency_ms.max         : 3163.996\r\n  latency_ms.mean        : 2250.035\r\n  latency_ms.samples     : 108\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  200                    :      108  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  (无)\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        12       0    2298.306\r\n       2        12       0    2064.356\r\n       4        12       0    3163.996\r\n       7        12       0    2722.541\r\n       9         7       0    2036.638\r\n      10         5       0    2062.386\r\n      11         7       0    2060.847\r\n      12         5       0    2053.579\r\n      13         7       0    2063.674\r\n      14         5       0    2086.242\r\n      16        12       0    2138.024\r\n      18        12       0    2146.919\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "fault_id": "res_db_memory",
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed": {
+                "ok": true,
+                "killed": 9,
+                "rc": 0,
+                "stderr": "",
+                "sessions_killed": 4
+              },
+              "restored": {
+                "sort_buffer_size": "262144",
+                "join_buffer_size": "262144",
+                "tmp_table_size": "16777216",
+                "max_heap_table_size": "16777216",
+                "internal_tmp_mem_storage_engine": "TempTable"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(rate(mysql_global_status_created_tmp_disk_tables{db_node=\"primary\"}[1m])) > 0.03",
+          "waited_s": 51.3,
+          "result": []
+        }
+      ],
+      "cancelled": false,
+      "ok": true,
+      "finished_at": 1791547924.3386717,
+      "scenario_seconds": 132.7,
+      "title": "数据库内存/排序资源不足（大排序落盘）",
+      "layer": "resource",
+      "category": "资源",
+      "expected_root_cause": "数据库排序内存不足（sort_buffer/tmp_table 配置偏小），临时表落盘"
+    }
+  ]
+}

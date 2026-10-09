@@ -1,0 +1,13 @@
+{
+  "summary": "可执行性版本：为 15 个根因术语补上 `remediation`（共 50 条处置动作），把『怎么办』从代码里按 5 个类别硬编码的通用建议，改为随根因术语走的本体知识（动作结构同构于 next_actions：urgency / action / command / needs_approval）。直接动机：第 11.20 节把结论补全为『名称+机制+归因对象+观测佐证+判据』后，唯一仍不贴切的就是处置建议 —— 例如『磁盘临时表』给出的是『确认容器是否因内存/CPU 受限被杀』，既不准确也不可执行。根因是类别只有 5 个而根因有 15 个，粒度天然对不上。本轮把粒度对齐到根因，并让『只读排查』与『需审批的写操作』显式分离。",
+  "limitations": [
+    "remediation 是本项目对 EvoOntology Term schema 的扩展字段（与 scoring_keywords / negative_keywords / lifecycle 同类；validate() 只强制 id，额外字段可安全共存）。上游若要正式支持，建议作为 Term 的一等字段纳入 schema 文档。",
+    "50 条动作是人工编写的，存在过拟合到当前 21 个场景与当前技术栈（docker compose / MySQL 8.0 / Nginx）的风险；换环境需要重新评审。",
+    "动作只覆盖『根因已确定之后做什么』，不含自动执行、回滚与验证闭环；needs_approval=true 的动作一律要求人工审批，本轮不做自动化。",
+    "处置契约只校验『可用性』（动作具体 / urgency 合法 / 声明审批），无法校验『这条动作在真实故障里是否真的管用』—— 那需要实测闭环，尚未做。"
+  ],
+  "links": [],
+  "questions": [],
+  "recorded_at": "2026-10-05T14:36:10.617511+00:00",
+  "version": "ontology_v4-remediation"
+}

@@ -1,0 +1,214 @@
+.agent-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Header */
+.agent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo { font-size: 22px; }
+.agent-header h1 { font-size: 16px; font-weight: 600; }
+.subtitle { font-size: 12px; color: var(--text-muted); }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.session-badge {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Body */
+.agent-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+  min-height: 0;
+}
+/* 拖拽中：禁止子元素抢鼠标事件 / 触发文本选择 */
+.agent-body.is-dragging {
+  cursor: col-resize;
+  user-select: none;
+}
+.agent-body.is-dragging * {
+  pointer-events: none;
+}
+.agent-body.is-dragging .splitter {
+  pointer-events: auto;
+}
+
+/* Left panel */
+.panel-chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── 可拖拽分隔条 ─────────────────────────────────────────── */
+.splitter {
+  flex: 0 0 6px;
+  width: 6px;
+  position: relative;
+  cursor: col-resize;
+  background: var(--border);
+  transition: background 0.15s;
+  touch-action: none;
+  outline: none;
+}
+.splitter:hover,
+.splitter:focus-visible,
+.splitter.active {
+  background: var(--accent);
+}
+.splitter.collapsed {
+  cursor: pointer;
+}
+/* 加宽命中区域（视觉仍为 6px） */
+.splitter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  right: -4px;
+}
+/* 中间握把 */
+.splitter-grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 34px;
+  border-radius: 1px;
+  background: var(--text-muted);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.splitter:hover .splitter-grip,
+.splitter.active .splitter-grip,
+.splitter:focus-visible .splitter-grip {
+  background: #000;
+  opacity: 0.8;
+  height: 48px;
+}
+
+/* Right panel */
+.panel-detail {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  min-width: 0;
+}
+.panel-detail.collapsed .detail-tabs {
+  flex-direction: column;
+  border-bottom: none;
+}
+.panel-detail.collapsed .detail-tabs button {
+  border-bottom: none;
+  border-left: 2px solid transparent;
+  padding: 10px 0;
+}
+.panel-detail.collapsed .detail-tabs button.active {
+  border-left-color: var(--accent);
+  border-bottom-color: transparent;
+}
+
+/* Tabs */
+.detail-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.detail-tabs button {
+  flex: 1;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 8px 4px;
+  background: transparent;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.detail-tabs button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Shortcuts */
+.shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.shortcut-btn {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: var(--surface2);
+}
+
+/* Input */
+.input-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.input-area textarea {
+  flex: 1;
+  font-size: 13px;
+}
+.send-btn { flex-shrink: 0; }
+
+/* Error */
+.error-banner {
+  padding: 8px 12px;
+  background: rgba(248, 81, 73, 0.15);
+  color: var(--red);
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Detail content */
+.detail-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.empty-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+}

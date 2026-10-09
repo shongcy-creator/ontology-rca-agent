@@ -1,0 +1,99 @@
+[
+  {
+    "id": "map:app-container",
+    "term_id": "env:container",
+    "database_source": "docker:cc-credit-card-app",
+    "table": "docker_ps",
+    "column": "NAMES",
+    "semantic_filter": "NAMES='cc-credit-card-app'",
+    "grain": "container",
+    "validation": "docker ps 输出匹配",
+    "evidence_refs": [
+      "ev-docker-ps"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:app-ip",
+    "term_id": "env:container",
+    "database_source": "http://127.0.0.1:8080/topology/raw",
+    "table": "network",
+    "column": "containerIP",
+    "grain": "container",
+    "semantic_filter": "containerIP=172.18.0.3",
+    "validation": "GET /topology/raw",
+    "evidence_refs": [
+      "ev-app-topology"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:db-version",
+    "term_id": "db:mysql-core",
+    "database_source": "mysql:creditcard",
+    "table": "performance_schema",
+    "column": "server_status",
+    "semantic_filter": "Variable_name='@@version'",
+    "aggregation_semantics": "scalar",
+    "grain": "server",
+    "validation": "SELECT @@version",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:db-maxconn",
+    "term_id": "db:mysql-core",
+    "database_source": "mysql:creditcard",
+    "table": "performance_schema",
+    "column": "server_status",
+    "semantic_filter": "Variable_name='@@max_connections'",
+    "grain": "server",
+    "validation": "SELECT @@max_connections",
+    "evidence_refs": [
+      "ev-mysql-vars"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:table-rows",
+    "term_id": "table:t_txn",
+    "database_source": "mysql:information_schema",
+    "table": "tables",
+    "column": "table_rows",
+    "semantic_filter": "table_schema='creditcard' AND table_name='t_txn'",
+    "grain": "table",
+    "validation": "information_schema 行数",
+    "evidence_refs": [
+      "ev-mysql-tables"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:host-cpu",
+    "term_id": "env:host-phys",
+    "database_source": "windows:wmi",
+    "table": "Win32_Processor",
+    "column": "NumberOfCores",
+    "grain": "host",
+    "validation": "Get-CimInstance Win32_Processor",
+    "evidence_refs": [
+      "ev-host-facts"
+    ],
+    "confidence": "high"
+  },
+  {
+    "id": "map:latency-p99",
+    "term_id": "metric:mysql-p99",
+    "database_source": "http://127.0.0.1:8080/topology/raw",
+    "table": "db.probe",
+    "column": "latencyMs",
+    "grain": "query",
+    "validation": "app-side JDBC ping latency",
+    "evidence_refs": [
+      "ev-db-probe"
+    ],
+    "confidence": "medium"
+  }
+]

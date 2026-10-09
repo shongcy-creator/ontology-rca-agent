@@ -1,0 +1,3482 @@
+{
+  "mode": "auto",
+  "hold": 240.0,
+  "stress": "--duration 150 --concurrency 24",
+  "complete": false,
+  "requested": [
+    "app_cpu_stress",
+    "app_gateway_stop",
+    "app_kill_replica",
+    "app_memory_stress",
+    "app_network_delay",
+    "app_network_loss",
+    "app_oom_kill",
+    "app_pause_replica",
+    "app_stop_replica",
+    "db_conn_saturation",
+    "db_cpu_stress",
+    "db_disk_temp_tables",
+    "db_primary_readonly",
+    "db_replica_io_stop",
+    "db_replica_kill",
+    "db_replica_lag",
+    "db_row_lock_hold",
+    "db_slow_query_flood",
+    "res_cluster_cpu",
+    "res_cluster_memory",
+    "res_db_memory"
+  ],
+  "summary": {
+    "total_scenarios": 18,
+    "injected_ok": 18,
+    "diagnosed_ok": 17,
+    "diagnosis_accuracy": 0.9444,
+    "alert_coverage": 0.8889,
+    "recovered_ok": 18,
+    "recovery_rate": 1.0,
+    "by_layer": {
+      "运行环境层": {
+        "total": 3,
+        "diagnosed": 2,
+        "injected": 3,
+        "recovered": 3,
+        "alert_covered": 2
+      },
+      "应用层": {
+        "total": 6,
+        "diagnosed": 6,
+        "injected": 6,
+        "recovered": 6,
+        "alert_covered": 6
+      },
+      "数据库层": {
+        "total": 9,
+        "diagnosed": 9,
+        "injected": 9,
+        "recovered": 9,
+        "alert_covered": 8
+      }
+    },
+    "diagnosis_modes": {
+      "deterministic": 18
+    },
+    "mean_diagnosis_latency_ms": 23151.0,
+    "mean_tokens": 11452.6
+  },
+  "results": [
+    {
+      "scenario": "app_cpu_stress",
+      "title": "单副本 CPU 打满（触发 cgroup CPU 配额节流）",
+      "layer": "runtime",
+      "layer_label": "运行环境层",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器 CPU 资源不足，被 cgroup cpu quota 节流",
+      "expected_terms": [
+        "rc:cpu-throttle",
+        "metric:cpu-throttle"
+      ],
+      "alert_names_expected": [
+        "AppContainerCpuThrottled",
+        "AppReplicaLatencySkew"
+      ],
+      "needs_stress": true,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "cpu_workers": 4,
+          "seconds": 900
+        },
+        "targets": [
+          "rca-agent-payment-app-1"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T11:24:16Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.13950205726830556,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 10.023335926214024,
+        "container_mem_ratio": 0.150604248046875,
+        "mysql_threads_connected": 27.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.15239256324291375,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppContainerCpuThrottled",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "runtime",
+          "onto_constraint": "con:app-cpu-throttle",
+          "hint": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+          "summary": "应用副本 {{ $labels.app_instance }} 被 CPU 配额节流",
+          "value": "8.769067194424851e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.473797977387728e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppContainerCpuThrottled"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:cpu-throttle",
+          "root_cause_name": "根因：容器 CPU 配额节流",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:cpu-throttle",
+            "metric:cpu-throttle"
+          ],
+          "hit_keywords": [
+            "节流",
+            "throttle",
+            "cpu quota",
+            "CPU 配额",
+            "CPU 资源"
+          ],
+          "expected_terms": [
+            "rc:cpu-throttle",
+            "metric:cpu-throttle"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:cpu-throttle 且被约束 con:app-cpu-throttle,con:pool-waiting 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 18176.0,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:cpu-throttle 且被约束 con:app-cpu-throttle,con:pool-waiting 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 22.2
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 321.4,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-1": {
+                "ok": true,
+                "killed": 5,
+                "rc": 0,
+                "stderr": ""
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(rate(cc_container_cpu_throttled_seconds_total[1m])) > 0.1",
+          "waited_s": 51.4,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 391.8
+    },
+    {
+      "scenario": "app_gateway_stop",
+      "title": "停掉应用层网关（整个应用入口不可用）",
+      "layer": "application",
+      "layer_label": "应用层",
+      "category": "依赖",
+      "expected_root_cause": "应用层网关（负载均衡入口）不可用，而非业务副本故障",
+      "expected_terms": [
+        "rc:gateway-down"
+      ],
+      "alert_names_expected": [
+        "AppGatewayUnreachable"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppContainerCpuThrottled",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "stopped": "cc-app-gateway"
+        },
+        "targets": [
+          "cc-app-gateway"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T11:30:58Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 0.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.008425005000333354,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1009368896484375,
+        "mysql_threads_connected": 28.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.161914014134141,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppGatewayUnreachable",
+          "state": "firing",
+          "severity": "P0",
+          "layer": "application",
+          "onto_constraint": "con:gateway-availability",
+          "hint": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503",
+          "summary": "应用网关黑盒探活失败",
+          "value": "0e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.4737876342199452e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppGatewayUnreachable"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503",
+      "severity": "P0",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:gateway-down",
+          "root_cause_name": "根因：应用网关不可用",
+          "root_cause_category": "依赖",
+          "root_cause_confidence": 0.98,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:gateway-down"
+          ],
+          "hit_keywords": [
+            "网关",
+            "gateway",
+            "负载均衡",
+            "入口"
+          ],
+          "expected_terms": [
+            "rc:gateway-down"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:gateway-down 且被约束 con:gateway-availability,con:gateway-down 支撑，置信度 0.98 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 27.5,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:gateway-down 且被约束 con:gateway-availability,con:gateway-down 支撑，置信度 0.98 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 2.6
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 281.7,
+        "stdout_tail": "-----------------------------------\r\n状态码直方图\r\n  no-response            :      888  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  connection_refused     :      888  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        24      24    4155.899\r\n       4        24      24    4059.788\r\n       8        24      24    4075.933\r\n      12        24      24    4098.498\r\n      16        24      24    4081.106\r\n      20        24      24    4076.693\r\n      24        24      24      4077.9\r\n      28        24      24    4057.639\r\n      32        24      24    4081.999\r\n      36        24      24     4056.34\r\n      40        24      24    4052.533\r\n      44        24      24    4077.625\r\n      48        24      24    4065.314\r\n      52        24      24    4074.236\r\n      57        24      24     4057.62\r\n      61        24      24    4085.195\r\n      65        24      24    4078.692\r\n      69        24      24    4082.815\r\n      73        24      24    4096.767\r\n      77        24      24     4084.32\r\n      81        24      24    4081.714\r\n      85        24      24    4059.893\r\n      89        24      24    4079.121\r\n      93        24      24    4078.146\r\n      97        24      24    4077.876\r\n     101        24      24    4092.149\r\n     105        24      24    4071.564\r\n     109        24      24    4080.391\r\n     113         6       6     4088.51\r\n     114        18      18     4084.26\r\n     118        24      24    4087.046\r\n     122        24      24    4078.084\r\n     126        24      24    4070.601\r\n     130        24      24    4106.361\r\n     134        24      24    4094.088\r\n     138        24      24    4088.222\r\n     142        24      24    4068.897\r\n     146        24      24    4095.567\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-app-gateway"
+            ],
+            "ok": true,
+            "detail": {
+              "name": "cc-app-gateway",
+              "exists": true,
+              "status": "running",
+              "oom_killed": false,
+              "restart_count": 0,
+              "exit_code": "0",
+              "memory_limit_mb": 128.0,
+              "nano_cpus": "0",
+              "started_at": "2026-10-08T11:31:40.446753491Z"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(probe_success{job=\"blackbox-gateway\"} == 0) > 0",
+          "waited_s": 9.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 309.8
+    },
+    {
+      "scenario": "app_kill_replica",
+      "title": "强杀一个应用副本（模拟容器崩溃/OOM 后消失）",
+      "layer": "application",
+      "layer_label": "应用层",
+      "category": "资源",
+      "expected_root_cause": "应用层某个副本容器被强制终止（崩溃/OOM Kill），集群副本数下降",
+      "expected_terms": [
+        "rc:replica-loss"
+      ],
+      "alert_names_expected": [
+        "AppReplicaCountLow"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppGatewayUnreachable",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "killed": [
+            "rca-agent-payment-app-2"
+          ]
+        },
+        "targets": [
+          "rca-agent-payment-app-2"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T11:36:18Z",
+        "healthy_app_replicas": 2.0,
+        "app_replicas_total": 2.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.024391346418550508,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1095428466796875,
+        "mysql_threads_connected": 23.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.09524625920316979,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "exited",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppReplicaCountLow",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "application",
+          "onto_constraint": "con:app-replica-quorum",
+          "hint": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+          "summary": "payment-app 在册副本数不足（期望 3）",
+          "value": "2e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.0877956347813883e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppReplicaCountLow"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:replica-loss",
+          "root_cause_name": "根因：应用副本丢失",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:replica-loss"
+          ],
+          "hit_keywords": [
+            "副本丢失",
+            "副本数",
+            "replica",
+            "replicas",
+            "容器被终止",
+            "被杀"
+          ],
+          "expected_terms": [
+            "rc:replica-loss"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:replica-loss 且被约束 con:app-replica-quorum,con:app-mem-limit 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 16743.4,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:replica-loss 且被约束 con:app-replica-quorum,con:app-mem-limit 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 19.5
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 318.6,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-2"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-2": {
+                "name": "rca-agent-payment-app-2",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000",
+                "started_at": "2026-10-08T11:37:36.969300085Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "waited_s": 30.2,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 367.6
+    },
+    {
+      "scenario": "app_memory_stress",
+      "title": "单副本容器内存耗尽（逼近 cgroup 上限，OOM 前兆）",
+      "layer": "runtime",
+      "layer_label": "运行环境层",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器内存不足（内存泄漏/大对象），逼近 cgroup 内存上限",
+      "expected_terms": [
+        "metric:mem-pressure",
+        "rc:oom-kill"
+      ],
+      "alert_names_expected": [
+        "AppContainerMemoryPressure"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppReplicaCountLow",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "vm_bytes_mb": 200,
+          "seconds": 900
+        },
+        "targets": [
+          "rca-agent-payment-app-2"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T11:42:35Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.02431356014942497,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.9400787353515625,
+        "mysql_threads_connected": 29.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.16191709844559588,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppContainerMemoryPressure",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "runtime",
+          "onto_constraint": "con:app-mem-limit",
+          "hint": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+          "summary": "应用副本 {{ $labels.app_instance }} 容器内存 > 85% 上限",
+          "value": "9.405364990234375e-01"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.5440384325202564e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppContainerMemoryPressure"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:oom-kill",
+          "root_cause_name": "根因：容器内存超限被 OOM Kill",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "metric:mem-pressure",
+            "rc:oom-kill"
+          ],
+          "hit_keywords": [
+            "内存压力",
+            "memory",
+            "OOM"
+          ],
+          "expected_terms": [
+            "metric:mem-pressure",
+            "rc:oom-kill"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:oom-kill 且被约束 con:app-mem-limit,con:oom-detection 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 34.7,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:oom-kill 且被约束 con:app-mem-limit,con:oom-detection 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 2.6
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 301.8,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-2"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-2": {
+                "ok": true,
+                "killed": 3,
+                "rc": 0,
+                "stderr": ""
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "waited_s": 16.2,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 336.5
+    },
+    {
+      "scenario": "app_network_delay",
+      "title": "单副本网络延迟注入（tc netem 300ms）",
+      "layer": "application",
+      "layer_label": "应用层",
+      "category": "依赖",
+      "expected_root_cause": "应用副本网络链路延迟异常（网络/中间设备），非资源不足",
+      "expected_terms": [
+        "rc:net-fault",
+        "metric:net-delay"
+      ],
+      "alert_names_expected": [
+        "AppReplicaLatencySkew"
+      ],
+      "needs_stress": true,
+      "ok": true,
+      "alerts_pre": [
+        "AppContainerMemoryPressure",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "delay_ms": 300,
+          "jitter_ms": 30
+        },
+        "targets": [
+          "rca-agent-payment-app-1"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T11:48:15Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.4412504018048485,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 1.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.118804931640625,
+        "mysql_threads_connected": 31.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.14286666730162964,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppReplicaLatencySkew",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "application",
+          "onto_constraint": "con:app-cpu-throttle",
+          "hint": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+          "summary": "payment-app 存在单副本延迟偏斜（最慢副本 P99 超过最快副本 2 倍）",
+          "value": "4.225037257824167e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.5000950060170476e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppReplicaLatencySkew"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+      "severity": "P2",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:net-fault",
+          "root_cause_name": "根因：网络延迟/丢包",
+          "root_cause_category": "依赖",
+          "root_cause_confidence": 0.91,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:net-fault"
+          ],
+          "hit_keywords": [
+            "网络延迟",
+            "链路",
+            "延迟",
+            "netem"
+          ],
+          "expected_terms": [
+            "rc:net-fault",
+            "metric:net-delay"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:net-fault 且被约束 con:app-cpu-throttle,con:net-quality 支撑，置信度 0.91 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 33390.5,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:net-fault 且被约束 con:app-cpu-throttle,con:net-quality 支撑，置信度 0.91 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 36.6
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 335.9,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1"
+            ],
+            "ok": true
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.2",
+          "waited_s": 9.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 356.6
+    },
+    {
+      "scenario": "app_network_loss",
+      "title": "单副本网络丢包注入（tc netem loss 40%）",
+      "layer": "application",
+      "layer_label": "应用层",
+      "category": "依赖",
+      "expected_root_cause": "应用副本网络丢包严重，链路质量故障",
+      "expected_terms": [
+        "rc:net-fault",
+        "metric:net-loss"
+      ],
+      "alert_names_expected": [
+        "AppReplicaLatencySkew"
+      ],
+      "needs_stress": true,
+      "ok": true,
+      "alerts_pre": [
+        "AppReplicaLatencySkew",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "loss_pct": 40
+        },
+        "targets": [
+          "rca-agent-payment-app-1"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T11:54:29Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.4724989284897929,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 1.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.131195068359375,
+        "mysql_threads_connected": 32.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.1428666673016296,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppReplicaLatencySkew",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "application",
+          "onto_constraint": "con:app-cpu-throttle",
+          "hint": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+          "summary": "payment-app 存在单副本延迟偏斜（最慢副本 P99 超过最快副本 2 倍）",
+          "value": "5.223447475333714e+01"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.473782462690495e-01"
+        }
+      ],
+      "alerts_new": [],
+      "alerts_residual": [
+        "AppReplicaLatencySkew",
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+      "severity": "P2",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:net-fault",
+          "root_cause_name": "根因：网络延迟/丢包",
+          "root_cause_category": "依赖",
+          "root_cause_confidence": 0.91,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:net-fault"
+          ],
+          "hit_keywords": [
+            "丢包",
+            "网络",
+            "链路"
+          ],
+          "expected_terms": [
+            "rc:net-fault",
+            "metric:net-loss"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:net-fault 且被约束 con:app-cpu-throttle,con:net-quality 支撑，置信度 0.91 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 39.2,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:net-fault 且被约束 con:app-cpu-throttle,con:net-quality 支撑，置信度 0.91 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 3.1
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 302.1,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1"
+            ],
+            "ok": true
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 322.8
+    },
+    {
+      "scenario": "app_oom_kill",
+      "title": "构造真实容器 OOMKill（内存上限低于实际用量 + 内存申请）",
+      "layer": "runtime",
+      "layer_label": "运行环境层",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器被内核 OOM Kill 后重启（内存超限）",
+      "expected_terms": [
+        "rc:oom-kill",
+        "rc:replica-loss"
+      ],
+      "alert_names_expected": [
+        "AppContainerOOMKilled",
+        "AppContainerMemoryPressure",
+        "AppReplicaCountLow"
+      ],
+      "needs_stress": false,
+      "ok": false,
+      "alerts_pre": [
+        "AppReplicaLatencySkew",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "shrunk_to_mb": 64,
+          "vm_bytes_mb": 200,
+          "docker_update": {
+            "rca-agent-payment-app-1": {
+              "rc": 0,
+              "error": ""
+            }
+          },
+          "observation": {
+            "rca-agent-payment-app-1": {
+              "status": "running",
+              "oom_killed": true,
+              "restart_count_before": 1,
+              "restart_count_now": 1,
+              "restarted_after_oom": false,
+              "exit_code": "0"
+            }
+          },
+          "oom_observed": true
+        },
+        "targets": [
+          "rca-agent-payment-app-1"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:00:54Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.024090909546154858,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.3236083984375,
+        "mysql_threads_connected": 29.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.16191709844559588,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 64.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.473813492411615e-01"
+        }
+      ],
+      "alerts_new": [],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": false,
+      "alert_text": "监控无对应告警，但业务侧出现异常（层级=运行环境层）",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": false,
+          "how": "未命中",
+          "partial": true,
+          "root_cause_id": "env:cluster",
+          "root_cause_name": "Docker 容器运行时引擎（非业务集群）",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.37,
+          "hit_root_cause_exact": false,
+          "hit_terms_in_text": [],
+          "hit_keywords": [],
+          "expected_terms": [
+            "rc:oom-kill",
+            "rc:replica-loss"
+          ],
+          "route_mode": "agentic",
+          "route_reason": "需 LLM 深入分析：置信度 0.37 < 阈值 0.85；未命中已知约束/根因；候选根因类别分歧（代码, 数据, 资源）",
+          "mode": "deterministic",
+          "status": "fallback",
+          "model": "",
+          "steps_used": 6,
+          "tools_used": [
+            "db_innodb_status",
+            "db_processlist",
+            "db_slow_queries",
+            "db_status",
+            "env_container_logs",
+            "env_containers",
+            "metrics_query",
+            "metrics_range"
+          ],
+          "total_tokens": 69578,
+          "latency_ms": 104925.2,
+          "reasoning_summary": "LLM 不可用，已回落至本体确定性引擎",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 107.7
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 406.9,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-1": {
+                "name": "rca-agent-payment-app-1",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 2,
+                "exit_code": "0",
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000",
+                "started_at": "2026-10-08T11:56:06.056160467Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 480.1
+    },
+    {
+      "scenario": "app_pause_replica",
+      "title": "暂停一个应用副本（假死：进程在但完全不响应）",
+      "layer": "application",
+      "layer_label": "应用层",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器被挂起（假死），进程存在但无法处理请求",
+      "expected_terms": [
+        "rc:replica-hang",
+        "rc:replica-loss"
+      ],
+      "alert_names_expected": [
+        "AppReplicaProbeFailing"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "paused": [
+            "rca-agent-payment-app-2"
+          ]
+        },
+        "targets": [
+          "rca-agent-payment-app-2"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:08:11Z",
+        "healthy_app_replicas": 2.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": 1.0,
+        "p99_seconds": 0.1941999959997558,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1058807373046875,
+        "mysql_threads_connected": 32.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.10477188303647965,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "paused",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppReplicaProbeFailing",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "application",
+          "onto_constraint": "con:app-replica-quorum",
+          "hint": "payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+          "summary": "应用副本 {{ $labels.instance }} 探活失败",
+          "value": "0e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.0176366966811008e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppReplicaProbeFailing"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:replica-loss",
+          "root_cause_name": "根因：应用副本丢失",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.69,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:replica-loss"
+          ],
+          "hit_keywords": [
+            "pause",
+            "探活失败"
+          ],
+          "expected_terms": [
+            "rc:replica-hang",
+            "rc:replica-loss"
+          ],
+          "route_mode": "agentic",
+          "route_reason": "需 LLM 深入分析：置信度 0.69 < 阈值 0.85；候选根因类别分歧（代码, 资源）",
+          "mode": "deterministic",
+          "status": "fallback",
+          "model": "",
+          "steps_used": 6,
+          "tools_used": [
+            "db_innodb_status",
+            "db_processlist",
+            "db_status",
+            "env_container_inspect",
+            "env_container_logs",
+            "env_container_stats",
+            "env_containers",
+            "history_search",
+            "metrics_range"
+          ],
+          "total_tokens": 69478,
+          "latency_ms": 53703.9,
+          "reasoning_summary": "LLM 不可用，已回落至本体确定性引擎",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 56.6
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 355.7,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-2"
+            ],
+            "ok": true,
+            "detail": {
+              "unpaused": [
+                "rca-agent-payment-app-2"
+              ]
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 376.2
+    },
+    {
+      "scenario": "app_stop_replica",
+      "title": "优雅下线一个应用副本",
+      "layer": "application",
+      "layer_label": "应用层",
+      "category": "资源",
+      "expected_root_cause": "应用副本因发布/缩容下线，集群副本数不足",
+      "expected_terms": [
+        "rc:replica-loss"
+      ],
+      "alert_names_expected": [
+        "AppReplicaCountLow"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppReplicaProbeFailing",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "stopped": [
+            "rca-agent-payment-app-3"
+          ]
+        },
+        "targets": [
+          "rca-agent-payment-app-3"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:14:45Z",
+        "healthy_app_replicas": 2.0,
+        "app_replicas_total": 2.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.023626312619464053,
+        "http_5xx_rate": null,
+        "pool_active_max": 1.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.135223388671875,
+        "mysql_threads_connected": 25.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.0952471663967997,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "exited",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppReplicaCountLow",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "application",
+          "onto_constraint": "con:app-replica-quorum",
+          "hint": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+          "summary": "payment-app 在册副本数不足（期望 3）",
+          "value": "2e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.0527165350186153e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppReplicaCountLow"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:replica-loss",
+          "root_cause_name": "根因：应用副本丢失",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:replica-loss"
+          ],
+          "hit_keywords": [
+            "副本数",
+            "replica"
+          ],
+          "expected_terms": [
+            "rc:replica-loss"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:replica-loss 且被约束 con:app-replica-quorum,con:app-mem-limit 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 16822.5,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:replica-loss 且被约束 con:app-replica-quorum,con:app-mem-limit 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 19.4
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 318.5,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-3"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-3": {
+                "name": "rca-agent-payment-app-3",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000",
+                "started_at": "2026-10-08T12:16:03.743471568Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "waited_s": 16.2,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 360.9
+    },
+    {
+      "scenario": "db_conn_saturation",
+      "title": "耗尽 MySQL max_connections（连接数打满）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "配置",
+      "expected_root_cause": "MySQL 连接资源耗尽（max_connections 打满），新连接被拒绝",
+      "expected_terms": [
+        "rc:conn-exhaust"
+      ],
+      "alert_names_expected": [
+        "MySQLTooManyConnections",
+        "MySQLConnectionRefused",
+        "MySQLThreadsRunningHigh"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppReplicaCountLow",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "requested": 170,
+          "total_connections": "196",
+          "max_connections": "200"
+        },
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:20:52Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.023462498095074825,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1446533203125,
+        "mysql_threads_connected": 4.0,
+        "mysql_threads_running": 2.0,
+        "mysql_slow_queries_rate": 0.1428693888047547,
+        "mysql_row_lock_waits": 0.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLDown",
+          "state": "firing",
+          "severity": "P0",
+          "layer": "database",
+          "onto_constraint": "con:db-availability",
+          "hint": "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果是读容量下降与复制滞后",
+          "summary": "MySQL 节点 {{ $labels.instance }} 不可达",
+          "value": "0e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.4387125978587745e-01"
+        }
+      ],
+      "alerts_new": [
+        "MySQLDown"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": false,
+      "alert_text": "监控无对应告警，但业务侧出现异常（层级=数据库层）",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "期望术语出现在候选/证据/推理中(rc:conn-exhaust)",
+          "partial": true,
+          "root_cause_id": "rc:db-replica-loss",
+          "root_cause_name": "根因：数据库只读副本丢失",
+          "root_cause_category": "数据",
+          "root_cause_confidence": 0.55,
+          "hit_root_cause_exact": false,
+          "hit_terms_in_text": [
+            "rc:conn-exhaust"
+          ],
+          "hit_keywords": [
+            "max_connections",
+            "连接资源",
+            "Too many connections"
+          ],
+          "expected_terms": [
+            "rc:conn-exhaust"
+          ],
+          "route_mode": "agentic",
+          "route_reason": "需 LLM 深入分析：置信度 0.55 < 阈值 0.85；候选根因类别分歧（依赖, 数据, 资源）",
+          "mode": "deterministic",
+          "status": "fallback",
+          "model": "",
+          "steps_used": 6,
+          "tools_used": [
+            "db_innodb_status",
+            "db_processlist",
+            "db_slow_queries",
+            "env_container_inspect",
+            "env_container_logs",
+            "env_containers",
+            "metrics_query",
+            "metrics_range"
+          ],
+          "total_tokens": 67090,
+          "latency_ms": 65879.5,
+          "reasoning_summary": "LLM 不可用，已回落至本体确定性引擎",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 68.7
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 367.8,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed_processes": 171,
+              "killed_sessions": 170,
+              "connections_left": "32"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 409.6
+    },
+    {
+      "scenario": "db_cpu_stress",
+      "title": "数据库 CPU 压力（交叉连接放大查询）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "资源",
+      "expected_root_cause": "数据库服务器 CPU 资源不足，查询排队等待 CPU",
+      "expected_terms": [
+        "rc:db-cpu-starve"
+      ],
+      "alert_names_expected": [
+        "MySQLThreadsRunningHigh"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLDown",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "loops": 300,
+          "parallel": 16,
+          "sql": "SELECT COUNT(*) /* chaos-db-cpu */ FROM t_txn a JOIN t_seq b ON b.n <= 8 WHERE a.amount > 0 AND a.status <> 'VOID'"
+        },
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:27:49Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.09476660447689503,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.04445629945763315,
+        "container_mem_ratio": 0.142578125,
+        "mysql_threads_connected": 49.0,
+        "mysql_threads_running": 20.0,
+        "mysql_slow_queries_rate": 1.0668190693908652,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.473901417050934e-01"
+        },
+        {
+          "name": "MySQLThreadsRunningHigh",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:db-maxconn",
+          "hint": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+          "summary": "MySQL {{ $labels.instance }} 并发执行线程过高",
+          "value": "2e+01"
+        }
+      ],
+      "alerts_new": [
+        "MySQLThreadsRunningHigh"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+      "severity": "P2",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:db-cpu-starve",
+          "root_cause_name": "根因：数据库 CPU 资源不足",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.95,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:db-cpu-starve"
+          ],
+          "hit_keywords": [
+            "数据库 CPU",
+            "CPU 资源不足",
+            "threads_running"
+          ],
+          "expected_terms": [
+            "rc:db-cpu-starve"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:db-cpu-starve 且被约束 con:db-cpu-capacity,con:app-cpu-throttle 支撑，置信度 0.95 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 44468.5,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:db-cpu-starve 且被约束 con:db-cpu-capacity,con:app-cpu-throttle 支撑，置信度 0.95 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 47.8
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 347.6,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "ok": true,
+              "killed": 33,
+              "rc": 0,
+              "stderr": "",
+              "sessions_killed": 16
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "mysql_global_status_threads_running{db_node=\"primary\"} > 12",
+          "waited_s": 9.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 393.6
+    },
+    {
+      "scenario": "db_disk_temp_tables",
+      "title": "排序/分组内存不足落盘（磁盘临时表激增）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "配置",
+      "expected_root_cause": "数据库排序/分组内存配置过小（tmp_table_size），临时表落盘导致 IO 瓶颈",
+      "expected_terms": [
+        "rc:tmp-disk"
+      ],
+      "alert_names_expected": [
+        "MySQLDiskTempTables"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLSlowQueries",
+        "MySQLThreadsRunningHigh"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "loops": 120,
+          "parallel": 4,
+          "tmp_table_size_forced_mb": 1,
+          "tmp_engine_forced": "MEMORY"
+        },
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:34:35Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.08505569866176313,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 1.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.06667111140742717,
+        "container_mem_ratio": 0.1426239013671875,
+        "mysql_threads_connected": 37.0,
+        "mysql_threads_running": 8.0,
+        "mysql_slow_queries_rate": 0.1523954662348795,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.17145143161945403,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "3.1231905672626464e-01"
+        },
+        {
+          "name": "MySQLDiskTempTables",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:db-tmp-table",
+          "hint": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+          "summary": "MySQL {{ $labels.instance }} 大量磁盘临时表",
+          "value": "2.1907682929152458e-01"
+        }
+      ],
+      "alerts_new": [
+        "MySQLDiskTempTables"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+      "severity": "P2",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:tmp-disk",
+          "root_cause_name": "根因：排序内存不足导致磁盘临时表",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.95,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:tmp-disk"
+          ],
+          "hit_keywords": [
+            "临时表",
+            "落盘",
+            "排序",
+            "tmp",
+            "磁盘 IO",
+            "内存不足"
+          ],
+          "expected_terms": [
+            "rc:tmp-disk"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:tmp-disk 且被约束 con:tmp-disk,con:app-mem-limit 支撑，置信度 0.95 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 73.9,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:tmp-disk 且被约束 con:tmp-disk,con:app-mem-limit 支撑，置信度 0.95 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 3.8
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 303.1,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed": {
+                "ok": true,
+                "killed": 9,
+                "rc": 0,
+                "stderr": "",
+                "sessions_killed": 4
+              },
+              "restored": {
+                "tmp_table_size": "16777216",
+                "max_heap_table_size": "16777216",
+                "internal_tmp_mem_storage_engine": "TempTable"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "rate(mysql_global_status_created_tmp_disk_tables[1m]) > 0.05",
+          "waited_s": 51.3,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 379.2
+    },
+    {
+      "scenario": "db_primary_readonly",
+      "title": "主库被置为只读（读写分离下最隐蔽的配置漂移）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "配置",
+      "expected_root_cause": "主库被置为只读（配置变更/切换未回滚），写路径全部失败而读路径正常",
+      "expected_terms": [
+        "rc:primary-readonly"
+      ],
+      "alert_names_expected": [
+        "MySQLPrimaryReadOnly"
+      ],
+      "needs_stress": true,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLDiskTempTables",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "read_only_before": "0",
+          "read_only_now": "1"
+        },
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "warning": null,
+        "signal_checks_under_load": [
+          {
+            "ok": true,
+            "expr": "rate(cc_http_requests_total{path=\"/txn\",status=\"503\"}[2m]) > 0",
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {
+                  "app": "payment-app",
+                  "app_instance": "0ac43e225ce5",
+                  "component": "payment-app",
+                  "instance": "172.18.0.15",
+                  "job": "payment-app",
+                  "layer": "application",
+                  "method": "POST",
+                  "path": "/txn",
+                  "status": "503",
+                  "version": "1.8.3"
+                },
+                "value": [
+                  1791463014.768,
+                  "0.07619700736253583"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:40:54Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.010599952852080955,
+        "http_5xx_rate": 0.314315649109439,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1456146240234375,
+        "mysql_threads_connected": 33.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.1428666673016296,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLPrimaryReadOnly",
+          "state": "firing",
+          "severity": "P0",
+          "layer": "database",
+          "onto_constraint": "con:db-role",
+          "hint": "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题",
+          "summary": "MySQL 主库被置为只读（写路径不可用）",
+          "value": "1e+00"
+        },
+        {
+          "name": "AppHighErrorRate",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "application",
+          "onto_constraint": "con:app-error-budget",
+          "hint": "5xx 错误率突增，请求大量失败",
+          "summary": "payment-app 5xx 错误率 > 5%",
+          "value": "9.075795630679496e-01"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.4738290077621663e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppHighErrorRate",
+        "MySQLPrimaryReadOnly"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题",
+      "severity": "P0",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:primary-readonly",
+          "root_cause_name": "根因：主库被置为只读",
+          "root_cause_category": "依赖",
+          "root_cause_confidence": 0.98,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:primary-readonly"
+          ],
+          "hit_keywords": [
+            "只读",
+            "read_only",
+            "配置漂移",
+            "写入失败"
+          ],
+          "expected_terms": [
+            "rc:primary-readonly"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:primary-readonly 且被约束 con:db-role,con:app-replica-quorum 支撑，置信度 0.98 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 28454.1,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:primary-readonly 且被约束 con:db-role,con:app-replica-quorum 支撑，置信度 0.98 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 31.5
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 339.7,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "read_only_now": "0"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "rate(cc_http_requests_total{path=\"/txn\",status=\"503\"}[1m]) > 0",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 344.9
+    },
+    {
+      "scenario": "db_replica_io_stop",
+      "title": "停止副本 IO 线程（复制中断）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "依赖",
+      "expected_root_cause": "主从复制中断（IO 线程停止），副本数据停止同步",
+      "expected_terms": [
+        "rc:db-replica-loss"
+      ],
+      "alert_names_expected": [
+        "MySQLReplicationBroken"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppHighErrorRate",
+        "MySQLPrimaryReadOnly",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "io_thread_stopped": [
+            "cc-mysql-replica-1",
+            "cc-mysql-replica-2"
+          ]
+        },
+        "targets": [
+          "cc-mysql-replica-1",
+          "cc-mysql-replica-2"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:46:49Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.02392499374230956,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.143768310546875,
+        "mysql_threads_connected": 31.0,
+        "mysql_threads_running": 2.0,
+        "mysql_slow_queries_rate": 0.14288163685203178,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": null,
+        "replica_io_down": 2.0,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLReplicationBroken",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "database",
+          "onto_constraint": "con:replica-down",
+          "hint": "MySQL 主从复制中断 replication broken，副本 IO/SQL 线程停止，副本数据滞后",
+          "summary": "MySQL 副本 {{ $labels.instance }} 复制线程中断",
+          "value": "0e+00"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.543973415585008e-01"
+        }
+      ],
+      "alerts_new": [
+        "MySQLReplicationBroken"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "MySQL 主从复制中断 replication broken，副本 IO/SQL 线程停止，副本数据滞后",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:db-replica-loss",
+          "root_cause_name": "根因：数据库只读副本丢失",
+          "root_cause_category": "数据",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:db-replica-loss"
+          ],
+          "hit_keywords": [
+            "复制中断",
+            "sql thread"
+          ],
+          "expected_terms": [
+            "rc:db-replica-loss"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:db-replica-loss 且被约束 con:app-replica-quorum,con:replica-down 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 30.8,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:db-replica-loss 且被约束 con:app-replica-quorum,con:replica-down 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 2.6
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 301.8,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ],
+            "ok": true
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(mysql_slave_status_slave_io_running == 0) > 0",
+          "waited_s": 16.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 329.6
+    },
+    {
+      "scenario": "db_replica_kill",
+      "title": "杀掉一个只读副本容器",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "资源",
+      "expected_root_cause": "数据库只读副本节点丢失，读路径容量下降",
+      "expected_terms": [
+        "rc:db-replica-loss",
+        "rc:replica-loss"
+      ],
+      "alert_names_expected": [
+        "MySQLReplicaDown",
+        "MySQLDown"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLReplicationBroken",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "killed": [
+            "cc-mysql-replica-1",
+            "cc-mysql-replica-2"
+          ]
+        },
+        "targets": [
+          "cc-mysql-replica-1",
+          "cc-mysql-replica-2"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:52:36Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.023510343398930208,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 1.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0222227160603569,
+        "container_mem_ratio": 0.125946044921875,
+        "mysql_threads_connected": 32.0,
+        "mysql_threads_running": 3.0,
+        "mysql_slow_queries_rate": 0.009524263060145722,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": null,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLDown",
+          "state": "firing",
+          "severity": "P0",
+          "layer": "database",
+          "onto_constraint": "con:db-availability",
+          "hint": "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果是读容量下降与复制滞后",
+          "summary": "MySQL 节点 {{ $labels.instance }} 不可达",
+          "value": "0e+00"
+        }
+      ],
+      "alerts_new": [
+        "MySQLDown"
+      ],
+      "alerts_residual": [],
+      "alert_coverage": true,
+      "alert_text": "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果是读容量下降与复制滞后",
+      "severity": "P0",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:replica-loss",
+          "root_cause_name": "根因：应用副本丢失",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:db-replica-loss",
+            "rc:replica-loss"
+          ],
+          "hit_keywords": [
+            "副本丢失",
+            "节点不可达"
+          ],
+          "expected_terms": [
+            "rc:db-replica-loss",
+            "rc:replica-loss"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:replica-loss 且被约束 con:app-replica-quorum,con:db-replica-down 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 16923.9,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:replica-loss 且被约束 con:app-replica-quorum,con:db-replica-down 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 19.5
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 318.7,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ],
+            "ok": true,
+            "detail": {
+              "cc-mysql-replica-1": {
+                "name": "cc-mysql-replica-1",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 768.0,
+                "nano_cpus": "0",
+                "started_at": "2026-10-08T12:53:54.997073426Z"
+              },
+              "cc-mysql-replica-2": {
+                "name": "cc-mysql-replica-2",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 0,
+                "exit_code": "0",
+                "memory_limit_mb": 768.0,
+                "nano_cpus": "0",
+                "started_at": "2026-10-08T12:53:55.284996049Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(mysql_up{db_role=\"replica\"} == 1) < 2",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 340.3
+    },
+    {
+      "scenario": "db_replica_lag",
+      "title": "只读副本复制延迟（SOURCE_DELAY）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "依赖",
+      "expected_root_cause": "主从复制延迟过大，只读副本数据陈旧，读路径读到过期数据",
+      "expected_terms": [
+        "rc:replica-lag"
+      ],
+      "alert_names_expected": [
+        "MySQLReplicationLag"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLDown"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "delay_s": 60,
+          "source_delay_now": {
+            "cc-mysql-replica-1": "60",
+            "cc-mysql-replica-2": "60"
+          },
+          "writer": "chaos-lag-writer"
+        },
+        "targets": [
+          "cc-mysql-replica-1",
+          "cc-mysql-replica-2"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T12:58:33Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.023330436610952222,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 1.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.140716552734375,
+        "mysql_threads_connected": 33.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.16191092994018816,
+        "mysql_row_lock_waits": 2.0,
+        "replica_lag_max": 61.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLReplicationLag",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "database",
+          "onto_constraint": "con:replica-lag",
+          "hint": "MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+          "summary": "MySQL 副本 {{ $labels.instance }} 复制延迟 > 5s",
+          "value": "6.2e+01"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "pending",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.4019445380703516e-01"
+        }
+      ],
+      "alerts_new": [
+        "MySQLReplicationLag",
+        "MySQLSlowQueries"
+      ],
+      "alerts_residual": [],
+      "alert_coverage": true,
+      "alert_text": "MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:replica-lag",
+          "root_cause_name": "根因：主从复制延迟",
+          "root_cause_category": "数据",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:replica-lag"
+          ],
+          "hit_keywords": [
+            "复制延迟",
+            "lag"
+          ],
+          "expected_terms": [
+            "rc:replica-lag"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:replica-lag 且被约束 con:replica-lag,con:app-replica-quorum 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 27.0,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:replica-lag 且被约束 con:replica-lag,con:app-replica-quorum 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 2.6
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 301.6,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-replica-1",
+              "cc-mysql-replica-2"
+            ],
+            "ok": true,
+            "detail": {
+              "source_delay": {
+                "cc-mysql-replica-1": "0",
+                "cc-mysql-replica-2": "0"
+              },
+              "killed_writer_processes": 2,
+              "seconds_behind_after_catchup": {
+                "replica-2": 0.0,
+                "replica-1": 0.0
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(cc_mysql_replica_desired_delay) > 0",
+          "waited_s": 16.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 360.6
+    },
+    {
+      "scenario": "db_row_lock_hold",
+      "title": "持有 t_txn 排他行锁（写事务被阻塞）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "数据",
+      "expected_root_cause": "InnoDB 行锁等待：长事务持有 t_txn 排他锁阻塞写入，连接池被占满",
+      "expected_terms": [
+        "rc:row-lock"
+      ],
+      "alert_names_expected": [
+        "MySQLRowLockContention",
+        "MySQLConnectionPoolExhausted"
+      ],
+      "needs_stress": true,
+      "ok": true,
+      "alerts_pre": [
+        "MySQLReplicationLag",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "holder_sessions": "1",
+          "victims": 4,
+          "query_sessions": "1"
+        },
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T13:04:34Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 2.5,
+        "http_5xx_rate": 0.5714575978923179,
+        "pool_active_max": 11.0,
+        "pool_waiting_max": 54.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1361083984375,
+        "mysql_threads_connected": 36.0,
+        "mysql_threads_running": 35.0,
+        "mysql_slow_queries_rate": 0.8000304773515183,
+        "mysql_row_lock_waits": 38.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppHighLatencyP99",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "application",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "payment-app 整体 P99 latency > 500ms（所有副本同时偏高，非单副本偏斜）—— 判据：P99>500ms 且副本间无显著差异。常见原因按可能性：① 数据库层变慢（慢查询/行锁等待/DB CPU 不足）② 连接池耗尽 ③ 下游依赖退化",
+          "summary": "payment-app P99 延迟 > 500ms",
+          "value": "2.5e+00"
+        },
+        {
+          "name": "AppHighErrorRate",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "application",
+          "onto_constraint": "con:app-error-budget",
+          "hint": "5xx 错误率突增，请求大量失败",
+          "summary": "payment-app 5xx 错误率 > 5%",
+          "value": "4.0830449348042375e-01"
+        },
+        {
+          "name": "MySQLConnectionPoolExhausted",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "database",
+          "onto_constraint": "con:pool-exhaust",
+          "hint": "MySQL connection pool exhausted, payment-app P99 latency high",
+          "summary": "副本 {{ $labels.app_instance }} 连接池使用率 > 80%",
+          "value": "1e+00"
+        },
+        {
+          "name": "MySQLPoolQueueBacklog",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "database",
+          "onto_constraint": "con:pool-waiting",
+          "hint": "MySQL 连接池排队 waiting queue 出现堆积，连接池容量不足，请求被迫等待",
+          "summary": "副本 {{ $labels.app_instance }} 连接池出现排队",
+          "value": "5.4e+01"
+        },
+        {
+          "name": "MySQLRowLockContention",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "database",
+          "onto_constraint": "con:row-lock",
+          "hint": "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入",
+          "summary": "MySQL {{ $labels.instance }} 持续出现新的行锁等待",
+          "value": "5.714557836087433e-01"
+        },
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.4737617769356282e-01"
+        },
+        {
+          "name": "MySQLThreadsRunningHigh",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:db-maxconn",
+          "hint": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+          "summary": "MySQL {{ $labels.instance }} 并发执行线程过高",
+          "value": "3.5e+01"
+        }
+      ],
+      "alerts_new": [
+        "AppHighErrorRate",
+        "AppHighLatencyP99",
+        "MySQLConnectionPoolExhausted",
+        "MySQLPoolQueueBacklog",
+        "MySQLRowLockContention",
+        "MySQLThreadsRunningHigh"
+      ],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "MySQL connection pool exhausted, payment-app P99 latency high；MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:row-lock",
+          "root_cause_name": "根因：InnoDB 行锁等待",
+          "root_cause_category": "依赖",
+          "root_cause_confidence": 0.94,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:row-lock"
+          ],
+          "hit_keywords": [
+            "行锁",
+            "锁等待",
+            "lock",
+            "长事务",
+            "阻塞"
+          ],
+          "expected_terms": [
+            "rc:row-lock"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:row-lock 且被约束 con:row-lock,con:p99-threshold 支撑，置信度 0.94 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 16961.9,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:row-lock 且被约束 con:row-lock,con:p99-threshold 支撑，置信度 0.94 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 19.6
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 0,
+        "killed": false,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 298.7,
+        "stdout_tail": "================================================================\r\n压力测试报告  label=-  mode=http\r\n================================================================\r\n  target                 : POST http://localhost:8080/txn\r\n  started_at             : 2026-10-08T21:00:34\r\n  wall_seconds           : 156.723\r\n  concurrency            : 24\r\n  ramp_up_seconds        : 0.0\r\n  total                  : 312\r\n  success                : 0\r\n  error                  : 312\r\n  success_rate           : 0.00%\r\n  requests_per_sec       : 1.991\r\n  bytes_per_sec          : 0.0\r\n  latency_ms.min         : 12019.88\r\n  latency_ms.p50         : 12048.891\r\n  latency_ms.p90         : 12065.161\r\n  latency_ms.p95         : 12072.782\r\n  latency_ms.p99         : 12134.599\r\n  latency_ms.max         : 12139.928\r\n  latency_ms.mean        : 12049.775\r\n  latency_ms.samples     : 312\r\n----------------------------------------------------------------\r\n状态码直方图\r\n  no-response            :      312  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n错误类型计数\r\n  timeout                :      312  100.00%  ##################################################\r\n----------------------------------------------------------------\r\n分秒序列 (t, count, errors, p99_ms)\r\n       0        24      24   12139.928\r\n      12        24      24   12056.093\r\n      24        24      24    12058.24\r\n      36        24      24   12061.027\r\n      48        24      24   12065.161\r\n      60        24      24   12046.335\r\n      72        24      24   12079.348\r\n      84        24      24    12047.35\r\n      96        24      24   12081.532\r\n     108        24      24   12062.653\r\n     120        24      24    12044.92\r\n     132        24      24   12053.387\r\n     144        24      24   12056.795\r\n================================================================\r\n",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed_processes": 2,
+              "killed_waiting": 0,
+              "killed_stuck_trx": 31,
+              "killed_long_select": 0,
+              "innodb_trx_left": "0",
+              "data_lock_waits_left": "0"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "rate(mysql_global_status_innodb_row_lock_waits[1m]) > 0.02",
+          "waited_s": 58.4,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 377.6
+    },
+    {
+      "scenario": "db_slow_query_flood",
+      "title": "持续制造慢查询（全表扫描 + 连接放大）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "数据",
+      "expected_root_cause": "t_txn 上存在无索引全表扫描的慢 SQL，数据库性能退化",
+      "expected_terms": [
+        "rc:slow-sql"
+      ],
+      "alert_names_expected": [
+        "MySQLSlowQueries",
+        "AppHighLatencyP99"
+      ],
+      "needs_stress": true,
+      "ok": true,
+      "alerts_pre": [
+        "AppHighErrorRate",
+        "AppHighLatencyP99",
+        "MySQLRowLockContention",
+        "MySQLSlowQueries"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "loops": 400,
+          "duration_s": 480.0,
+          "sql": "SELECT COUNT(*) /* chaos-slow-query */ FROM t_txn a JOIN t_seq s ON s.n <= 5 WHERE a.amount > 0 AND a.status <> 'VOID'"
+        },
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-08T13:11:19Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.02398461610034595,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1544647216796875,
+        "mysql_threads_connected": 33.0,
+        "mysql_threads_running": 5.0,
+        "mysql_slow_queries_rate": 0.5428881650380022,
+        "mysql_row_lock_waits": 8.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 2,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLSlowQueries",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:p99-threshold",
+          "hint": "MySQL 慢查询增多，t_txn 表响应变慢",
+          "summary": "MySQL {{ $labels.instance }} 慢查询增长",
+          "value": "1.4737617769356282e-01"
+        }
+      ],
+      "alerts_new": [],
+      "alerts_residual": [
+        "MySQLSlowQueries"
+      ],
+      "alert_coverage": true,
+      "alert_text": "MySQL 慢查询增多，t_txn 表响应变慢",
+      "severity": "P2",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:slow-sql",
+          "root_cause_name": "根因：t_txn 慢查询致连接耗尽",
+          "root_cause_category": "数据",
+          "root_cause_confidence": 0.98,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:slow-sql"
+          ],
+          "hit_keywords": [
+            "慢查询",
+            "全表扫描",
+            "索引",
+            "slow",
+            "sql"
+          ],
+          "expected_terms": [
+            "rc:slow-sql"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "置信度 0.98 ≥ 阈值 0.85 且命中已知约束，直接返回确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 34.7,
+          "reasoning_summary": "命中已知本体模式（置信度 0.98 ≥ 阈值 0.85 且命中已知约束，直接返回确定性结论），确定性引擎直接定论",
+          "requested_mode": "auto",
+          "http_status": 200,
+          "wall_s": 2.9
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<home>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe <repo>/tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 302.0,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "ok": true,
+              "killed": 2,
+              "rc": 0,
+              "stderr": "",
+              "sessions_killed": 0
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(rate(mysql_global_status_slow_queries{db_node=\"primary\"}[1m])) > 0.45",
+          "waited_s": 16.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 352.3
+    }
+  ]
+}

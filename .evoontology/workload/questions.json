@@ -1,0 +1,3341 @@
+{
+  "questions": [
+    {
+      "id": "q_3ed0afaee842ec51",
+      "question": "数据库内存/排序资源不足（大排序落盘）：数据库排序内存不足（sort_buffer/tmp_table 配置偏小），临时表落盘",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048821+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_4e7d300a095784e9",
+      "question": "应用集群内存全面耗尽：应用集群内存资源不足，全部副本面临 OOM Kill 风险",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048801+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_342ae140d44dee25",
+      "question": "应用集群 CPU 全面耗尽（全副本 CPU 压力 + 压测）：应用集群整体 CPU 资源不足（副本数不足或 CPU 配额过低）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048783+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_1c854cad00050bbb",
+      "question": "持续制造慢查询（全表扫描 + 连接放大）：t_txn 上存在无索引全表扫描的慢 SQL，数据库性能退化",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048762+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_88d78127dc835989",
+      "question": "持有 t_txn 排他行锁（写事务被阻塞）：InnoDB 行锁等待：长事务持有 t_txn 排他锁阻塞写入，连接池被占满",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048743+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_887986e2e4f4e77e",
+      "question": "只读副本复制延迟（SOURCE_DELAY）：主从复制延迟过大，只读副本数据陈旧，读路径读到过期数据",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048723+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_00a78afb6ab86760",
+      "question": "杀掉一个只读副本容器：数据库只读副本节点丢失，读路径容量下降",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048705+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_7371b96485780673",
+      "question": "停止副本 IO 线程（复制中断）：主从复制中断（IO 线程停止），副本数据停止同步",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048689+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_457c1a167635336c",
+      "question": "主库被置为只读（读写分离下最隐蔽的配置漂移）：主库被置为只读（配置变更/切换未回滚），写路径全部失败而读路径正常",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048672+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_a2149779438021be",
+      "question": "排序/分组内存不足落盘（磁盘临时表激增）：数据库排序/分组内存配置过小（tmp_table_size），临时表落盘导致 IO 瓶颈",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048650+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_aaedb057ae1a928d",
+      "question": "数据库 CPU 压力（交叉连接放大查询）：数据库服务器 CPU 资源不足，查询排队等待 CPU",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048630+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_79123b6095671196",
+      "question": "耗尽 MySQL max_connections（连接数打满）：MySQL 连接资源耗尽（max_connections 打满），新连接被拒绝",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048612+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_d06309e10ea8b9f3",
+      "question": "优雅下线一个应用副本：应用副本因发布/缩容下线，集群副本数不足",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048594+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_6df2e8dfd3b0abe7",
+      "question": "暂停一个应用副本（假死：进程在但完全不响应）：应用副本容器被挂起（假死），进程存在但无法处理请求",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048577+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_7813f2580329fd78",
+      "question": "构造真实容器 OOMKill（内存上限低于实际用量 + 内存申请）：应用副本容器被内核 OOM Kill 后重启（内存超限）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048557+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_4e20bac7e634330b",
+      "question": "单副本网络丢包注入（tc netem loss 40%）：应用副本网络丢包严重，链路质量故障",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048537+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_c258c624d16fd5ff",
+      "question": "单副本网络延迟注入（tc netem 300ms）：应用副本网络链路延迟异常（网络/中间设备），非资源不足",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048519+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_bb60d5036c2839e8",
+      "question": "单副本容器内存耗尽（逼近 cgroup 上限，OOM 前兆）：应用副本容器内存不足（内存泄漏/大对象），逼近 cgroup 内存上限",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048498+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_33ee878d9d46ca33",
+      "question": "强杀一个应用副本（模拟容器崩溃/OOM 后消失）：应用层某个副本容器被强制终止（崩溃/OOM Kill），集群副本数下降",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048460+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_2d58003b8f65f049",
+      "question": "停掉应用层网关（整个应用入口不可用）：应用层网关（负载均衡入口）不可用，而非业务副本故障",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048084+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_99ccb52d7ed25d79",
+      "question": "单副本 CPU 打满（触发 cgroup CPU 配额节流）：应用副本容器 CPU 资源不足，被 cgroup cpu quota 节流",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:36:03.048045+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_f44162a075ac0a9e",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2ec27903bbc9408daf7b934e69ae3282.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2ec27903bbc9408daf7b934e69ae3282.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3dc5b321b792403996d788fc3c75d6ed.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3dc5b321b792403996d788fc3c75d6ed.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7f698b34175e46df8201c964da8d40a4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7f698b34175e46df8201c964da8d40a4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_815d80f8dc174013895de5aca03b66d9.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_815d80f8dc174013895de5aca03b66d9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_816c8040f3cc420a9ae6b3f668a6eb06.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_816c8040f3cc420a9ae6b3f668a6eb06.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8d791ae15b68466e81d74b4787e1f8ee.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8d791ae15b68466e81d74b4787e1f8ee.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_adef56f2e3b74cf1bb7438a4e87bdb44.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_adef56f2e3b74cf1bb7438a4e87bdb44.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bf5edcae6cd040c69434866962edb1de.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bf5edcae6cd040c69434866962edb1de.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_da2ccc7eef04487397acae3f286b9454.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_da2ccc7eef04487397acae3f286b9454.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e9f2b4a8457946098499ebb77af4d1dc.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e9f2b4a8457946098499ebb77af4d1dc.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_2ec27903bbc9408daf7b934e69ae3282.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_2ec27903bbc9408daf7b934e69ae3282.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3dc5b321b792403996d788fc3c75d6ed.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3dc5b321b792403996d788fc3c75d6ed.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7f698b34175e46df8201c964da8d40a4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7f698b34175e46df8201c964da8d40a4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_815d80f8dc174013895de5aca03b66d9.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_815d80f8dc174013895de5aca03b66d9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_816c8040f3cc420a9ae6b3f668a6eb06.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_816c8040f3cc420a9ae6b3f668a6eb06.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8d791ae15b68466e81d74b4787e1f8ee.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8d791ae15b68466e81d74b4787e1f8ee.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_adef56f2e3b74cf1bb7438a4e87bdb44.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_adef56f2e3b74cf1bb7438a4e87bdb44.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bf5edcae6cd040c69434866962edb1de.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bf5edcae6cd040c69434866962edb1de.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_da2ccc7eef04487397acae3f286b9454.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_da2ccc7eef04487397acae3f286b9454.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e9f2b4a8457946098499ebb77af4d1dc.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e9f2b4a8457946098499ebb77af4d1dc.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:34:11.200912+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_e97668f3ce2bbdc1",
+      "question": "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c5aff727f5914e3aa01693cac03f744b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c5aff727f5914e3aa01693cac03f744b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cb2c31cfe31346f1a22a19c471334972.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cb2c31cfe31346f1a22a19c471334972.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c5aff727f5914e3aa01693cac03f744b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c5aff727f5914e3aa01693cac03f744b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_cb2c31cfe31346f1a22a19c471334972.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_cb2c31cfe31346f1a22a19c471334972.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:29:46.067559+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_089a30a497f2f56c",
+      "question": "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；MySQL 慢查询增多，t_txn 表响应变慢；MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_119c8b81c2fb4719a639e4fb3c8dce9b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_119c8b81c2fb4719a639e4fb3c8dce9b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cc3f6660cc0940788bcb9278627fdcba.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cc3f6660cc0940788bcb9278627fdcba.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_119c8b81c2fb4719a639e4fb3c8dce9b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_119c8b81c2fb4719a639e4fb3c8dce9b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_cc3f6660cc0940788bcb9278627fdcba.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_cc3f6660cc0940788bcb9278627fdcba.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:27:46.146286+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_ebc9a736f7245829",
+      "question": "MySQL 数据库不可用 down；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8c1da64dde7b45bf9022406f98a61676.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8c1da64dde7b45bf9022406f98a61676.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c8c3ad71c7a246d2a2c93849f1844f28.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c8c3ad71c7a246d2a2c93849f1844f28.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8c1da64dde7b45bf9022406f98a61676.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8c1da64dde7b45bf9022406f98a61676.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c8c3ad71c7a246d2a2c93849f1844f28.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c8c3ad71c7a246d2a2c93849f1844f28.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:22:32.845683+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_d848fbbb9a7fe139",
+      "question": "5xx 错误率突增，请求大量失败；payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_254a9a80e9b745d79b8978b694d3de03.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_254a9a80e9b745d79b8978b694d3de03.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fab159a4f2a34e27a60b75dc0316dd98.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fab159a4f2a34e27a60b75dc0316dd98.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_254a9a80e9b745d79b8978b694d3de03.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_254a9a80e9b745d79b8978b694d3de03.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fab159a4f2a34e27a60b75dc0316dd98.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fab159a4f2a34e27a60b75dc0316dd98.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:16:19.899005+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_82fdbdfc74f7ded8",
+      "question": "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；payment-app P99 latency > 500ms, MySQL connection pool exhausted；5xx 错误率突增，请求大量失败；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8f67ceb6d6654d8f9663b0d35ccff811.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8f67ceb6d6654d8f9663b0d35ccff811.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d97fc049c4fd4d38bd0d71ace6dbce62.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d97fc049c4fd4d38bd0d71ace6dbce62.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8f67ceb6d6654d8f9663b0d35ccff811.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8f67ceb6d6654d8f9663b0d35ccff811.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d97fc049c4fd4d38bd0d71ace6dbce62.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d97fc049c4fd4d38bd0d71ace6dbce62.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:13:44.260945+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_5f6e9b57830c3145",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 慢查询增多，t_txn 表响应变慢；MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_592ed23a59934c50b30b867c50533401.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_592ed23a59934c50b30b867c50533401.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5a9a1bd98e01470bb77bb301617d813e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5a9a1bd98e01470bb77bb301617d813e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_592ed23a59934c50b30b867c50533401.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_592ed23a59934c50b30b867c50533401.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5a9a1bd98e01470bb77bb301617d813e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5a9a1bd98e01470bb77bb301617d813e.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:07:37.666238+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_fcee4dfee1b721bf",
+      "question": "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1bf6b25feeb14a8b96376e690af1f478.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1bf6b25feeb14a8b96376e690af1f478.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_78d0086db72f4182b3410f4018d8d332.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_78d0086db72f4182b3410f4018d8d332.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1bf6b25feeb14a8b96376e690af1f478.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1bf6b25feeb14a8b96376e690af1f478.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_78d0086db72f4182b3410f4018d8d332.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_78d0086db72f4182b3410f4018d8d332.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:04:22.662760+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_15f3286f560df0f3",
+      "question": "当前系统有哪些问题",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_61607d51fb774ef8b0348f36d409e263.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_61607d51fb774ef8b0348f36d409e263.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_61607d51fb774ef8b0348f36d409e263.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_61607d51fb774ef8b0348f36d409e263.json"
+          ]
+        },
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_247be283e0c5415aa5b57d4deba1d102.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_247be283e0c5415aa5b57d4deba1d102.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T04:04:11.878734+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_b5ca99809b157321",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46fdde052c6448d0a7d649c81b84822b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46fdde052c6448d0a7d649c81b84822b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f52179efa4cf47cd98788302ebefbe96.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f52179efa4cf47cd98788302ebefbe96.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_46fdde052c6448d0a7d649c81b84822b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_46fdde052c6448d0a7d649c81b84822b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f52179efa4cf47cd98788302ebefbe96.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f52179efa4cf47cd98788302ebefbe96.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T03:52:34.228805+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_6c9c49c368d01720",
+      "question": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503；payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_559169c09d504667b7a6ac48d7301295.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_559169c09d504667b7a6ac48d7301295.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_559169c09d504667b7a6ac48d7301295.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_559169c09d504667b7a6ac48d7301295.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T03:44:46.646094+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_14d5ed7aef7520d0",
+      "question": "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_809856d292954412aba9f949af5a8cc6.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_809856d292954412aba9f949af5a8cc6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_809856d292954412aba9f949af5a8cc6.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_809856d292954412aba9f949af5a8cc6.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T03:40:26.225477+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_cd7748b58e5eb832",
+      "question": "MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入；payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b1c0e9f3fe84f25bc0dcca049551ccd.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b1c0e9f3fe84f25bc0dcca049551ccd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6b1c0e9f3fe84f25bc0dcca049551ccd.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6b1c0e9f3fe84f25bc0dcca049551ccd.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-02T03:38:39.531736+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_78f84a8e282bebb7",
+      "question": "MySQL 磁盘临时表急剧增多，created_tmp_disk_tables 速率升高，filesort 落盘，数据库响应变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7ea2b8f7a62e480ba8a2024870552ade.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7ea2b8f7a62e480ba8a2024870552ade.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7ea2b8f7a62e480ba8a2024870552ade.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7ea2b8f7a62e480ba8a2024870552ade.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-05T14:39:54.417099+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_473d12fc5b257213",
+      "question": "cc-app-gateway 出现异常，请诊断根因。",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_381b09c5a35b46e298941a5051cafcd4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_381b09c5a35b46e298941a5051cafcd4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_381b09c5a35b46e298941a5051cafcd4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_381b09c5a35b46e298941a5051cafcd4.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T10:29:53.023386+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_0d7292171ae1fd8e",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1ec610bd14424cd1a699bd08cebbaf27.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1ec610bd14424cd1a699bd08cebbaf27.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ec610bd14424cd1a699bd08cebbaf27.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ec610bd14424cd1a699bd08cebbaf27.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:25:03.379845+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_9ce825a96e951f34",
+      "question": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503；payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_65b48630f46f42f688dded23e075cf9b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_65b48630f46f42f688dded23e075cf9b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_65b48630f46f42f688dded23e075cf9b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_65b48630f46f42f688dded23e075cf9b.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:27:48.397828+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_d7d0600cf77f401a",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL connection pool exhausted, payment-app P99 latency high；payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ddb3d27e0d7b40acb8280a1d6f292e11.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ddb3d27e0d7b40acb8280a1d6f292e11.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ddb3d27e0d7b40acb8280a1d6f292e11.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ddb3d27e0d7b40acb8280a1d6f292e11.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:29:35.912166+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_b713061709131a86",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据；payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b707197ba2ed4b0484eb83b2142c541b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b707197ba2ed4b0484eb83b2142c541b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b707197ba2ed4b0484eb83b2142c541b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b707197ba2ed4b0484eb83b2142c541b.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:31:29.527656+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_a8cb6f149278d201",
+      "question": "MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f4ab366fe9054af6a23b6b3d7083fd1d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f4ab366fe9054af6a23b6b3d7083fd1d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_400c7808237149fba908d10d52df4842.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_400c7808237149fba908d10d52df4842.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3a343621600747aaa313bd78219ed494.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3a343621600747aaa313bd78219ed494.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f99db9531e30429fb36c4755c9a5f2b8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f99db9531e30429fb36c4755c9a5f2b8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3dd167d6716a4cb882b65385c00e8272.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3dd167d6716a4cb882b65385c00e8272.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3a343621600747aaa313bd78219ed494.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3a343621600747aaa313bd78219ed494.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3dd167d6716a4cb882b65385c00e8272.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3dd167d6716a4cb882b65385c00e8272.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_400c7808237149fba908d10d52df4842.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_400c7808237149fba908d10d52df4842.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f4ab366fe9054af6a23b6b3d7083fd1d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f4ab366fe9054af6a23b6b3d7083fd1d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f99db9531e30429fb36c4755c9a5f2b8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f99db9531e30429fb36c4755c9a5f2b8.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:34:54.737517+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_ba905c14c143968f",
+      "question": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d0f0571ff37c43bb8e67b22a8473fead.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d0f0571ff37c43bb8e67b22a8473fead.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ee5f2fcbd41a4cbb9af56031fa9b8b70.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ee5f2fcbd41a4cbb9af56031fa9b8b70.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_14e2f1362e0a45fda214f0199675f5cb.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_14e2f1362e0a45fda214f0199675f5cb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_18172d95f5774c8caf5bf7b2b756e353.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_18172d95f5774c8caf5bf7b2b756e353.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_abb1aa16af94412dbdc4cfc8e2ea0abc.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_abb1aa16af94412dbdc4cfc8e2ea0abc.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_22629a18dc50454f81024eeda06c069d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_22629a18dc50454f81024eeda06c069d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_14e2f1362e0a45fda214f0199675f5cb.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_14e2f1362e0a45fda214f0199675f5cb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_18172d95f5774c8caf5bf7b2b756e353.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_18172d95f5774c8caf5bf7b2b756e353.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_22629a18dc50454f81024eeda06c069d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_22629a18dc50454f81024eeda06c069d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_abb1aa16af94412dbdc4cfc8e2ea0abc.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_abb1aa16af94412dbdc4cfc8e2ea0abc.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d0f0571ff37c43bb8e67b22a8473fead.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d0f0571ff37c43bb8e67b22a8473fead.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ee5f2fcbd41a4cbb9af56031fa9b8b70.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ee5f2fcbd41a4cbb9af56031fa9b8b70.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:37:56.828572+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_b1a0fe61b9b70545",
+      "question": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d779346424d74145a425e45d6bede01c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d779346424d74145a425e45d6bede01c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fa5973c8a3a543fba6cefc5fb7770e37.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fa5973c8a3a543fba6cefc5fb7770e37.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_478281513d0841ce81e5d06b39fad5e1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_478281513d0841ce81e5d06b39fad5e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_442885a239b543b5a0a88e8982b27bfb.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_442885a239b543b5a0a88e8982b27bfb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_04abee0fdd3a478b8a2c215ff6d86f33.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_04abee0fdd3a478b8a2c215ff6d86f33.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_2c7822f8b85a4defa738e6527be6a1e3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_2c7822f8b85a4defa738e6527be6a1e3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3f376b77f9cf4e0f8e5cc79d415fd182.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3f376b77f9cf4e0f8e5cc79d415fd182.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_28def36876124be2978cfa54f259a33e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_28def36876124be2978cfa54f259a33e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1ac28af8de7c4dbcaa5b50aab24bd2c3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1ac28af8de7c4dbcaa5b50aab24bd2c3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_14f25d816dd54f349f06bc045234b572.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_14f25d816dd54f349f06bc045234b572.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_04abee0fdd3a478b8a2c215ff6d86f33.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_04abee0fdd3a478b8a2c215ff6d86f33.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_14f25d816dd54f349f06bc045234b572.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_14f25d816dd54f349f06bc045234b572.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ac28af8de7c4dbcaa5b50aab24bd2c3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ac28af8de7c4dbcaa5b50aab24bd2c3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_28def36876124be2978cfa54f259a33e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_28def36876124be2978cfa54f259a33e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2c7822f8b85a4defa738e6527be6a1e3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2c7822f8b85a4defa738e6527be6a1e3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3f376b77f9cf4e0f8e5cc79d415fd182.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3f376b77f9cf4e0f8e5cc79d415fd182.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_442885a239b543b5a0a88e8982b27bfb.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_442885a239b543b5a0a88e8982b27bfb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_478281513d0841ce81e5d06b39fad5e1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_478281513d0841ce81e5d06b39fad5e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d779346424d74145a425e45d6bede01c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d779346424d74145a425e45d6bede01c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fa5973c8a3a543fba6cefc5fb7770e37.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fa5973c8a3a543fba6cefc5fb7770e37.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:40:16.390693+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_c61ff1c5ee392086",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0817151834d4411c9abf32cd965cb2b2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0817151834d4411c9abf32cd965cb2b2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_4c6950a3219d4419a415dad5e593da42.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_4c6950a3219d4419a415dad5e593da42.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bbb1d7ee39f94cd1848b737c5c944ae8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bbb1d7ee39f94cd1848b737c5c944ae8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_706dd8e45b0849f6a60103115fd09a12.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_706dd8e45b0849f6a60103115fd09a12.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c19656da6012409f8d7c6a7843143777.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c19656da6012409f8d7c6a7843143777.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_90043d9f05314080966bed3cd5396273.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_90043d9f05314080966bed3cd5396273.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ce9d33ebfa86463c860969ba8872aa0a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ce9d33ebfa86463c860969ba8872aa0a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_cb0d60030be8437984433afb3d7921c3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_cb0d60030be8437984433afb3d7921c3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0817151834d4411c9abf32cd965cb2b2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0817151834d4411c9abf32cd965cb2b2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4c6950a3219d4419a415dad5e593da42.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4c6950a3219d4419a415dad5e593da42.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_706dd8e45b0849f6a60103115fd09a12.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_706dd8e45b0849f6a60103115fd09a12.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_90043d9f05314080966bed3cd5396273.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_90043d9f05314080966bed3cd5396273.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bbb1d7ee39f94cd1848b737c5c944ae8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bbb1d7ee39f94cd1848b737c5c944ae8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c19656da6012409f8d7c6a7843143777.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c19656da6012409f8d7c6a7843143777.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cb0d60030be8437984433afb3d7921c3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cb0d60030be8437984433afb3d7921c3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ce9d33ebfa86463c860969ba8872aa0a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ce9d33ebfa86463c860969ba8872aa0a.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T11:43:56.181389+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_761bff5405415468",
+      "question": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c3244c2ba6ac4664ae4c1caf30c40ae4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c3244c2ba6ac4664ae4c1caf30c40ae4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f19310d5efad4c3f88b8323741470e48.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f19310d5efad4c3f88b8323741470e48.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_97ae5ef86c6447c59b767b7bc71f42e3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_97ae5ef86c6447c59b767b7bc71f42e3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5bd19bca5351450ca1edb9c7d4db6ab3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5bd19bca5351450ca1edb9c7d4db6ab3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bb4b61f2438241c18016e5e17f682a4e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bb4b61f2438241c18016e5e17f682a4e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_735d3ab04bb5496188259f0ff61a2a80.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_735d3ab04bb5496188259f0ff61a2a80.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_559ada1079ca423ab787e68552624851.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_559ada1079ca423ab787e68552624851.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_559ada1079ca423ab787e68552624851.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_559ada1079ca423ab787e68552624851.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5bd19bca5351450ca1edb9c7d4db6ab3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5bd19bca5351450ca1edb9c7d4db6ab3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_735d3ab04bb5496188259f0ff61a2a80.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_735d3ab04bb5496188259f0ff61a2a80.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_97ae5ef86c6447c59b767b7bc71f42e3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_97ae5ef86c6447c59b767b7bc71f42e3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bb4b61f2438241c18016e5e17f682a4e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bb4b61f2438241c18016e5e17f682a4e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c3244c2ba6ac4664ae4c1caf30c40ae4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c3244c2ba6ac4664ae4c1caf30c40ae4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f19310d5efad4c3f88b8323741470e48.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f19310d5efad4c3f88b8323741470e48.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:05:43.828722+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_4e14e8e536f4cbf4",
+      "question": "监控无对应告警，但业务侧出现异常（单副本网络延迟注入（tc netem 300ms））",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6b7402a13e6c49f983f41fda28c42542.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6b7402a13e6c49f983f41fda28c42542.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b7402a13e6c49f983f41fda28c42542.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b7402a13e6c49f983f41fda28c42542.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:07:43.801221+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_faa74834e10bcaaa",
+      "question": "监控无对应告警，但业务侧出现异常（单副本网络丢包注入（tc netem loss 40%））",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3df595276bf746d0a9184c0abd496a53.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3df595276bf746d0a9184c0abd496a53.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3df595276bf746d0a9184c0abd496a53.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3df595276bf746d0a9184c0abd496a53.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:09:44.353804+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_377f852472dcf4ba",
+      "question": "监控无对应告警，但业务侧出现异常（构造真实容器 OOMKill（内存上限低于实际用量 + 内存申请））",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b4fb1da2995f4b35b8153eb09f8857da.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b4fb1da2995f4b35b8153eb09f8857da.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b4fb1da2995f4b35b8153eb09f8857da.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b4fb1da2995f4b35b8153eb09f8857da.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:12:23.121664+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_6b46e7d56c037b8c",
+      "question": "payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_93afd84efade489484087aad3c889186.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_93afd84efade489484087aad3c889186.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8dc98a52d41a4d328371b85f0549b4a8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8dc98a52d41a4d328371b85f0549b4a8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0bccdcd9a44c4d49a88738384405fff7.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0bccdcd9a44c4d49a88738384405fff7.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_10dc29c389d04576a773f8f7f9630aca.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_10dc29c389d04576a773f8f7f9630aca.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_aca37b8fd533431393568e60a33ce18f.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_aca37b8fd533431393568e60a33ce18f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0bccdcd9a44c4d49a88738384405fff7.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0bccdcd9a44c4d49a88738384405fff7.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_10dc29c389d04576a773f8f7f9630aca.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_10dc29c389d04576a773f8f7f9630aca.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8dc98a52d41a4d328371b85f0549b4a8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8dc98a52d41a4d328371b85f0549b4a8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_93afd84efade489484087aad3c889186.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_93afd84efade489484087aad3c889186.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_aca37b8fd533431393568e60a33ce18f.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_aca37b8fd533431393568e60a33ce18f.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:15:55.389535+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_0d59c376a0901a9a",
+      "question": "监控无对应告警，但业务侧出现异常（耗尽 MySQL max_connections（连接数打满））",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_553625e811864dc9b4a3dffc0e02bd7d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_553625e811864dc9b4a3dffc0e02bd7d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_553625e811864dc9b4a3dffc0e02bd7d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_553625e811864dc9b4a3dffc0e02bd7d.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:20:26.855390+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_3abf80e23ab34d06",
+      "question": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6e7501a390af4fe8a6ede3121ee26a26.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6e7501a390af4fe8a6ede3121ee26a26.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e5f064aef6834ddfb40a94222e5d1606.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e5f064aef6834ddfb40a94222e5d1606.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_023d66fe66a1469faaba7d65b0e1a170.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_023d66fe66a1469faaba7d65b0e1a170.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_612136773cd746978cc90aa8f9672d83.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_612136773cd746978cc90aa8f9672d83.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_023d66fe66a1469faaba7d65b0e1a170.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_023d66fe66a1469faaba7d65b0e1a170.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_612136773cd746978cc90aa8f9672d83.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_612136773cd746978cc90aa8f9672d83.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6e7501a390af4fe8a6ede3121ee26a26.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6e7501a390af4fe8a6ede3121ee26a26.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e5f064aef6834ddfb40a94222e5d1606.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e5f064aef6834ddfb40a94222e5d1606.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:23:20.971820+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_47ad62615fc808cf",
+      "question": "监控无对应告警，但业务侧出现异常（排序/分组内存不足落盘（磁盘临时表激增））",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_32058e3b0cf44407942dc5e9426501d3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_32058e3b0cf44407942dc5e9426501d3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_32058e3b0cf44407942dc5e9426501d3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_32058e3b0cf44407942dc5e9426501d3.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:29:34.920637+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_0019c509d651c74b",
+      "question": "5xx 错误率突增，请求大量失败",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_012bf6eff05b4ab594992a6edefb4d24.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_012bf6eff05b4ab594992a6edefb4d24.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1d43ac5573e449e28c99d3f1eaa8dfd5.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1d43ac5573e449e28c99d3f1eaa8dfd5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_012bf6eff05b4ab594992a6edefb4d24.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_012bf6eff05b4ab594992a6edefb4d24.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1d43ac5573e449e28c99d3f1eaa8dfd5.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1d43ac5573e449e28c99d3f1eaa8dfd5.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:32:51.306642+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_394a1e73dbbfbfe7",
+      "question": "MySQL 主从复制中断 replication broken，副本 IO/SQL 线程停止，副本数据滞后",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_98f263268acd40359dc45141d99fe351.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_98f263268acd40359dc45141d99fe351.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7b0ac7d9adc44f2cbf5fb9739863cfeb.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7b0ac7d9adc44f2cbf5fb9739863cfeb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8ec5ff28d0914fa3991dbbbc391d460a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8ec5ff28d0914fa3991dbbbc391d460a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_cdbe12ce9c1847629b470deb2653b827.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_cdbe12ce9c1847629b470deb2653b827.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7b0ac7d9adc44f2cbf5fb9739863cfeb.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7b0ac7d9adc44f2cbf5fb9739863cfeb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8ec5ff28d0914fa3991dbbbc391d460a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8ec5ff28d0914fa3991dbbbc391d460a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_98f263268acd40359dc45141d99fe351.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_98f263268acd40359dc45141d99fe351.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cdbe12ce9c1847629b470deb2653b827.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cdbe12ce9c1847629b470deb2653b827.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:35:16.362113+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_3c7754d298e240ea",
+      "question": "监控无对应告警，但业务侧出现异常（杀掉一个只读副本容器）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_882670a75f8d47c796b5b488ca81ca7a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_882670a75f8d47c796b5b488ca81ca7a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_882670a75f8d47c796b5b488ca81ca7a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_882670a75f8d47c796b5b488ca81ca7a.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:39:16.892483+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_669764539bad83b9",
+      "question": "MySQL connection pool exhausted, payment-app P99 latency high；MySQL 出现 InnoDB 行锁等待 row lock wait，存在长事务持有排他锁阻塞写入",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c7777a096e43483ca406fd75d22ba68c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c7777a096e43483ca406fd75d22ba68c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8ecfb535dd0c4cea8887052899109fa9.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8ecfb535dd0c4cea8887052899109fa9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e32f92b7f4d24cc5b6fbc4f881316e02.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e32f92b7f4d24cc5b6fbc4f881316e02.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_860195caca184669996ba852d9c47347.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_860195caca184669996ba852d9c47347.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_860195caca184669996ba852d9c47347.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_860195caca184669996ba852d9c47347.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8ecfb535dd0c4cea8887052899109fa9.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8ecfb535dd0c4cea8887052899109fa9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c7777a096e43483ca406fd75d22ba68c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c7777a096e43483ca406fd75d22ba68c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e32f92b7f4d24cc5b6fbc4f881316e02.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e32f92b7f4d24cc5b6fbc4f881316e02.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:49:02.372260+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_00a1bc6b5e31cf22",
+      "question": "payment-app P99 latency > 500ms, MySQL connection pool exhausted；MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_27da487fc07a40f2a0d49a5223dc82e2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_27da487fc07a40f2a0d49a5223dc82e2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_2864e979703d4b33964d434a572ac3c0.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_2864e979703d4b33964d434a572ac3c0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_27da487fc07a40f2a0d49a5223dc82e2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_27da487fc07a40f2a0d49a5223dc82e2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2864e979703d4b33964d434a572ac3c0.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2864e979703d4b33964d434a572ac3c0.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T12:51:44.712946+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_203148ebc1e91cf6",
+      "question": "监控无对应告警，但业务侧出现异常（数据库内存/排序资源不足（大排序落盘））",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_def43423916f47919940c8eeeae07c85.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_def43423916f47919940c8eeeae07c85.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_def43423916f47919940c8eeeae07c85.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_def43423916f47919940c8eeeae07c85.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T13:01:35.315880+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_714397bb4f17be8f",
+      "question": "监控无对应告警，但业务侧出现异常（层级=应用层）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6d64741e6a20444d8c39c02154eaeb8f.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6d64741e6a20444d8c39c02154eaeb8f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_57263650e12b4ba7b620b22d3a7b7f74.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_57263650e12b4ba7b620b22d3a7b7f74.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e1ef23d6a6864f2ca27f49bfaa4e03c1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e1ef23d6a6864f2ca27f49bfaa4e03c1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_57263650e12b4ba7b620b22d3a7b7f74.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_57263650e12b4ba7b620b22d3a7b7f74.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6d64741e6a20444d8c39c02154eaeb8f.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6d64741e6a20444d8c39c02154eaeb8f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e1ef23d6a6864f2ca27f49bfaa4e03c1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e1ef23d6a6864f2ca27f49bfaa4e03c1.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T14:22:30.714644+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_614a9e02c9cbe200",
+      "question": "监控无对应告警，但业务侧出现异常（层级=运行环境层）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bd864906c4d54b36ae443e9bcfeb8f90.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bd864906c4d54b36ae443e9bcfeb8f90.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_329dcd41bf4d47f8abea906d23d3838a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_329dcd41bf4d47f8abea906d23d3838a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_329dcd41bf4d47f8abea906d23d3838a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_329dcd41bf4d47f8abea906d23d3838a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd864906c4d54b36ae443e9bcfeb8f90.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd864906c4d54b36ae443e9bcfeb8f90.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T14:32:11.004825+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_0eacd46969cd7702",
+      "question": "监控无对应告警，但业务侧出现异常（层级=数据库层）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7e4ec2a574d447689de4689a1d4d6061.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7e4ec2a574d447689de4689a1d4d6061.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8cc4f0e7685a4f879a15b121321e2261.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8cc4f0e7685a4f879a15b121321e2261.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_9ebcaac8c6864c59b7b8f1f0b16449e7.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_9ebcaac8c6864c59b7b8f1f0b16449e7.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5a4fe2b4628445f0825db7d5606cfdd8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5a4fe2b4628445f0825db7d5606cfdd8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c8b008eb3a614d2db350787136fa138c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c8b008eb3a614d2db350787136fa138c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5a4fe2b4628445f0825db7d5606cfdd8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5a4fe2b4628445f0825db7d5606cfdd8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7e4ec2a574d447689de4689a1d4d6061.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7e4ec2a574d447689de4689a1d4d6061.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8cc4f0e7685a4f879a15b121321e2261.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8cc4f0e7685a4f879a15b121321e2261.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9ebcaac8c6864c59b7b8f1f0b16449e7.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9ebcaac8c6864c59b7b8f1f0b16449e7.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c8b008eb3a614d2db350787136fa138c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c8b008eb3a614d2db350787136fa138c.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T14:40:45.898282+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_093d252163368ce6",
+      "question": "监控无对应告警，但业务侧出现异常（层级=跨层资源）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_019004a746f94885926c07a9f20f0985.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_019004a746f94885926c07a9f20f0985.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b253f5f722b74114b5026bef49fd8add.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b253f5f722b74114b5026bef49fd8add.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_019004a746f94885926c07a9f20f0985.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_019004a746f94885926c07a9f20f0985.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b253f5f722b74114b5026bef49fd8add.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b253f5f722b74114b5026bef49fd8add.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T15:22:02.237813+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_e24841fd6a82a4f7",
+      "question": "MySQL 连接数耗尽 max_connections",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_db2581870cfd4073a0a9509d017c43a2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_db2581870cfd4073a0a9509d017c43a2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_db2581870cfd4073a0a9509d017c43a2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_db2581870cfd4073a0a9509d017c43a2.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-07T15:37:08.825764+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_f3c89ce22d360de2",
+      "question": "当前系统状态如何",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_2a7ef8cf77514a1992ea010ee4520e4c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_2a7ef8cf77514a1992ea010ee4520e4c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2a7ef8cf77514a1992ea010ee4520e4c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2a7ef8cf77514a1992ea010ee4520e4c.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T01:07:46.197918+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_569c51bd179bf9f5",
+      "question": "MySQL 慢查询增多，数据库响应变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5cdff1b571ed435db19e7f0d19865d22.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5cdff1b571ed435db19e7f0d19865d22.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f5378d63bea84005b676c63eae52d405.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f5378d63bea84005b676c63eae52d405.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5cdff1b571ed435db19e7f0d19865d22.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5cdff1b571ed435db19e7f0d19865d22.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f5378d63bea84005b676c63eae52d405.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f5378d63bea84005b676c63eae52d405.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T01:22:57.866690+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_e6a6fff091d8f0a2",
+      "question": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f71791e33b4a49aabf2917ca30b323b3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f71791e33b4a49aabf2917ca30b323b3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8529e1db00ad4e77bbc8dca6df62aaf4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8529e1db00ad4e77bbc8dca6df62aaf4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3767a8cd24c24c018844a773c09671e1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3767a8cd24c24c018844a773c09671e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_12d05cf35ce94cdc9e610e8588486677.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_12d05cf35ce94cdc9e610e8588486677.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_12d05cf35ce94cdc9e610e8588486677.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_12d05cf35ce94cdc9e610e8588486677.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3767a8cd24c24c018844a773c09671e1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3767a8cd24c24c018844a773c09671e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8529e1db00ad4e77bbc8dca6df62aaf4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8529e1db00ad4e77bbc8dca6df62aaf4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f71791e33b4a49aabf2917ca30b323b3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f71791e33b4a49aabf2917ca30b323b3.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T05:45:03.004534+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_b13eba9ba3f77850",
+      "question": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fe49d4501274431fb10dd9dd62ac5652.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fe49d4501274431fb10dd9dd62ac5652.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe49d4501274431fb10dd9dd62ac5652.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe49d4501274431fb10dd9dd62ac5652.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T05:55:46.788113+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_f5c7930fd9bbfaa2",
+      "question": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7a2eda5010e24550bf08a296131735f4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7a2eda5010e24550bf08a296131735f4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f4df3f7461b94e77b16096245ef79a03.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f4df3f7461b94e77b16096245ef79a03.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5e55aa891c27440a948b33a154049bc3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5e55aa891c27440a948b33a154049bc3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5e55aa891c27440a948b33a154049bc3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5e55aa891c27440a948b33a154049bc3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7a2eda5010e24550bf08a296131735f4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7a2eda5010e24550bf08a296131735f4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f4df3f7461b94e77b16096245ef79a03.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f4df3f7461b94e77b16096245ef79a03.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T06:24:27.173447+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_fd99f552f886e40c",
+      "question": "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_861b43aff716420898054fdda5496069.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_861b43aff716420898054fdda5496069.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b826247a440a44dea8f8c21ffa03fab3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b826247a440a44dea8f8c21ffa03fab3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_861b43aff716420898054fdda5496069.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_861b43aff716420898054fdda5496069.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b826247a440a44dea8f8c21ffa03fab3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b826247a440a44dea8f8c21ffa03fab3.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T06:29:56.486972+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_79dec9f2447464aa",
+      "question": "MySQL 实例不可用 down（mysql_up=0）—— 先按 instance 判断角色再定性：若是主库 cc-mysql-core，写路径与复制源全部受影响；若是只读副本，写路径正常、只是读容量下降与副本数据滞后",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3a8dfff607454b74b693565c0f7b84e9.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3a8dfff607454b74b693565c0f7b84e9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3a8dfff607454b74b693565c0f7b84e9.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3a8dfff607454b74b693565c0f7b84e9.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T06:39:34.395865+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_e325c1fc5c6c8172",
+      "question": "MySQL 慢查询增多，t_txn 表响应变慢",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ce2d01d3d37e41109fe3336c19dde7a2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ce2d01d3d37e41109fe3336c19dde7a2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ce2d01d3d37e41109fe3336c19dde7a2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ce2d01d3d37e41109fe3336c19dde7a2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4d26fdc9231482da82e235fb913012e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4d26fdc9231482da82e235fb913012e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d4d26fdc9231482da82e235fb913012e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d4d26fdc9231482da82e235fb913012e.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T06:59:43.395620+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_db9467a8b0f177b1",
+      "question": "payment-app P99 延迟超过 500ms，MySQL 连接池排队",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0d067b91c36f47bb9a9e1df5ba3b40c8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0d067b91c36f47bb9a9e1df5ba3b40c8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e12e94f824d54920b49717e4b2fb6fb2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e12e94f824d54920b49717e4b2fb6fb2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0d067b91c36f47bb9a9e1df5ba3b40c8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0d067b91c36f47bb9a9e1df5ba3b40c8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e12e94f824d54920b49717e4b2fb6fb2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e12e94f824d54920b49717e4b2fb6fb2.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T08:28:04.231513+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_8579098d97ea622c",
+      "question": "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果是读容量下降与复制滞后",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b912c811833849fbb8f3882ac85759bd.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b912c811833849fbb8f3882ac85759bd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b912c811833849fbb8f3882ac85759bd.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b912c811833849fbb8f3882ac85759bd.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T12:53:34.855874+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_729f620212812032",
+      "question": "payment-app P99 延迟超过 500ms，MySQL 连接池耗尽",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0431eeb9e9d249e088f1b2305d9e5719.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0431eeb9e9d249e088f1b2305d9e5719.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T13:52:46.972015+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_ef733407c23ea4ae",
+      "question": "当前系统有啥问题",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ff98103e54a44aba828246d03e6bca34.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ff98103e54a44aba828246d03e6bca34.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T13:56:30.690054+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_c17735862e588171",
+      "question": "当前系统有什么问题",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_13236c9b50634219af0fe420e74995ad.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_13236c9b50634219af0fe420e74995ad.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-08T14:07:50.201988+00:00",
+      "purpose": "construction"
+    }
+  ],
+  "updated_at": "2026-10-09T01:05:55.899644+00:00"
+}
