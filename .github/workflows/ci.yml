@@ -70,6 +70,10 @@ jobs:
       # 表现就是 doctor 的「读路径 Access denied」+ 两条「replication FAIL」。
       - name: Bootstrap the cluster (schema + replication)
         run: python tools/cluster_bootstrap.py
+      - name: Seed the synthetic dataset
+        run: python tools/fault_injector.py seed
+      # 注意顺序：这个门用的就是 doctor，而 doctor 含「测试体量 t_txn」检查。
+      # 若把 seed 放在门之后，门**永远不可能通过**（会白重试到超时）。
       - name: Wait for the stack to converge (doctor retry gate)
         run: |
           for i in $(seq 1 15); do
@@ -82,8 +86,6 @@ jobs:
           done
           echo "::error::doctor still failing after 15 attempts"
           exit 1
-      - name: Seed the synthetic dataset
-        run: python tools/fault_injector.py seed
       - name: Doctor (18 checks, final)
         run: python tools/fault_injector.py doctor
       - name: Logs on failure
