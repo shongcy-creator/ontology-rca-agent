@@ -1,0 +1,3 @@
+# 权威依赖清单在 rca-agent/backend/requirements.txt（后端镜像按它安装）。
+# 根目录保留指针，便于 `pip install -r requirements.txt` 这类习惯用法。
+-r rca-agent/backend/requirements.txt

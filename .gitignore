@@ -1,0 +1,55 @@
+# ── 运行期状态（不进仓库；判定见 docs/Linux迁移适配.md）────────────────
+# .chaos：故障注入状态、任务日志、各类验证报告 —— 每次运行都会变，且含宿主绝对路径
+.chaos/
+# .evoontology：本体工作区。schema/版本要留，但演化运行时状态与轨迹不进仓库
+.evoontology/evolution/*/trajectories/
+.evoontology/**/*.tmp
+*.log
+cleanup_report.json
+fault_state.json
+
+# ── 密钥与本地配置 ─────────────────────────────────────────────────────────
+.env
+.env.local
+.credentials*
+*_credentials.yaml
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+
+# ── Node / 前端 ───────────────────────────────────────────────────────────
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# ── 编辑器 / 操作系统 ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── 临时件（本项目的调试脚本习惯用 _ 前缀）────────────────────────────────
+tools/_*.py
+*.spill
+dsh-spill-*/
+
+# ── 本体工作区：只留知识（versions/ + active.json），运行期产物不进仓库 ──
+# tasks/trajectories/visualizations 是演化协议的运行状态（实测占 15MB+ 且每次运行都变）
+.evoontology/tasks/
+.evoontology/trajectories/
+.evoontology/visualizations/
+.evoontology/evolution/
+.evoontology/plots/
+.evoontology/*.db
+
+# ── 上游自带的演示视频（8.9MB，占仓库体积约 37%；不影响运行）──────────────
+vendor/EvoOntology/assets/*.mp4
