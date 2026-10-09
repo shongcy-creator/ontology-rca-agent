@@ -145,6 +145,7 @@ reports/              验证报告原始产物（README 里的数字都能在这
 | `docs/EvoOntology_接入手册.md` | 中文 | 本体协议接入与轮次 |
 | `docs/Linux迁移适配.md` | 中文 | 从 Windows Docker 迁到 Linux Docker |
 | `docs/RCA_Agent_智能化改造方案.md` | 中文 | Agent 设计与路线图 |
+| [`docs/lessons/`](docs/lessons/README.md) | 中/英 | **六个真实事故**：让坏系统看起来正常的那些陷阱（502 上游缓存 / 连通自己 / 僵尸 / BOM / 判据不可能通过 / 证据放在被观测对象身上） |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 英 | 含 **10 条不可协商的纪律**（判据设计是重点） |
 
 ## 许可证
