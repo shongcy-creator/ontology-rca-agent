@@ -1367,7 +1367,11 @@ _register(Fault(
     # 现值 0.03 的依据：空闲基线恒为 0，故障期实测 0.028~0.055（见验证手册 §11.27）。
     signals=[
         'max(rate(mysql_global_status_created_tmp_disk_tables{db_node="primary"}[30s])) > 0.03',
-        'max(rate(mysql_global_status_slow_queries{db_node="primary"}[30s])) > 0.2',
+        # 这里原先还有一条 `rate(slow_queries[30s]) > 0.2`，**已删除**：本场景注入的是
+        # 大排序聚合，实测单次执行**均耗时 170s**（8 次执行），而 slow_queries 是
+        # **执行完成后**才自增的计数器 → 30s 窗口内它根本来不及动，属结构上不可能成立。
+        # 保留下面这条 tmp_disk_tables（它才是本场景真正的症状，实测能成立）。
+        # 注意：这不是"调低阈值让它变绿"，而是删掉一条测错东西的判据。
     ],
     recovered_signals=[
         'max(rate(mysql_global_status_created_tmp_disk_tables{db_node="primary"}[1m])) > 0.03',

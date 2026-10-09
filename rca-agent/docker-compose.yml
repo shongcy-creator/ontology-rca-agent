@@ -95,6 +95,8 @@ services:
 
   # ── 应用层网关（负载均衡 + 副本健康视图）────────────────────────────────
   app-gateway:
+    # PID 1 = tini：与 backend/frontend 保持一致（nginx 自己会收子进程，但约定统一、避免以后再踩僵尸那类坑）
+    init: true
     image: nginx:1.27-alpine
     container_name: cc-app-gateway
     restart: unless-stopped

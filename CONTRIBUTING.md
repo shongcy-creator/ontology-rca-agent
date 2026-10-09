@@ -64,6 +64,13 @@ Please read them before opening a PR.
    hold after recovery. Writing `count(up == 1) >= 3` (true when healthy) makes recovery
    impossible to confirm — the check timed out with the correct value already in the result.
 
+10. **A gate must be satisfiable by construction.** If you use a complete acceptance
+   check (like `doctor`) as a readiness gate, every precondition that check requires must be
+   fulfilled **before** the gate — otherwise it can never go green. A CI gate that ran
+   `doctor` (which verifies dataset size) *before* the seeding step retried 15 times and
+   failed, while looking like "the stack is broken". Same failure class as rules 2 and 3:
+   a check that structurally cannot pass tells you nothing.
+
 ## Pull requests
 
 - Keep the diff scoped; explain *how you verified it* (which command, which numbers).
