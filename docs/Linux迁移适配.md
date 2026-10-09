@@ -84,14 +84,20 @@
 # 1) 起服务
 docker compose -f rca-agent/docker-compose.yml up -d
 
-# 2) 重建数据集 —— 命名卷按 project 名创建，新宿主不会带走 MySQL 数据。
+# 2) **引导集群**：建 schema + 把副本指向主库并启动复制。
+#    这一步**不在 compose 里**（本地环境往往早就跑过，容易漏）。漏了的表现是：
+#    doctor 的「读路径」报 Access denied（副本上根本没有 appuser）、
+#    两条「replication」FAIL（SHOW REPLICA STATUS 为空）—— 因为副本是空实例。
+python tools/cluster_bootstrap.py
+
+# 3) 重建数据集 —— 命名卷按 project 名创建，新宿主不会带走 MySQL 数据。
 #    不 seed 的话 t_txn 是空的，doctor 的「测试体量 t_txn」与依赖它的场景全部失真。
 python tools/fault_injector.py seed
 
-# 3) 环境体检（期望 18 项 PASS）
+# 4) 环境体检（期望 18 项 PASS）
 python tools/fault_injector.py doctor
 
-# 4) 文件属主：容器（root）写 .chaos / .evoontology，宿主用户改不动
+# 5) 文件属主：容器（root）写 .chaos / .evoontology，宿主用户改不动
 sudo chown -R "$USER":"$(id -gn)" .chaos .evoontology
 ```
 
