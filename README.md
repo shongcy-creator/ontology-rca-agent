@@ -32,6 +32,87 @@ end-to-end diagnosis scoring, and a versioned ontology-evolution protocol.
 - Not a finished generalization: today the injection layer is **Docker-only** and the
   database dialect is **MySQL-only**. Portability work is tracked in `docs/`.
 
+## Key features, with screenshots
+
+> Every screenshot below is from a **real run**, and every feature states **why you can trust
+> it**. A feature list is cheap; making the conclusion verifiable is the hard part.
+
+### 1. Fault-injection console — 21 scenarios, grouped by layer and graded by risk
+
+![Fault injection console](docs/images/故障注入控制台.png)
+
+Each card declares its layer (app / database / cluster-resource), category, **blast radius** and
+expected root cause. High-risk scenarios need explicit confirmation, and only one injection may
+run at a time. **Why trust it:** every scenario declares the signals that must hold *while
+injected*, and `fault_injector verify` checks each one — currently **21/21 reproduced, 20/21
+signals all hold** ([report](reports/fault_verify_report.json)).
+
+### 2. One-click stop & roll back — recovery must pass its criteria
+
+![Stop and roll back](docs/images/故障注入_停止并回滚.png)
+
+Rollback re-checks that the **recovery criteria actually turned false**, not that "it looks fine
+now". **Why trust it:** this is exactly the defect class fixed three times
+([`docs/lessons/05`](docs/lessons/05-criteria-that-cannot-pass.md)) — a recovery criterion written
+backwards makes recovery **permanently fail** instead of silently passing.
+
+### 3. A running job survives tab switches
+
+![Global running indicator](docs/images/注入_切页全局指示.png)
+![Stress job survives a tab switch](docs/images/压测_切页状态保持.png)
+
+Switching tabs **unmounts** the page, so "a job is running" is persisted and shown globally; coming
+back **re-attaches** to the running job. **Why trust it:** verified over CDP in four steps —
+state persisted, indicator appeared, re-attached on return, job finished at 100% success.
+
+### 4. Stress harness — HTTP and MySQL modes
+
+![Stress harness](docs/images/压测台.png)
+
+Before starting it **probes reachability** (TCP for MySQL, `/health` for HTTP) and refuses with a
+reason if unreachable. **Why trust it:** this is the fix for
+[`docs/lessons/02`](docs/lessons/02-stress-harness-connected-to-itself.md) — a configuration error
+must not look like a performance result (842/842 "failures" at the time).
+
+### 5. Root-cause conclusions — deterministic engine and LLM take different paths
+
+![Root cause](docs/images/根因结论_RCA面板.png)
+
+Routing is decided by the **input**, not by the conclusion: structured alerts use the ontology fast
+path (**0 tokens, ~15 s**); open-ended natural-language questions are **forced** onto the LLM agent.
+**Why trust it:** every answer returns `mode` and `route_reason`, so you can check why it took that
+path.
+
+### 6. Ask in natural language, with the reasoning visible
+
+![Chat](docs/images/根因结论_聊天框.png)
+![Reasoning in the chat](docs/images/诊断_推理在聊天框.png)
+
+### 7. Metric view and topology view of the same diagnosis
+
+![Metrics panel](docs/images/诊断_指标面板.png)
+![Topology panel](docs/images/诊断_拓扑面板.png)
+
+### 8. Remediation — P0 is read-only, writes need approval, failures roll back
+
+![Remediation actions](docs/images/根因处置动作.png)
+
+**Invariant: the most urgent (P0) remediation actions are always read-only**, enforced as an
+ontology **release gate** rather than a comment. Write actions are dry-run by default, carry an
+inverse operation and a post-check, and roll back automatically if the check fails.
+
+### 9. Model settings and a cost dashboard
+
+![Model settings](docs/images/模型设置_LLM切换.png)
+![Cost dashboard](docs/images/成本看板.png)
+
+### 10. Cluster monitoring — Prometheus + 23 alert rules + Grafana
+
+![Grafana dashboard](docs/images/Grafana_面板.png)
+
+Alert coverage is **measured**: inject → wait long enough (max rule `for` + 60 s) → check whether
+the declared alert actually fires. Currently **20/21 = 95%**.
+
 ## Architecture
 
 ```
