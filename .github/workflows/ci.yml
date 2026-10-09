@@ -82,6 +82,22 @@ jobs:
               echo "::notice::doctor passed after $i attempt(s)"
               exit 0
             fi
+            echo "::group::diagnostics (attempt $i)"
+            docker compose -f rca-agent/docker-compose.yml ps --format \
+              'table {{.Service}}\t{{.State}}\t{{.Status}}' || true
+            echo "--- prometheus up series ---"
+            curl -s 'http://127.0.0.1:9090/api/v1/query?query=up' | head -c 1200 || true
+            echo
+            echo "--- app targets seen by prometheus ---"
+            curl -s 'http://127.0.0.1:9090/api/v1/query?query=count(up{job=%22payment-app%22})' \
+              | head -c 400 || true
+            echo
+            echo "--- blackbox probe series ---"
+            curl -s 'http://127.0.0.1:9090/api/v1/query?query=probe_success' | head -c 400 || true
+            echo
+            echo "--- logs (tail) ---"
+            docker compose -f rca-agent/docker-compose.yml logs --tail 12 2>&1 | tail -n 120 || true
+            echo "::endgroup::"
             sleep 20
           done
           echo "::error::doctor still failing after 15 attempts"
