@@ -152,6 +152,7 @@ docs/                 handbook + migration notes (mostly Chinese)
 | `docs/EvoOntology_接入手册.md` | 中文 | Ontology protocol integration and rounds |
 | `docs/Linux迁移适配.md` | 中文 | Moving from Windows Docker to Linux Docker |
 | `docs/RCA_Agent_智能化改造方案.md` | 中文 | Agent design and roadmap |
+| [`docs/lessons/`](docs/lessons/README.md) | EN/ZH | **Six real incidents** from building this: the traps that make a broken system look healthy |
 
 ## License
 
