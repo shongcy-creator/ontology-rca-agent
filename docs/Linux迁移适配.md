@@ -201,3 +201,18 @@ sudo modprobe sch_netem
 本文只解决 **同一套 compose 换宿主 OS**。
 若目标是 **app 任意、部署形态任意（VM/物理机）、数据库换 PG/GaussDB**，那是另一套改造
 （运行提供者抽象 + 数据库方言 + 规范化信号层 + 本体实例化），不在这份文档范围内。
+
+---
+
+## 附：上面这几步已收敛为一条命令
+
+三、四节的步骤仍列出来（便于逐段排查），但**日常只需要**：
+
+```bash
+python tools/dev_up.py --build
+# 等价于：起栈 → cluster_bootstrap → seed → doctor（含重试）
+```
+
+之所以收敛：`cluster_bootstrap.py` 这一步不在 compose 里，曾被漏掉三次
+（CI / 本文档 / 英文 README），而漏掉时的症状是**副本空实例** ——
+所有容器 healthy，只有 `doctor` 能看出来。

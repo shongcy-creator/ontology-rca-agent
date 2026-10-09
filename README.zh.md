@@ -50,6 +50,18 @@
 
 ## 快速开始
 
+> **一条命令即可**（推荐）：
+>
+> ```bash
+> python tools/dev_up.py        # 起栈 → 引导(schema+复制) → seed → 体检；也可用 make up
+> ```
+>
+> 下面 5 步是它**内部做的事**，保留下来便于出问题时逐段排查。
+> 这些步骤原先散落在**文档 / CI / compose** 三处，结果"漏跑引导"被踩了三次
+> （症状是副本成了空实例：读路径 Access denied、复制为空，而**所有容器都 healthy**），
+> 现在收敛到一个入口。
+
+
 ```bash
 # 1) 起集群（应用 ×3 + 网关，MySQL 主库 + 2 副本，
 #    Prometheus/Grafana/Alertmanager，诊断后端 + 控制台）

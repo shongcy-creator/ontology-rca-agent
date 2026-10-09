@@ -54,6 +54,18 @@ end-to-end diagnosis scoring, and a versioned ontology-evolution protocol.
 
 ## Quickstart
 
+> **One command is enough** (recommended):
+>
+> ```bash
+> python tools/dev_up.py        # up → bootstrap(schema+replication) → seed → doctor; or `make up`
+> ```
+>
+> The five steps below are what it does internally — kept for step-by-step troubleshooting.
+> They used to live in **three** places (docs / CI / compose), and the bootstrap step was
+> missed three times (symptom: replicas stay empty instances — "Access denied" on the read
+> path, no replication — while **every container reports healthy**). It is now one entry point.
+
+
 ```bash
 # 1) bring up the cluster (app x3 + gateway, MySQL primary + 2 replicas,
 #    Prometheus/Grafana/Alertmanager, RCA backend + console)
