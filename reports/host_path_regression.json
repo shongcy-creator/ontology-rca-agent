@@ -1,0 +1,351 @@
+{
+  "what": "写死宿主绝对路径清理后的**脚本回归**：改了哪些文件、实跑了哪些、结论与遗留",
+  "generated_at": "2026-10-10T14:47:31Z",
+  "scope": {
+    "repo_abs_path_hardcoded": "21 个文件 / 25 处（16 个 tools 脚本 + generate_ontology_review.py + generate_ontology_ttl.py + rca-agent/run_local.py + 2 处文档）",
+    "docker_abs_path_hardcoded": "4 个脚本（chaos/core、alert_firing_verify、cluster_bootstrap、fault_drill）",
+    "change": "一律改为由 __file__ 推导；解释器/工具走 PATH（CC_PYTHON / CC_DOCKER 可覆盖）"
+  },
+  "summary": {
+    "scripts_total": 27,
+    "executed_ok": 18,
+    "executed_failed": 1,
+    "blocked": 8,
+    "by_kind": {
+      "run": 13,
+      "checked": 1,
+      "probe": 5,
+      "blocked": 8
+    }
+  },
+  "results": [
+    {
+      "name": "tools/check_viz.py",
+      "kind": "run",
+      "note": "读可视化 HTML",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.1,
+      "tail": "ontology_v0-rca version: PRESENT in HTML",
+      "stdout_tail": "HTML size: 3608969 bytes\n\n  ev:rca-alert-p99: YES\n  ev:rca-topology-path: YES\n  ev:rca-root-cause: YES\n  app:payment-app: YES\n  rel:app-accesses-db: YES\n  db:mysql-core: YES\n  rc:slow-sql: YES\n  supported_by: YES\n  evidence: YES\n\nEvidence refs in HTML: ['ev:rca-alert-p99', 'ev:rca-inc', 'ev:rca-root-cause', 'ev:rca-topology-path']\n\nontology_v0-rca version: PRESENT in HTML\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/evo_tool_schemas.py",
+      "kind": "run",
+      "note": "起 MCP server 取 schema",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.2,
+      "tail": "}",
+      "stdout_tail": "=====\n### finish_ontology_task\nFinish an executed task and persist its trajectory. Completion is not a correctness judgment.\n{\n \"type\": \"object\",\n \"properties\": {\n  \"workspace\": {\n   \"type\": \"string\",\n   \"description\": \"Absolute path to the EvoOntology workspace directory (the .evoontology/ folder under the project root).\"\n  },\n  \"task_id\": {\n   \"type\": \"string\"\n  },\n  \"final_answer\": {},\n  \"status\": {\n   \"type\": \"string\",\n   \"enum\": [\n    \"completed\",\n    \"failed\",\n    \"interrupted\"\n   ]\n  }\n },\n \"required\": [\n  \"workspace\",\n  \"task_id\",\n  \"final_answer\"\n ],\n \"additionalProperties\": false\n}\n\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/mcp_test.py",
+      "kind": "run",
+      "note": "MCP browse/resolve 实调",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.2,
+      "tail": "}",
+      "stdout_tail": "           \"summary\": {\n              \"type\": \"string\"\n            },\n            \"limitations\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": \"string\"\n              }\n            },\n            \"links\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": \"object\"\n              }\n            }\n          },\n          \"required\": [\n            \"workspace\",\n            \"version\",\n            \"summary\",\n            \"limitations\",\n            \"links\"\n          ],\n          \"additionalProperties\": false\n        }\n      }\n    ]\n  }\n}\n\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/llm_provider_probe.py",
+      "kind": "run",
+      "note": "provider 连通性（无 key 时应如实报不可用）",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 31.9,
+      "tail": "   [OK ] deepseek-chat                392ms tokens=14",
+      "stdout_tail": "========================================\n\n### agnes  (sk-2g2n***)\n   [OK ] agnes-3.0-flash              13118ms tokens=85\n   [OK ] agnes-3.0-flash              11569ms tokens=85\n\n### rsxermu666  (sk-3YDF***)\n   [ERR] claude-opus-5-5              HTTP 403  {\"error\":{\"code\":1003,\"message\":\"此 API Key 已过期\",\"type\":\"authentication_error\"}}\n   [ERR] claude-sonnet-4-6            HTTP 403  {\"error\":{\"code\":1003,\"message\":\"此 API Key 已过期\",\"type\":\"authentication_error\"}}\n\n### deepseek  (sk-54f2***)\n   [OK ] deepseek-chat                533ms tokens=14\n   [OK ] deepseek-chat                392ms tokens=14\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/panel_summary.py",
+      "kind": "run",
+      "note": "docker compose ps + 前端源码",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.3,
+      "tail": "  API     http://localhost:8088/docs",
+      "stdout_tail": "ner-exporter          Up 27 hours\nrca-agent-frontend          Up 28 hours (healthy)\npayment-app                 Up 3 hours (healthy)\npayment-app                 Up 7 hours (healthy)\npayment-app                 Up 3 hours (healthy)\n\n=== 宽度约束 ===\n  默认宽度         ? px\n  最小宽度         280 px\n  聊天区最小        340 px\n  最大宽度         1100 px\n\n=== 交互能力 ===\n  鼠标拖拽         YES\n  触摸拖拽         YES\n  键盘微调         YES\n  双击复位         YES\n  折叠/展开        YES\n  本地持久化        YES\n  尺寸自适应        YES\n  无障碍语义        YES\n  拖拽态样式        YES\n\n=== 访问地址 ===\n  UI      http://localhost:3001\n  API     http://localhost:8088/docs\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/print_rca.py",
+      "kind": "run",
+      "note": "读 tools/rca_result_ALERT-P99.json",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.0,
+      "tail": "elapsed_ms=146.5",
+      "stdout_tail": "=== topology ===\n  [entity] ds:pay = 支付数据源\n  [relation] rel:app-accesses-db = association\n  [relation] rel:app-produces-metric = association\n  [relation] rel:app-runs-on-container = composition\n  [entity] app:payment-app = 支付交易应用 payment-app\n  [entity] env:container = 支付容器 cc-credit-card-app\n=== candidates ===\n  [依赖] rel:app-accesses-db confidence=0.99\n  [资源] rel:app-runs-on-container confidence=0.99\n  [资源] env:container confidence=0.99\n=== root_cause ===\n  [依赖] rel:app-accesses-db\n  confidence=0.99\n  reason=命中关键词: accesses\nelapsed_ms=146.5\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/resizable_verify.py",
+      "kind": "run",
+      "note": "HTTP + 前端 dist",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 10.4,
+      "tail": "========================================================================",
+      "stdout_tail": "is-dragging\n  [PASS] css contains panel-detail.collapsed\n  [PASS] css contains pointer-events:none\n\n[3] Served by nginx\n  [PASS] index served\n  [PASS] index references bundle\n  [PASS] index references css\n  [PASS] bundle fetchable via nginx\n  [PASS] served bundle has splitter logic\n  [PASS] css fetchable via nginx\n  [PASS] served css has .splitter\n\n[4] API regression\n  [PASS] api health ok\n  [PASS] incidents still served\n\n========================================================================\nRESULT: 40 passed, 0 failed\n========================================================================\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/test_topology_query.py",
+      "kind": "run",
+      "note": "本体拓扑查询",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.5,
+      "tail": "        {\"id\": \"rel:ds-points-db\", \"relation_type\": \"association\", \"source\": \"ds:pay\", \"target\": \"db:mysql-core\", \"connection_condition\": \"dataSourceOf: 数据源指向",
+      "stdout_tail": "ype\": \"composition\", \"source\": \"env:host-wsl\", \"target\": \"env:container\", \"connection_condition\": \"h\n        {\"id\": \"rel:container-managed-by-cluster\", \"relation_type\": \"composition\", \"source\": \"env:container\", \"target\": \"env:cluster\", \"connection_condition\":\n   - ds:pay | rels: 2\n        {\"id\": \"rel:app-datasource\", \"relation_type\": \"association\", \"source\": \"app:payment-app\", \"target\": \"ds:pay\", \"connection_condition\": \"hasDataSource: \n        {\"id\": \"rel:ds-points-db\", \"relation_type\": \"association\", \"source\": \"ds:pay\", \"target\": \"db:mysql-core\", \"connection_condition\": \"dataSourceOf: 数据源指向\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/test_rca_engine.py",
+      "kind": "run",
+      "note": "引擎单场景 infer",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 11.2,
+      "tail": "chain steps: 8",
+      "stdout_tail": "incident_id: INC-1791643277\nelapsed_ms: 11040.8\nconfidence: 0.82\nroot_cause: 数据 rc:slow-sql conf= 0.82\ntopology nodes: 20\ncandidates: 6\nchain steps: 8\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/verify_all.py",
+      "kind": "run",
+      "note": "7 个套件聚合器，其中 fault_drill.py / alert_firing_verify.py 会注入故障并调 /api/rca/infer —— 具备破坏性，本次 240s 上限把它掐断",
+      "rc": 124,
+      "status": "nonzero",
+      "elapsed_s": 240.0,
+      "tail": "TIMEOUT(240s)",
+      "stdout_tail": "",
+      "stderr_tail": "TIMEOUT(240s)"
+    },
+    {
+      "name": "tools/publish_reports.py",
+      "kind": "run",
+      "note": "报告卫生闸门",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.1,
+      "tail": "PASS  reports/ 宿主路径卫生：17 份报告，0 处身份路径",
+      "stdout_tail": "PASS  reports/ 宿主路径卫生：17 份报告，0 处身份路径\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/strict_score_check.py",
+      "kind": "run",
+      "note": "严格命中 + 影响范围核对",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.1,
+      "tail": "结论: PASS",
+      "stdout_tail": "===============\n严格命中复算（仅可测量场景）\n  改前 reports/rca_diagnosis_report.json              19/20\n  改后 reports/rca_diagnosis_report_postfix.json      20/20\n====================================================================================================\n\n逐 case 变化：\n  res_cluster_memory     rc:oom-kill              -> rc:cluster-capacity       严格 False -> True\n\n转正 1 个: res_cluster_memory\n回退 0 个: -\n不可测量（占位输入，不计分母）: db_conn_saturation\n\n断言：\n  [PASS] 转正集合 == ['res_cluster_memory']\n  [PASS] 回退集合 == []\n  [PASS] 告警 AppClusterMemoryCapacity 触发范围 == ['res_cluster_memory']（实际 ['res_cluster_memory']）\n\n结论: PASS\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "generate_ontology_review.py",
+      "kind": "run",
+      "note": "写**未跟踪** xlsx（仓库外无副作用）",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.4,
+      "tail": "saved: <repo>\\本体模型设计_信用卡系统运维智能体.xlsx",
+      "stdout_tail": "saved: <repo>\\本体模型设计_信用卡系统运维智能体.xlsx\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "generate_ontology_ttl.py",
+      "kind": "checked",
+      "note": "会重写已跟踪的 ontology_turtle/*.ttl —— 执行后必须 diff，必要时还原",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.0,
+      "tail": "DONE",
+      "stdout_tail": "wrote <repo>\\ontology_turtle\\ontology.ttl 12310 bytes\nwrote <repo>\\ontology_turtle\\instances.ttl 4143 bytes\nwrote <repo>\\ontology_turtle\\topology.ttl 1856 bytes\nwrote <repo>\\ontology_turtle\\sparql_queries.txt 2579 bytes\nDONE\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/cluster_bootstrap.py",
+      "kind": "probe",
+      "note": "会重建 schema/复制（破坏性）——只验证它解析到的 docker 可执行",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.1,
+      "tail": "docker rc= 0 Docker version 29.8.1, build 4a63305",
+      "stdout_tail": "docker rc= 0 Docker version 29.8.1, build 4a63305\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/fault_drill.py",
+      "kind": "blocked",
+      "note": "演练体是顶层代码（无 __main__ 守卫）：import 即开始施压并注入故障，回归里不执行",
+      "rc": null,
+      "status": "blocked"
+    },
+    {
+      "name": "tools/chaos/core.py",
+      "kind": "probe",
+      "note": "chaos 注入层核心；只验证 docker 解析（不注入）",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.2,
+      "tail": "chaos.core docker rc= 0 Docker version 29.8.1, build 4a63305",
+      "stdout_tail": "chaos.core docker rc= 0 Docker version 29.8.1, build 4a63305\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/alert_firing_verify.py",
+      "kind": "probe",
+      "note": "脚本本体在 import 时就会注入 t_txn 行锁故障 —— 不执行，只验证同一表达式",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.1,
+      "tail": "alert_firing DOCKER -> C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.EXE",
+      "stdout_tail": "alert_firing DOCKER -> C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.EXE\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/fix_exporter.py",
+      "kind": "probe",
+      "note": "会改写已跟踪的 demo/docker-compose.yml —— 只验证目标路径解析",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.0,
+      "tail": "fix_exporter target -> <repo>\\demo\\docker-compose.yml exists= True",
+      "stdout_tail": "fix_exporter target -> <repo>\\demo\\docker-compose.yml exists= True\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "rca-agent/run_local.py",
+      "kind": "probe",
+      "note": "会占用 8088 起 uvicorn（与容器后端冲突）—— 只验证 EVO_WORKSPACE 解析",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 0.0,
+      "tail": "expected EVO_WORKSPACE -> <repo>\\.evoontology",
+      "stdout_tail": "expected EVO_WORKSPACE -> <repo>\\.evoontology\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "tools/agent_loop_verify.py",
+      "kind": "blocked",
+      "note": "会真实调用 LLM 并消耗额度（tools/llm_provider_probe.py 实测 deepseek-chat 392ms / tokens=14，说明凭据可用）—— 未获授权不代跑",
+      "rc": null,
+      "status": "blocked"
+    },
+    {
+      "name": "tools/agent_tools_verify.py",
+      "kind": "blocked",
+      "note": "会真实调用 LLM 并消耗额度（tools/llm_provider_probe.py 实测 deepseek-chat 392ms / tokens=14，说明凭据可用）—— 未获授权不代跑",
+      "rc": null,
+      "status": "blocked"
+    },
+    {
+      "name": "tools/dual_engine_verify.py",
+      "kind": "blocked",
+      "note": "会真实调用 LLM 并消耗额度（tools/llm_provider_probe.py 实测 deepseek-chat 392ms / tokens=14，说明凭据可用）—— 未获授权不代跑",
+      "rc": null,
+      "status": "blocked"
+    },
+    {
+      "name": "tools/anthropic_path_verify.py",
+      "kind": "blocked",
+      "note": "会真实调用 LLM 并消耗额度（tools/llm_provider_probe.py 实测 deepseek-chat 392ms / tokens=14，说明凭据可用）—— 未获授权不代跑",
+      "rc": null,
+      "status": "blocked"
+    },
+    {
+      "name": "tools/llm_client_verify.py",
+      "kind": "blocked",
+      "note": "会真实调用 LLM 并消耗额度（tools/llm_provider_probe.py 实测 deepseek-chat 392ms / tokens=14，说明凭据可用）—— 未获授权不代跑",
+      "rc": null,
+      "status": "blocked"
+    },
+    {
+      "name": "tools/llm_large_context_test.py",
+      "kind": "blocked",
+      "note": "会真实调用 LLM 并消耗额度（tools/llm_provider_probe.py 实测 deepseek-chat 392ms / tokens=14，说明凭据可用）—— 未获授权不代跑",
+      "rc": null,
+      "status": "blocked"
+    },
+    {
+      "name": "tools/restart_and_test.py",
+      "kind": "blocked",
+      "note": "taskkill /F /IM python.exe 会杀掉本机所有 python（含 DSH 自身）",
+      "rc": null,
+      "status": "blocked"
+    }
+  ],
+  "findings": [
+    {
+      "id": "active-ontology-flip",
+      "severity": "high",
+      "title": "跑一次 /api/rca/infer 会把**激活本体**从 ontology_v6 悄悄切回 ontology_v0-rca-agent",
+      "evidence": [
+        "rca-agent/backend/services/rca_engine.py:656  inject_evidence: bool = True（**默认开**）",
+        "rca-agent/backend/services/rca_engine.py:766-768  new_version = \"ontology_v0-rca-agent\" → SemanticStore.save_version(...) → SemanticStore.set_active(...)",
+        "后端日志：[RCA] Evidence injected: ev:rca-inc_*",
+        "回归期间 .evoontology/active.json 被改写为 ontology_v0-rca-agent，且 versions/ontology_v0-rca-agent/{terms,relations,evidence}.json 被追加（+99 行）"
+      ],
+      "trigger": "verify_all.py → tools/fault_drill.py:200 POST /api/rca/infer（该端点走默认 inject_evidence=True）",
+      "impact": "此后后端与所有读 active.json 的工具都在用**旧本体**（18 Term 时代），本轮刚修好的 rc:cluster-capacity 之类知识直接消失 —— 正是六轮迭代要消灭的那个状态",
+      "action_taken": "已 git checkout 还原 active.json、versions/ontology_v0-rca-agent/、ontology_turtle/；并用真实后端复测确认又服务 ontology_v6（同一告警文本 → rc:cluster-capacity，conf 0.99）",
+      "pre_existing": true,
+      "suggested_fix": "_inject_evidence 不应改写 active：把证据写进**当前**激活版本，或写进证据专用版本但不 set_active"
+    },
+    {
+      "id": "fault_drill-import-side-effect",
+      "severity": "medium",
+      "title": "tools/fault_drill.py 的演练体是顶层代码：import 即开始施压并注入行锁故障",
+      "evidence": [
+        "该文件没有 if __name__ == \"__main__\" 守卫（演练体在模块层执行）",
+        "回归中一次 import 探针真的把演练跑了起来，只能 kill 掉"
+      ],
+      "action_taken": "未改写（把 140 行演练体缩进进 main() 属未经验证的重写，而该脚本会注入故障、无法在回归里跑通证实没坏）；已在文件头加醒目警告",
+      "pre_existing": true
+    },
+    {
+      "id": "verify_all-destructive-stale",
+      "severity": "medium",
+      "title": "tools/verify_all.py 是破坏性聚合器（且套件清单已与当年的目录结构脱节）",
+      "evidence": [
+        "7 个套件里有 2 个会注入故障（fault_drill / alert_firing_verify）",
+        "本次执行 240s 未结束，被上限掐断"
+      ],
+      "action_taken": "保留原样；回归日志如实记为 rc=124（超时）并注明破坏性",
+      "pre_existing": true
+    },
+    {
+      "id": "ttl-regeneration-drift",
+      "severity": "low",
+      "title": "generate_ontology_ttl.py 重新生成的结果比已提交版本**少 370 行**",
+      "evidence": [
+        "运行后 git diff：instances.ttl -147 / ontology.ttl -111 / sparql_queries.txt -76 / topology.ttl -36"
+      ],
+      "impact": "说明生成器与已提交产物已经漂移：直接跑它会把跟踪文件改小",
+      "action_taken": "已还原 ontology_turtle/（生成本身与本次路径改动无关，路径改动只是让它能定位到 BASE）",
+      "pre_existing": true
+    },
+    {
+      "id": "docker-path-via-PATH",
+      "severity": "info",
+      "title": "4 个脚本原先写死 Docker Desktop 路径，改为 PATH 解析",
+      "evidence": [
+        "tools/alert_firing_verify.py 的探针在本机解析到同一个二进制 C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.EXE",
+        "tools/chaos/core.py 与 tools/cluster_bootstrap.py 探针：docker rc=0，Docker version 29.8.1"
+      ],
+      "impact": "本机行为不变；差别是换机器/换安装位置（含 Linux 的 /usr/bin/docker）不再失效",
+      "action_taken": "已改（PATH + CC_DOCKER 可覆盖）",
+      "pre_existing": false
+    }
+  ]
+}

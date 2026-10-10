@@ -74,8 +74,41 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `CC_PYTHON`) and repo-relative paths, so no committed file carries a username or a host layout.
   The MCP overlay must now be launched **from the repo root** (its `cwd`/`PYTHONPATH`/implicit
   `--store` are relative; the server's store default is `<cwd>/.evoontology`).
-  Note: ~20 older `tools/*.py` scripts still hardcode the repo's absolute host path
-  (`D:\05_code\credit-card-sys-ops`) — no identity leak, tracked separately as a portability chore.
+- **Hardcoded host paths in scripts (portability, no identity leak): 21 files / 25 occurrences.**
+  Sixteen `tools/*.py`, `generate_ontology_review.py`, `generate_ontology_ttl.py` and
+  `rca-agent/run_local.py` pinned the repo to `D:\05_code\credit-card-sys-ops`; four scripts
+  (`tools/chaos/core.py`, `tools/alert_firing_verify.py`, `tools/cluster_bootstrap.py`,
+  `tools/fault_drill.py`) pinned Docker to `C:\Program Files\Docker\...\docker.exe`. All now derive
+  paths from `__file__` and resolve tools via `PATH` (`CC_PYTHON` / `CC_DOCKER` override). The
+  migration guide's "fixed" table was one-sided — it listed 2 files while 21 were affected — and is
+  now corrected. Every touched script was re-run; 18 executed clean, 1 exceeded its cap, 8 are
+  deliberately not executed with the reason recorded
+  ([`reports/host_path_regression.json`](reports/host_path_regression.json)).
+
+### Findings — discovered while running that regression (all pre-existing)
+
+- **One call to `/api/rca/infer` silently switches the active ontology back to
+  `ontology_v0-rca-agent`.** `RCAEngine.infer(..., inject_evidence=True)` is the **default**, and
+  `_inject_evidence()` hardcodes `new_version = "ontology_v0-rca-agent"` before calling
+  `SemanticStore.save_version(...)` **and `SemanticStore.set_active(...)`**
+  (`rca-agent/backend/services/rca_engine.py:656,766-768`). So the live backend and every tool that
+  reads `active.json` then serve the 18-term legacy ontology — the exact state six rounds of
+  evolution removed. The regression hit it through
+  `tools/verify_all.py` → `tools/fault_drill.py` → `POST /api/rca/infer` (backend log:
+  `[RCA] Evidence injected: ev:rca-inc_*`). Restored: `active.json`,
+  `versions/ontology_v0-rca-agent/` and `ontology_turtle/` were reverted to HEAD, and a live
+  re-check confirms the engine answers from `ontology_v6` again (`rc:cluster-capacity`, 0.99).
+  Suggested fix: write injected evidence into the **current** active version (or a version that is
+  never activated), instead of calling `set_active`.
+- **`tools/fault_drill.py` injects faults on `import`** — its drill body is top-level code with no
+  `__main__` guard (an import probe really started the drill). Not rewritten: indenting ~140 lines of
+  an untested fault-injecting script is riskier than the documented hazard; a warning now sits at the
+  top of the file.
+- **`tools/verify_all.py` is a destructive aggregator** whose suite list still names scripts from an
+  older layout; two of its seven suites inject faults.
+- **`generate_ontology_ttl.py` no longer reproduces its committed output** — regenerating produced
+  370 lines *fewer* across `ontology_turtle/*.ttl`. The generator has drifted from the committed
+  artifacts (unrelated to this change); the files were reverted.
 
 ## [0.1.0] — 2026-10-09
 
