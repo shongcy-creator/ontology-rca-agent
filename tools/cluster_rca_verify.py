@@ -636,7 +636,15 @@ def summarize(results: List[Dict[str, Any]], mode: str) -> Dict[str, Any]:
             modes_used[k] = modes_used.get(k, 0) + 1
 
     total = len(results)
+    # ── 三态评分：不可测量 ≠ 未命中 ──────────────────────────────────────
+    # 依据（实测）：当场景声明的告警一条都没触发时，harness 发给引擎的是占位文本
+    # （"监控无对应告警，但业务侧出现异常"）。那样的回答**既不该算命中**
+    # （它只是从空输入里猜出来的），**也不该把"必然失分"算进分母**。
+    # 因此把它单列出来，准确率只在**可测量**场景上计算。
+    not_meas = [r.get("scenario") for r in results if r.get("alert_coverage") is False]
+    measurable = total - len(not_meas)
     diag = sum(1 for r in results if r.get("ok"))
+    diag_meas = sum(1 for r in results if r.get("ok") and r.get("alert_coverage") is not False)
     inj = sum(1 for r in results if r.get("inject", {}).get("ok"))
     rec = sum(1 for r in results if r.get("recovered"))
     alert_cov = sum(1 for r in results if r.get("alert_coverage"))
@@ -646,9 +654,13 @@ def summarize(results: List[Dict[str, Any]], mode: str) -> Dict[str, Any]:
               if isinstance(run.get("total_tokens"), (int, float))]
     return {
         "total_scenarios": total,
+        "not_measurable": len(not_meas),
+        "not_measurable_scenarios": not_meas,
+        "measurable_scenarios": measurable,
         "injected_ok": inj,
-        "diagnosed_ok": diag,
-        "diagnosis_accuracy": round(diag / total, 4) if total else 0.0,
+        "diagnosed_ok": diag_meas,
+        "diagnosed_ok_all": diag,
+        "diagnosis_accuracy": round(diag_meas / measurable, 4) if measurable else 0.0,
         "alert_coverage": round(alert_cov / total, 4) if total else 0.0,
         "recovered_ok": rec,
         "recovery_rate": round(rec / total, 4) if total else 0.0,
@@ -780,7 +792,7 @@ def main(argv: Optional[List[str]] = None) -> int:
           % (int(summary["alert_coverage"] * summary["total_scenarios"]),
              summary["total_scenarios"], summary["alert_coverage"] * 100))
     print("  诊断命中            %d/%d  (%.0f%%)"
-          % (summary["diagnosed_ok"], summary["total_scenarios"],
+          % (summary["diagnosed_ok"], summary["measurable_scenarios"],
              summary["diagnosis_accuracy"] * 100))
     print("  故障恢复成功        %d/%d  (%.0f%%)"
           % (summary["recovered_ok"], summary["total_scenarios"],
