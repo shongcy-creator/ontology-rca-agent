@@ -197,6 +197,7 @@ a green check must be able to fail.
 | Deterministic fast path | **0 tokens, ~15 s/case** | when routing stays on the fast path |
 | Component→root-cause promotion (A/B) | strict **17→18/21**, top-5 **20→21/21**, 0 regressions | `rootcause_promotion_verify.py` |
 | Cross-cluster attribution | **16/18 = 89%** | `crosscluster_verify.py` |
+| **vs. a pure-threshold baseline** | ontology **16/18 = 88.9%** vs baseline **11/18 = 61.1%** (the baseline is misled by pre-existing noise alerts in 4 cases); the baseline never wins a single case | offline replay of the archived run, [`reports/baseline_compare.json`](reports/baseline_compare.json) |
 | **Held-out phrasing (not tuned on)** | **4/10 = 40%** vs 81–86% on the tuned set | `heldout_verify.py` |
 
 The last row is the most important one: it is a **negative result we chose to publish**.

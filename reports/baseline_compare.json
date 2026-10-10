@@ -1,0 +1,419 @@
+{
+  "method": "offline replay of the archived e2e report; scoring at root-cause-term level",
+  "cases": 18,
+  "ontology": {
+    "top1_hits": 16,
+    "accuracy": 0.8889
+  },
+  "threshold_baseline": {
+    "definition": "the most severe firing alert IS the root cause (mapped via the catalog)",
+    "top1_hits": 11,
+    "accuracy": 0.6111,
+    "misled_by_preexisting_alert": 4
+  },
+  "llm_baseline": {
+    "measured": false,
+    "reason": "needs an external model credential; not available offline — left unmeasured on purpose rather than estimated"
+  },
+  "results": [
+    {
+      "scenario": "app_cpu_stress",
+      "layer": "runtime",
+      "truth_terms": [
+        "rc:cpu-throttle"
+      ],
+      "ontology": {
+        "pred": "rc:cpu-throttle",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_cpu_stress",
+        "top_alert": "AppContainerCpuThrottled",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_gateway_stop",
+      "layer": "application",
+      "truth_terms": [
+        "rc:gateway-down"
+      ],
+      "ontology": {
+        "pred": "rc:gateway-down",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_gateway_stop",
+        "top_alert": "AppGatewayUnreachable",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppContainerCpuThrottled",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_kill_replica",
+      "layer": "application",
+      "truth_terms": [
+        "rc:replica-loss"
+      ],
+      "ontology": {
+        "pred": "rc:replica-loss",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_kill_replica",
+        "top_alert": "AppReplicaCountLow",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppGatewayUnreachable",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_memory_stress",
+      "layer": "runtime",
+      "truth_terms": [
+        "rc:oom-kill"
+      ],
+      "ontology": {
+        "pred": "rc:oom-kill",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_memory_stress",
+        "top_alert": "AppContainerMemoryPressure",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppReplicaCountLow",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_network_delay",
+      "layer": "application",
+      "truth_terms": [
+        "rc:net-fault"
+      ],
+      "ontology": {
+        "pred": "rc:net-fault",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_cpu_stress",
+        "top_alert": "AppReplicaLatencySkew",
+        "hit": false,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppContainerMemoryPressure",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_network_loss",
+      "layer": "application",
+      "truth_terms": [
+        "rc:net-fault"
+      ],
+      "ontology": {
+        "pred": "rc:net-fault",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_cpu_stress",
+        "top_alert": "AppReplicaLatencySkew",
+        "hit": false,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppReplicaLatencySkew",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_oom_kill",
+      "layer": "runtime",
+      "truth_terms": [
+        "rc:oom-kill",
+        "rc:replica-loss"
+      ],
+      "ontology": {
+        "pred": "env:cluster",
+        "hit": false,
+        "how": "未命中"
+      },
+      "threshold": {
+        "pred": "db_replica_lag",
+        "top_alert": "MySQLSlowQueries",
+        "hit": false,
+        "n_alerts": 1,
+        "pre_existing": [
+          "AppReplicaLatencySkew",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_pause_replica",
+      "layer": "application",
+      "truth_terms": [
+        "rc:replica-hang",
+        "rc:replica-loss"
+      ],
+      "ontology": {
+        "pred": "rc:replica-loss",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_pause_replica",
+        "top_alert": "AppReplicaProbeFailing",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "app_stop_replica",
+      "layer": "application",
+      "truth_terms": [
+        "rc:replica-loss"
+      ],
+      "ontology": {
+        "pred": "rc:replica-loss",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "app_kill_replica",
+        "top_alert": "AppReplicaCountLow",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppReplicaProbeFailing",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "db_conn_saturation",
+      "layer": "database",
+      "truth_terms": [
+        "rc:conn-exhaust"
+      ],
+      "ontology": {
+        "pred": "rc:db-replica-loss",
+        "hit": false,
+        "how": "期望术语出现在候选/证据/推理中(rc:conn-exhaust)"
+      },
+      "threshold": {
+        "pred": "db_replica_kill",
+        "top_alert": "MySQLDown",
+        "hit": false,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppReplicaCountLow",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "db_cpu_stress",
+      "layer": "database",
+      "truth_terms": [
+        "rc:db-cpu-starve"
+      ],
+      "ontology": {
+        "pred": "rc:db-cpu-starve",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_replica_lag",
+        "top_alert": "MySQLSlowQueries",
+        "hit": false,
+        "n_alerts": 2,
+        "pre_existing": [
+          "MySQLDown",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "db_disk_temp_tables",
+      "layer": "database",
+      "truth_terms": [
+        "rc:tmp-disk"
+      ],
+      "ontology": {
+        "pred": "rc:tmp-disk",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_disk_temp_tables",
+        "top_alert": "MySQLDiskTempTables",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "MySQLSlowQueries",
+          "MySQLThreadsRunningHigh"
+        ]
+      }
+    },
+    {
+      "scenario": "db_primary_readonly",
+      "layer": "database",
+      "truth_terms": [
+        "rc:primary-readonly"
+      ],
+      "ontology": {
+        "pred": "rc:primary-readonly",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_primary_readonly",
+        "top_alert": "MySQLPrimaryReadOnly",
+        "hit": true,
+        "n_alerts": 3,
+        "pre_existing": [
+          "MySQLDiskTempTables",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "db_replica_io_stop",
+      "layer": "database",
+      "truth_terms": [
+        "rc:db-replica-loss"
+      ],
+      "ontology": {
+        "pred": "rc:db-replica-loss",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_replica_io_stop",
+        "top_alert": "MySQLReplicationBroken",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "AppHighErrorRate",
+          "MySQLPrimaryReadOnly",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "db_replica_kill",
+      "layer": "database",
+      "truth_terms": [
+        "rc:db-replica-loss",
+        "rc:replica-loss"
+      ],
+      "ontology": {
+        "pred": "rc:replica-loss",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_replica_kill",
+        "top_alert": "MySQLDown",
+        "hit": true,
+        "n_alerts": 1,
+        "pre_existing": [
+          "MySQLReplicationBroken",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "db_replica_lag",
+      "layer": "database",
+      "truth_terms": [
+        "rc:replica-lag"
+      ],
+      "ontology": {
+        "pred": "rc:replica-lag",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_replica_lag",
+        "top_alert": "MySQLReplicationLag",
+        "hit": true,
+        "n_alerts": 2,
+        "pre_existing": [
+          "MySQLDown"
+        ]
+      }
+    },
+    {
+      "scenario": "db_row_lock_hold",
+      "layer": "database",
+      "truth_terms": [
+        "rc:row-lock"
+      ],
+      "ontology": {
+        "pred": "rc:row-lock",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_primary_readonly",
+        "top_alert": "AppHighErrorRate",
+        "hit": false,
+        "n_alerts": 7,
+        "pre_existing": [
+          "MySQLReplicationLag",
+          "MySQLSlowQueries"
+        ]
+      }
+    },
+    {
+      "scenario": "db_slow_query_flood",
+      "layer": "database",
+      "truth_terms": [
+        "rc:slow-sql"
+      ],
+      "ontology": {
+        "pred": "rc:slow-sql",
+        "hit": true,
+        "how": "root_cause 精确命中"
+      },
+      "threshold": {
+        "pred": "db_replica_lag",
+        "top_alert": "MySQLSlowQueries",
+        "hit": false,
+        "n_alerts": 1,
+        "pre_existing": [
+          "AppHighErrorRate",
+          "AppHighLatencyP99",
+          "MySQLRowLockContention",
+          "MySQLSlowQueries"
+        ]
+      }
+    }
+  ]
+}

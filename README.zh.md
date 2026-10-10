@@ -188,6 +188,7 @@ python tools/run_all_verification.py --full            # 全流水线（数小�
 | 组件级→根因级升级（A/B） | 严格 **17→18/21**，top-5 **20→21/21**，**0 回退** | [`reports/promotion_ab.json`](reports/promotion_ab.json) |
 | 跨集群归属（该找谁） | **16/18 = 89%** | `crosscluster_verify` |
 | 确定性快路径 | **0 token，约 15 秒/例** | 路由停留在快路径时 |
+| **对比纯阈值基线** | 本体 **16/18 = 88.9%** vs 基线 **11/18 = 61.1%**（其中 4 例被注入前就存在的噪声告警带偏）；**没有任何一例基线赢过本体** | 归档运行的离线重放，[`reports/baseline_compare.json`](reports/baseline_compare.json) |
 | **held-out 措辞（未参与调参）** | **4/10 = 40%**（调参集为 81–86%） | `heldout_verify` |
 
 **最后一行是最重要的一行**：这是一个我们**主动公开的负面结果** —— 打分关键词明显过拟合于
