@@ -4,18 +4,18 @@
   "runs_per_case": 3,
   "cases": 8,
   "total_runs": 24,
-  "requests_failed": 12,
-  "valid": false,
-  "false_positive_rate": 0.4583,
-  "decline_stability": 0.875,
+  "requests_failed": 0,
+  "valid": true,
+  "false_positive_rate": 0.9167,
+  "decline_stability": 0.75,
   "by_path": {
     "deterministic": {
-      "runs": 9,
+      "runs": 15,
       "fp_rate": 1.0
     },
     "agentic": {
-      "runs": 3,
-      "fp_rate": 0.6667
+      "runs": 9,
+      "fp_rate": 0.7778
     }
   },
   "supersedes": "earlier runs of this probe (0/8 when the requests were rejected with 422, then 8/8 when the engine's explicit no-fault verdict was counted as an assertion) — both were measurement errors, not engine behaviour",
@@ -27,17 +27,17 @@
         {
           "verdict": "decline",
           "mode": "agentic",
-          "detail": "无故障"
-        },
-        {
-          "verdict": "assert",
-          "mode": "agentic",
           "detail": "数据"
         },
         {
           "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "依赖"
+        },
+        {
+          "verdict": "assert",
           "mode": "agentic",
-          "detail": "配置"
+          "detail": "依赖"
         }
       ],
       "n": 3,
@@ -46,7 +46,8 @@
       "fp_rate": 0.667,
       "stable": false,
       "modes": [
-        "agentic"
+        "agentic",
+        "deterministic"
       ]
     },
     {
@@ -141,108 +142,118 @@
       "input": "例行配置变更：已把 long_query_time 从 0.1s 调整为 1s",
       "runs": [
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "decline",
+          "mode": "agentic",
+          "detail": "配置"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "配置"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "配置"
         }
       ],
       "n": 3,
-      "assert": 0,
-      "decline": 0,
-      "fp_rate": 0.0,
-      "stable": true,
-      "modes": []
+      "assert": 2,
+      "decline": 1,
+      "fp_rate": 0.667,
+      "stable": false,
+      "modes": [
+        "agentic"
+      ]
     },
     {
       "case": "unrelated_alert",
       "input": "GrafanaSlowRender：Grafana 自身的面板渲染耗时偏高",
       "runs": [
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "配置"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "配置"
         }
       ],
       "n": 3,
-      "assert": 0,
+      "assert": 3,
       "decline": 0,
-      "fp_rate": 0.0,
+      "fp_rate": 1.0,
       "stable": true,
-      "modes": []
+      "modes": [
+        "agentic",
+        "deterministic"
+      ]
     },
     {
       "case": "out_of_scope",
       "input": "今天天气怎么样？",
       "runs": [
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "配置"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "数据"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "?"
         }
       ],
       "n": 3,
-      "assert": 0,
+      "assert": 3,
       "decline": 0,
-      "fp_rate": 0.0,
+      "fp_rate": 1.0,
       "stable": true,
-      "modes": []
+      "modes": [
+        "agentic",
+        "deterministic"
+      ]
     },
     {
       "case": "metrics_only_ok",
       "input": "t_txn 行数增长与往常一致，副本延迟为 0",
       "runs": [
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
         },
         {
-          "verdict": "invalid",
-          "mode": null,
-          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
         }
       ],
       "n": 3,
-      "assert": 0,
+      "assert": 3,
       "decline": 0,
-      "fp_rate": 0.0,
+      "fp_rate": 1.0,
       "stable": true,
-      "modes": []
+      "modes": [
+        "deterministic"
+      ]
     }
   ]
 }

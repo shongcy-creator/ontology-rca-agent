@@ -21,6 +21,7 @@ agentic 路径**不确定**：同一个"今天天气怎么样？"一次返回 `�
 """
 import json
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -29,6 +30,10 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 API = "http://127.0.0.1:8088/api/agent/diagnose"
 N = 3
+# 后端有"每分钟诊断次数"上限（这是好设计）→ 探针必须主动节流，
+# 而不是把 429 当成"引擎没有误报"。
+PACE_S = 7
+RETRY_429 = 5
 
 DECLINE = ("无故障", "非真实故障", "无有效故障证据", "不是故障", "证据不足", "no fault",
            "not a real fault", "no anomaly")
@@ -63,15 +68,25 @@ def verdict(body):
 
 
 def post(msg):
-    rq = urllib.request.Request(API, data=json.dumps({"alert": msg}).encode("utf-8"),
-                                headers={"Content-Type": "application/json"}, method="POST")
-    try:
-        with urllib.request.urlopen(rq, timeout=240) as r:
-            return json.loads(r.read().decode("utf-8")), None
-    except urllib.error.HTTPError as e:
-        return None, "HTTP %s: %s" % (e.code, e.read().decode("utf-8", "replace")[:120])
-    except Exception as e:  # noqa: BLE001
-        return None, "%s: %s" % (type(e).__name__, str(e)[:120])
+    last = None
+    for attempt in range(RETRY_429 + 1):
+        time.sleep(PACE_S)                      # 主动节流：不与后端限流对抗
+        rq = urllib.request.Request(API, data=json.dumps({"alert": msg}).encode("utf-8"),
+                                    headers={"Content-Type": "application/json"}, method="POST")
+        try:
+            with urllib.request.urlopen(rq, timeout=240) as r:
+                return json.loads(r.read().decode("utf-8")), None
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "replace")
+            last = "HTTP %s: %s" % (e.code, body[:120])
+            if e.code == 429 and attempt < RETRY_429:
+                print("      （429 限流，等 65s 后重试 %d/%d）" % (attempt + 1, RETRY_429))
+                time.sleep(65)
+                continue
+            return None, last
+        except Exception as e:  # noqa: BLE001
+            return None, "%s: %s" % (type(e).__name__, str(e)[:120])
+    return None, last
 
 
 def main():
