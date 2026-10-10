@@ -64,14 +64,31 @@ def build(req_fields, props, msg, extra):
     return p
 
 
+DECLINE_MARKERS = ("无故障", "非真实故障", "无有效故障证据", "不是故障", "no fault",
+                   "not a real fault", "no anomaly")
+
+
 def root_cause_of(body):
+    """返回**引擎断言的根因**；若引擎明确拒答（判定为无故障）则返回 None。
+
+    注意：引擎把"无故障"这个判定也放在 root_cause 字段里（category/description），
+    所以**不能**以"字段存在"作为判定依据 —— 那会把正确拒答误报成假阳性（我踩过）。
+    """
     if not isinstance(body, dict):
         return None
-    for k in ("root_cause_id", "root_cause", "root_cause_name"):
+    rc = body.get("root_cause")
+    if isinstance(rc, dict):
+        cat = str(rc.get("category") or "")
+        desc = str(rc.get("description") or "")
+        if any(m in cat or m in desc for m in DECLINE_MARKERS):
+            return None                      # 正确拒答
+        return rc.get("entity_id") or rc.get("name") or cat or "?"
+    if isinstance(rc, str) and rc.strip():
+        return None if any(m in rc for m in DECLINE_MARKERS) else rc.strip()
+    for k in ("root_cause_id", "root_cause_name"):
         v = body.get(k)
         if isinstance(v, str) and v.strip():
-            return v.strip()
-    import re
+            return None if any(m in v for m in DECLINE_MARKERS) else v.strip()
     m = re.search(r'"(rc:[a-z0-9\-]+)"', json.dumps(body, ensure_ascii=False))
     return m.group(1) if m else None
 

@@ -15,7 +15,7 @@
       "error": null,
       "mode": "agentic",
       "route_reason": null,
-      "root_cause": "rc:replica-loss",
+      "root_cause": "none",
       "false_positive": true
     },
     {
@@ -52,9 +52,9 @@
         "severity": "P2"
       },
       "error": null,
-      "mode": "deterministic",
+      "mode": "agentic",
       "route_reason": null,
-      "root_cause": "rc:slow-sql",
+      "root_cause": "db:mysql-core",
       "false_positive": true
     },
     {
@@ -66,7 +66,7 @@
       "error": null,
       "mode": "agentic",
       "route_reason": null,
-      "root_cause": "rc:replica-loss",
+      "root_cause": "db:mysql-core",
       "false_positive": true
     },
     {
@@ -79,7 +79,7 @@
       "error": null,
       "mode": "deterministic",
       "route_reason": null,
-      "root_cause": "rc:replica-loss",
+      "root_cause": "?",
       "false_positive": true
     },
     {
@@ -91,7 +91,7 @@
       "error": null,
       "mode": "agentic",
       "route_reason": null,
-      "root_cause": "rc:slow-sql",
+      "root_cause": "alert:p99",
       "false_positive": true
     },
     {
@@ -103,7 +103,7 @@
       "error": null,
       "mode": "agentic",
       "route_reason": null,
-      "root_cause": "rc:replica-loss",
+      "root_cause": "env:host-wsl",
       "false_positive": true
     }
   ]

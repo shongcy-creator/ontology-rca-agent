@@ -3371,6 +3371,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_c8965083f9f74dddb70cae9435ce0c95.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e6eaf933bef8483686b159ce8f2a8626.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e6eaf933bef8483686b159ce8f2a8626.json"
+          ]
         }
       ],
       "topics": [],
@@ -3397,6 +3404,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_f917e5281c104ee09773840b362c7a36.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_f917e5281c104ee09773840b362c7a36.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_39c20116e5a84ce6ae2244e69a26d3df.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_39c20116e5a84ce6ae2244e69a26d3df.json"
           ]
         }
       ],
@@ -3425,6 +3439,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_b396445dc81d41cd841573ba5390ec9e.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_32adc877c06c4fc9ab43d642fffbd61e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_32adc877c06c4fc9ab43d642fffbd61e.json"
+          ]
         }
       ],
       "topics": [],
@@ -3451,6 +3472,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_76f372fa605749e9a5a70c93078f6b16.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_76f372fa605749e9a5a70c93078f6b16.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_89b1fe971ecb4de4bb9c885e7a6197e8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_89b1fe971ecb4de4bb9c885e7a6197e8.json"
           ]
         }
       ],
@@ -3479,6 +3507,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_744cc380c2f343acba91ec6c806cd4fd.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_4bf8b5ea8b324abdbb577cecdf0a1a91.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_4bf8b5ea8b324abdbb577cecdf0a1a91.json"
+          ]
         }
       ],
       "topics": [],
@@ -3506,6 +3541,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_3f6f763b72ab491cbfbaab76eaa0c42c.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_51fd8b6277a941e48d085b6d4d0b763f.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_51fd8b6277a941e48d085b6d4d0b763f.json"
+          ]
         }
       ],
       "topics": [],
@@ -3532,6 +3574,20 @@
           "source_ref": "/app/.evoontology/trajectories/task_332ffc80fc02421cac0a8474b212b043.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_332ffc80fc02421cac0a8474b212b043.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_df740601ae714684a848ec6327521119.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_df740601ae714684a848ec6327521119.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fd458674c0644393ad44353c39f5e450.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fd458674c0644393ad44353c39f5e450.json"
           ]
         }
       ],
@@ -3567,5 +3623,5 @@
       "purpose": "construction"
     }
   ],
-  "updated_at": "2026-10-10T03:20:12.014208+00:00"
+  "updated_at": "2026-10-10T03:29:06.027194+00:00"
 }
