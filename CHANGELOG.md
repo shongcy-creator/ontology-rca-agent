@@ -14,6 +14,13 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `tools/oom_evidence_counterfactual.py` — builds keyword-tightening variants of
   `con:oom-detection` and scores them on those inputs, to test whether a proposed tightening can
   actually move the number (instead of assuming it did).
+- `tools/publish_reports.py` — publishes `.chaos/` artifacts into `reports/` with host paths
+  scrubbed to `<repo>` / `<home>` / `<python>`. `--check` turns the promise in `reports/README.md`
+  into a **gate** (a `X:\Users\<name>` path makes it exit 1); `--scrub FILE` cleans one in place.
+- `tools/strict_score_check.py` — recomputes the **strict** score (measurable scenarios only) from
+  any two e2e reports and asserts a change's blast radius: the exactly-improved / exactly-regressed
+  sets and an alert's firing scope. Exits 1 when an assertion fails, so "19/20 → 20/20, one case
+  changed, 0 regressions, alert fired only there" is one command instead of four claims.
 
 ### Findings — published as a negative result
 
@@ -59,6 +66,16 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`app_memory_stress`) kept `rc:oom-kill`. The `+1` comes from fixing the **input**, not from a
   keyword edit — round 6's ontology tightening moved nothing on the same kind of replay
   ([`reports/oom_evidence_replay.json`](reports/oom_evidence_replay.json)).
+- **Host paths and a username were baked into tracked files.** The new report artifacts embedded the
+  interpreter path (`C:\Users\<user>\...\python.exe`) in the recorded stress command —
+  `tools/publish_reports.py` now rewrites it to `<python>`. The same absolute path appeared in
+  `config/evoontology.cordis.yml`, `tools/mcp_test.py`, `tools/restart_and_test.py` and the ontology
+  integration guide; those now use a PATH-resolved interpreter (`python`, overridable via
+  `CC_PYTHON`) and repo-relative paths, so no committed file carries a username or a host layout.
+  The MCP overlay must now be launched **from the repo root** (its `cwd`/`PYTHONPATH`/implicit
+  `--store` are relative; the server's store default is `<cwd>/.evoontology`).
+  Note: ~20 older `tools/*.py` scripts still hardcode the repo's absolute host path
+  (`D:\05_code\credit-card-sys-ops`) — no identity leak, tracked separately as a portability chore.
 
 ## [0.1.0] — 2026-10-09
 

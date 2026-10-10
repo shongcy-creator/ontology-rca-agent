@@ -170,6 +170,8 @@ python tools/fault_injector.py verify --fast          # 代表性子集（7 个�
 python tools/alert_coverage_check.py                  # 注入 → 等够久 → 声明的告警是否真的 firing
 python tools/cluster_rca_verify.py                    # 端到端：注入 → 压测 → 告警 → 诊断 → 评分
 python tools/evolve_ontology_cluster.py --round memory  # 走一轮本体演化（成对评估 + 闸门）
+python tools/strict_score_check.py --help               # 从报告复算严格 top-1 + 核对改动影响范围
+python tools/publish_reports.py --check                 # 报告卫生闸门（宿主路径 → exit 1）
 python tools/run_all_verification.py --full            # 全流水线（数小时；14 步）
 ```
 

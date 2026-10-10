@@ -177,6 +177,8 @@ python tools/fault_injector.py verify --fast          # representative subset (7
 python tools/alert_coverage_check.py                  # inject → wait → did the declared alert fire?
 python tools/cluster_rca_verify.py                    # end-to-end: inject → stress → alerts → diagnose → score
 python tools/evolve_ontology_cluster.py --round memory  # one ontology round (paired eval + gate)
+python tools/strict_score_check.py --help               # recompute strict top-1 from reports + assert blast radius
+python tools/publish_reports.py --check                 # report hygiene gate (host paths → exit 1)
 python tools/run_all_verification.py --full            # the whole pipeline (hours; 14 steps)
 ```
 
