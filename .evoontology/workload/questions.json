@@ -3378,6 +3378,34 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_e6eaf933bef8483686b159ce8f2a8626.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d4417a04f793409ba4b7750f1171ff9b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d4417a04f793409ba4b7750f1171ff9b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bd627954ad3440f89cea96cf4a930074.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bd627954ad3440f89cea96cf4a930074.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_97726cae6dda4cf59278cfc94237c7cd.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_97726cae6dda4cf59278cfc94237c7cd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_4b894ec19aa14dfea35f523ab658e947.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_4b894ec19aa14dfea35f523ab658e947.json"
+          ]
         }
       ],
       "topics": [],
@@ -3411,6 +3439,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_39c20116e5a84ce6ae2244e69a26d3df.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_39c20116e5a84ce6ae2244e69a26d3df.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5d6abd69bb5047eda494e092d097038d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5d6abd69bb5047eda494e092d097038d.json"
           ]
         }
       ],
@@ -3446,6 +3481,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_32adc877c06c4fc9ab43d642fffbd61e.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b13d1dbf30b24bb7b00bd05f826b3c81.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b13d1dbf30b24bb7b00bd05f826b3c81.json"
+          ]
         }
       ],
       "topics": [],
@@ -3479,6 +3521,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_89b1fe971ecb4de4bb9c885e7a6197e8.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_89b1fe971ecb4de4bb9c885e7a6197e8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f644b8fd0aa24daab5a96be9a1408b9c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f644b8fd0aa24daab5a96be9a1408b9c.json"
           ]
         }
       ],
@@ -3514,6 +3563,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_4bf8b5ea8b324abdbb577cecdf0a1a91.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f607027d653e47c9b299fc3d68ee7d54.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f607027d653e47c9b299fc3d68ee7d54.json"
+          ]
         }
       ],
       "topics": [],
@@ -3547,6 +3603,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_51fd8b6277a941e48d085b6d4d0b763f.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_51fd8b6277a941e48d085b6d4d0b763f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_34b4151d33674237beebdbefa007f885.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_34b4151d33674237beebdbefa007f885.json"
           ]
         }
       ],
@@ -3589,6 +3652,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_fd458674c0644393ad44353c39f5e450.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fb8c649fb42c4166bf1b06f320984a08.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fb8c649fb42c4166bf1b06f320984a08.json"
+          ]
         }
       ],
       "topics": [],
@@ -3616,12 +3686,142 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_d6797e3bf4ce4382b94b95a587831c27.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_061ed5c3afcf46929b3eef754c16944e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_061ed5c3afcf46929b3eef754c16944e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1c739b33a1f446dcb1fff7944d81e0e4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1c739b33a1f446dcb1fff7944d81e0e4.json"
+          ]
         }
       ],
       "topics": [],
       "recorded_at": "2026-10-10T03:18:49.217188+00:00",
       "purpose": "construction"
+    },
+    {
+      "id": "q_df149691c1cd9782",
+      "question": "MySQLSlowQueries：MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c3e353123a844f4f8923826c1ab4bca3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c3e353123a844f4f8923826c1ab4bca3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c22c50bbb57c4da589566c5d1fc77def.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c22c50bbb57c4da589566c5d1fc77def.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_cfacb1e47959458a8fd11ca37d7e2a2a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_cfacb1e47959458a8fd11ca37d7e2a2a.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:47:44.166779+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_1fd8a1cb46b81bbf",
+      "question": "AppHighErrorRate：应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8d7503f169f94d0ca1a38164fc99e262.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8d7503f169f94d0ca1a38164fc99e262.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_92e06fddb3704c0a8ca0c9a5149e078a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_92e06fddb3704c0a8ca0c9a5149e078a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_eaecbaee2bb941bebe1eabe019cb90f8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_eaecbaee2bb941bebe1eabe019cb90f8.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:47:46.719454+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_19b76c8b9e0ccd9e",
+      "question": "MySQLReplicationBroken：复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3ffd9a96d77f4c4aa75707a5512ea810.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3ffd9a96d77f4c4aa75707a5512ea810.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a4c127b161c24093a11d68c183828b06.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a4c127b161c24093a11d68c183828b06.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:47:48.967165+00:00",
+      "purpose": "construction"
     }
   ],
-  "updated_at": "2026-10-10T03:29:06.027194+00:00"
+  "updated_at": "2026-10-10T03:47:50.544361+00:00"
 }

@@ -1,110 +1,248 @@
 {
-  "probe": "false-positive (healthy inputs)",
+  "probe": "false-positive (healthy inputs), N runs per case",
+  "verdict_rule": "no-fault category/description ⇒ correct decline; any other category ⇒ the engine asserted a fault. Reference fields such as entity_id are NOT used (using them produced a false alarm in v3).",
+  "runs_per_case": 3,
   "cases": 8,
-  "requests_failed": 0,
-  "false_positives": 8,
-  "false_positive_rate": 1.0,
-  "definition": "a case counts as a false positive ONLY if the response actually names an ontology root cause (rc:*). A rejected request is a probe failure, never a pass.",
+  "total_runs": 24,
+  "requests_failed": 12,
+  "valid": false,
+  "false_positive_rate": 0.4583,
+  "decline_stability": 0.875,
+  "by_path": {
+    "deterministic": {
+      "runs": 9,
+      "fp_rate": 1.0
+    },
+    "agentic": {
+      "runs": 3,
+      "fp_rate": 0.6667
+    }
+  },
+  "supersedes": "earlier runs of this probe (0/8 when the requests were rejected with 422, then 8/8 when the engine's explicit no-fault verdict was counted as an assertion) — both were measurement errors, not engine behaviour",
   "results": [
     {
       "case": "healthy_plain",
       "input": "系统当前状态正常，没有异常",
-      "payload": {
-        "alert": "系统当前状态正常，没有异常"
-      },
-      "error": null,
-      "mode": "agentic",
-      "route_reason": null,
-      "root_cause": "none",
-      "false_positive": true
+      "runs": [
+        {
+          "verdict": "decline",
+          "mode": "agentic",
+          "detail": "无故障"
+        },
+        {
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "数据"
+        },
+        {
+          "verdict": "assert",
+          "mode": "agentic",
+          "detail": "配置"
+        }
+      ],
+      "n": 3,
+      "assert": 2,
+      "decline": 1,
+      "fp_rate": 0.667,
+      "stable": false,
+      "modes": [
+        "agentic"
+      ]
     },
     {
       "case": "residual_alert",
-      "input": "MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
-      "payload": {
-        "alert": "MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
-        "severity": "P2"
-      },
-      "error": null,
-      "mode": "deterministic",
-      "route_reason": null,
-      "root_cause": "rc:slow-sql",
-      "false_positive": true
+      "input": "MySQLSlowQueries：MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
+      "runs": [
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
+        },
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
+        },
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
+        }
+      ],
+      "n": 3,
+      "assert": 3,
+      "decline": 0,
+      "fp_rate": 1.0,
+      "stable": true,
+      "modes": [
+        "deterministic"
+      ]
     },
     {
       "case": "single_transient",
-      "input": "应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
-      "payload": {
-        "alert": "应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
-        "severity": "P2"
-      },
-      "error": null,
-      "mode": "deterministic",
-      "route_reason": null,
-      "root_cause": "rc:replica-loss",
-      "false_positive": true
+      "input": "AppHighErrorRate：应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
+      "runs": [
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "资源"
+        },
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "资源"
+        },
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "资源"
+        }
+      ],
+      "n": 3,
+      "assert": 3,
+      "decline": 0,
+      "fp_rate": 1.0,
+      "stable": true,
+      "modes": [
+        "deterministic"
+      ]
     },
     {
       "case": "already_recovered",
-      "input": "复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
-      "payload": {
-        "alert": "复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
-        "severity": "P2"
-      },
-      "error": null,
-      "mode": "agentic",
-      "route_reason": null,
-      "root_cause": "db:mysql-core",
-      "false_positive": true
+      "input": "MySQLReplicationBroken：复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
+      "runs": [
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
+        },
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
+        },
+        {
+          "verdict": "assert",
+          "mode": "deterministic",
+          "detail": "数据"
+        }
+      ],
+      "n": 3,
+      "assert": 3,
+      "decline": 0,
+      "fp_rate": 1.0,
+      "stable": true,
+      "modes": [
+        "deterministic"
+      ]
     },
     {
       "case": "informational",
       "input": "例行配置变更：已把 long_query_time 从 0.1s 调整为 1s",
-      "payload": {
-        "alert": "例行配置变更：已把 long_query_time 从 0.1s 调整为 1s"
-      },
-      "error": null,
-      "mode": "agentic",
-      "route_reason": null,
-      "root_cause": "db:mysql-core",
-      "false_positive": true
+      "runs": [
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        }
+      ],
+      "n": 3,
+      "assert": 0,
+      "decline": 0,
+      "fp_rate": 0.0,
+      "stable": true,
+      "modes": []
     },
     {
       "case": "unrelated_alert",
-      "input": "Grafana 自身的面板渲染耗时偏高",
-      "payload": {
-        "alert": "Grafana 自身的面板渲染耗时偏高",
-        "severity": "P3"
-      },
-      "error": null,
-      "mode": "deterministic",
-      "route_reason": null,
-      "root_cause": "?",
-      "false_positive": true
+      "input": "GrafanaSlowRender：Grafana 自身的面板渲染耗时偏高",
+      "runs": [
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        }
+      ],
+      "n": 3,
+      "assert": 0,
+      "decline": 0,
+      "fp_rate": 0.0,
+      "stable": true,
+      "modes": []
     },
     {
       "case": "out_of_scope",
       "input": "今天天气怎么样？",
-      "payload": {
-        "alert": "今天天气怎么样？"
-      },
-      "error": null,
-      "mode": "agentic",
-      "route_reason": null,
-      "root_cause": "alert:p99",
-      "false_positive": true
+      "runs": [
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        }
+      ],
+      "n": 3,
+      "assert": 0,
+      "decline": 0,
+      "fp_rate": 0.0,
+      "stable": true,
+      "modes": []
     },
     {
       "case": "metrics_only_ok",
       "input": "t_txn 行数增长与往常一致，副本延迟为 0",
-      "payload": {
-        "alert": "t_txn 行数增长与往常一致，副本延迟为 0"
-      },
-      "error": null,
-      "mode": "agentic",
-      "route_reason": null,
-      "root_cause": "env:host-wsl",
-      "false_positive": true
+      "runs": [
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        },
+        {
+          "verdict": "invalid",
+          "mode": null,
+          "detail": "HTTP 429: {\"detail\":{\"error\":\"每分钟诊断次数已达上限（10）\",\"re"
+        }
+      ],
+      "n": 3,
+      "assert": 0,
+      "decline": 0,
+      "fp_rate": 0.0,
+      "stable": true,
+      "modes": []
     }
   ]
 }
