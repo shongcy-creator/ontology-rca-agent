@@ -191,7 +191,7 @@ a green check must be able to fail.
 | Fault scenarios reproduced | **21/21** | `fault_verify`, [`reports/fault_verify_report.json`](reports/fault_verify_report.json) |
 | Injected-state signals all hold | **20/21** criteria observed at injection time | `fault_verify`, [`reports/fault_verify_report.json`](reports/fault_verify_report.json) |
 | Declared alerts actually fire | **20/21 = 95%** | `alert_coverage_check` (hold = max rule `for` + 60s) |
-| Strict root-cause top-1 | **16/18 scenarios** by strict top-1 (the report's own `diagnosed_ok` is 17/18, a looser criterion); the run was cut off at 18/21 by a too-small step budget, since fixed | e2e, [`reports/rca_diagnosis_report.json`](reports/rca_diagnosis_report.json) |
+| Strict root-cause top-1 | **19/21 = 90.5%** by root-cause term (the report's own looser criterion — anything that names an ontology root cause — counts 1.0; the two are NOT interchangeable) | e2e over all 21 scenarios, [`reports/rca_diagnosis_report.json`](reports/rca_diagnosis_report.json) |
 | Component→root-cause promotion (A/B) | strict **17→18/21**, top-5 **20→21/21**, 0 regressions | [`reports/promotion_ab.json`](reports/promotion_ab.json) |
 | Recovery verified | **18/18** | e2e, after switching the lag-recovery criterion to config state |
 | Deterministic fast path | **0 tokens, ~15 s/case** | when routing stays on the fast path |

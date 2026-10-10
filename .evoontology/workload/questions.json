@@ -1335,6 +1335,13 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f99db9531e30429fb36c4755c9a5f2b8.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7d3a3c60762c4ebdab8253a3d951f1f6.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7d3a3c60762c4ebdab8253a3d951f1f6.json"
+          ]
         }
       ],
       "topics": [],
@@ -1438,6 +1445,13 @@
           "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ee5f2fcbd41a4cbb9af56031fa9b8b70.json",
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ee5f2fcbd41a4cbb9af56031fa9b8b70.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_50fd5c0ced3f43e98e7841557d3a7fe7.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_50fd5c0ced3f43e98e7841557d3a7fe7.json"
           ]
         }
       ],
@@ -1599,6 +1613,20 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fa5973c8a3a543fba6cefc5fb7770e37.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_863e7c78cd0b44e68b4805d8be726f82.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_863e7c78cd0b44e68b4805d8be726f82.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_19a29c1f8f8142b09622ce6b91e3e547.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_19a29c1f8f8142b09622ce6b91e3e547.json"
+          ]
         }
       ],
       "topics": [],
@@ -1731,6 +1759,20 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ce9d33ebfa86463c860969ba8872aa0a.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_61be56e9d72848f8a7d00454db97a7e2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_61be56e9d72848f8a7d00454db97a7e2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f11bc9dfba394719a14601e11187266a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f11bc9dfba394719a14601e11187266a.json"
+          ]
         }
       ],
       "topics": [],
@@ -1848,6 +1890,20 @@
           "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f19310d5efad4c3f88b8323741470e48.json",
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f19310d5efad4c3f88b8323741470e48.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d4e46e3ca42447bf8253a71d288369c4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d4e46e3ca42447bf8253a71d288369c4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_02ac166708da45529fe559efbe8bdb0f.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_02ac166708da45529fe559efbe8bdb0f.json"
           ]
         }
       ],
@@ -2041,6 +2097,13 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_aca37b8fd533431393568e60a33ce18f.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f0ca2b4245ce4055b0167a411dc7e27d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f0ca2b4245ce4055b0167a411dc7e27d.json"
+          ]
         }
       ],
       "topics": [],
@@ -2150,6 +2213,13 @@
           "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e5f064aef6834ddfb40a94222e5d1606.json",
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e5f064aef6834ddfb40a94222e5d1606.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a9a185cb3e2440c3ad18271e410f89cd.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a9a185cb3e2440c3ad18271e410f89cd.json"
           ]
         }
       ],
@@ -2308,6 +2378,13 @@
           "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cdbe12ce9c1847629b470deb2653b827.json",
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cdbe12ce9c1847629b470deb2653b827.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c1ad88170ebc4f1f8cfb010c69e687d0.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c1ad88170ebc4f1f8cfb010c69e687d0.json"
           ]
         }
       ],
@@ -2701,6 +2778,13 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c8b008eb3a614d2db350787136fa138c.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6614bbf5a31a4fa3a0169ca6ec99e06c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6614bbf5a31a4fa3a0169ca6ec99e06c.json"
+          ]
         }
       ],
       "topics": [],
@@ -2948,6 +3032,20 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f71791e33b4a49aabf2917ca30b323b3.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3197d3b46d9f4e7abb379a14c30355a6.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3197d3b46d9f4e7abb379a14c30355a6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d90d5c3b26054390a30d48d3b8a57ad0.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d90d5c3b26054390a30d48d3b8a57ad0.json"
+          ]
         }
       ],
       "topics": [],
@@ -3043,6 +3141,13 @@
           "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f4df3f7461b94e77b16096245ef79a03.json",
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f4df3f7461b94e77b16096245ef79a03.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_68b60c2bebd8469abb2f607b3b37f243.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_68b60c2bebd8469abb2f607b3b37f243.json"
           ]
         }
       ],
@@ -3174,6 +3279,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_d4d26fdc9231482da82e235fb913012e.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b4db6da79b284f6bb1c930f103fd97eb.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b4db6da79b284f6bb1c930f103fd97eb.json"
+          ]
         }
       ],
       "topics": [],
@@ -3255,6 +3367,13 @@
           "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b912c811833849fbb8f3882ac85759bd.json",
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b912c811833849fbb8f3882ac85759bd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fe1cde21a02e4a77a47588b520ab874e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fe1cde21a02e4a77a47588b520ab874e.json"
           ]
         }
       ],
@@ -3966,6 +4085,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_f81a08d7dd21444bac798b4a354af8d7.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_9381443d877342bd9c77d0a32e989e79.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_9381443d877342bd9c77d0a32e989e79.json"
+          ]
         }
       ],
       "topics": [],
@@ -4475,7 +4601,88 @@
       "topics": [],
       "recorded_at": "2026-10-10T06:59:25.853661+00:00",
       "purpose": "construction"
+    },
+    {
+      "id": "q_a77c62943e1fc261",
+      "question": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高；payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fd5d587a35d04d47b13b86f769f2b4ca.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fd5d587a35d04d47b13b86f769f2b4ca.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T08:43:01.961773+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_33500e99e4af0a14",
+      "question": "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题；5xx 错误率突增，请求大量失败",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_987a4827cad244089f9888bc7a9334df.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_987a4827cad244089f9888bc7a9334df.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T09:19:24.906795+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_1bf7d68ac33400e8",
+      "question": "payment-app 整体 P99 latency > 500ms（所有副本同时偏高，非单副本偏斜）—— 判据：P99>500ms 且副本间无显著差异。常见原因按可能性：① 数据库层变慢（慢查询/行锁等待/DB CPU 不足）② 连接池耗尽 ③ 下游依赖退化；5xx 错误率突增，请求大量失败；MySQL connection pool exhausted, payment-app P99 latency high；MySQL 连接池排队 waiting queue 出现堆积，连接池容量不足，请求被迫等待",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c16285c1a45d4c3295b6ef0b0affba74.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c16285c1a45d4c3295b6ef0b0affba74.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T09:42:39.014782+00:00",
+      "purpose": "construction"
     }
   ],
-  "updated_at": "2026-10-10T07:11:39.632348+00:00"
+  "updated_at": "2026-10-10T10:10:12.945073+00:00"
 }
