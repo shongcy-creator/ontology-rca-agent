@@ -1,0 +1,120 @@
+{
+  "report": "<repo>\\.chaos\\rca_diagnosis_report.json",
+  "baseline_version": "ontology_v6",
+  "pair": [
+    "app_memory_stress",
+    "res_cluster_memory"
+  ],
+  "pair_same_input": true,
+  "pair_expected_intersection": [
+    "metric:mem-pressure"
+  ],
+  "variants": [
+    {
+      "variant": "v6_baseline",
+      "note": "当前已发布版本（第 6 轮：已删掉「内存压力/内存不足」）",
+      "invariants_passed": "9/9",
+      "strict": 19,
+      "n": 20,
+      "topk": 20,
+      "pair": {
+        "app_memory_stress": {
+          "top1": "rc:oom-kill",
+          "strict": true
+        },
+        "res_cluster_memory": {
+          "top1": "rc:oom-kill",
+          "strict": false
+        }
+      },
+      "non_pair_misses": [],
+      "oom_detection_keywords": [
+        "oom",
+        "oomkill",
+        "OOMKilled",
+        "被内核杀死",
+        "oom_kill 计数增加",
+        "容器重启"
+      ]
+    },
+    {
+      "variant": "V1_hard_evidence_only",
+      "note": "只保留「已被杀」的硬证据；删掉裸 oom / 被内核杀死（风险措辞）/ 容器重启",
+      "invariants_passed": "9/9",
+      "strict": 19,
+      "n": 20,
+      "topk": 20,
+      "pair": {
+        "app_memory_stress": {
+          "top1": "rc:oom-kill",
+          "strict": true
+        },
+        "res_cluster_memory": {
+          "top1": "rc:oom-kill",
+          "strict": false
+        }
+      },
+      "non_pair_misses": [],
+      "oom_detection_keywords": [
+        "OOMKilled",
+        "oom_kill 计数增加",
+        "increase(cc_container_oom_kill_total",
+        "已被内核杀死"
+      ]
+    },
+    {
+      "variant": "V2_V1_plus_negative_on_rc_oom_kill",
+      "note": "V1 + 给 rc:oom-kill 加 negative_keywords（「什么情况下不是我」）：风险/可能被/逼近",
+      "invariants_passed": "9/9",
+      "strict": 19,
+      "n": 20,
+      "topk": 20,
+      "pair": {
+        "app_memory_stress": {
+          "top1": "rc:oom-kill",
+          "strict": true
+        },
+        "res_cluster_memory": {
+          "top1": "rc:oom-kill",
+          "strict": false
+        }
+      },
+      "non_pair_misses": [],
+      "oom_detection_keywords": [
+        "OOMKilled",
+        "oom_kill 计数增加",
+        "increase(cc_container_oom_kill_total",
+        "已被内核杀死"
+      ]
+    },
+    {
+      "variant": "V3_force_cluster_capacity",
+      "note": "V1 + 硬把「容器内存/内存」塞进 con:cluster-capacity，试图强推 rc:cluster-capacity",
+      "invariants_passed": "9/9",
+      "strict": 18,
+      "n": 20,
+      "topk": 20,
+      "pair": {
+        "app_memory_stress": {
+          "top1": "rc:cluster-capacity",
+          "strict": false
+        },
+        "res_cluster_memory": {
+          "top1": "rc:cluster-capacity",
+          "strict": true
+        }
+      },
+      "non_pair_misses": [
+        "app_oom_kill"
+      ],
+      "oom_detection_keywords": [
+        "OOMKilled",
+        "oom_kill 计数增加",
+        "increase(cc_container_oom_kill_total",
+        "已被内核杀死"
+      ]
+    }
+  ],
+  "best_strict": 19,
+  "n": 20
+}
