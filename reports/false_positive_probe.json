@@ -1,0 +1,110 @@
+{
+  "probe": "false-positive (healthy inputs)",
+  "cases": 8,
+  "requests_failed": 0,
+  "false_positives": 8,
+  "false_positive_rate": 1.0,
+  "definition": "a case counts as a false positive ONLY if the response actually names an ontology root cause (rc:*). A rejected request is a probe failure, never a pass.",
+  "results": [
+    {
+      "case": "healthy_plain",
+      "input": "系统当前状态正常，没有异常",
+      "payload": {
+        "alert": "系统当前状态正常，没有异常"
+      },
+      "error": null,
+      "mode": "agentic",
+      "route_reason": null,
+      "root_cause": "rc:replica-loss",
+      "false_positive": true
+    },
+    {
+      "case": "residual_alert",
+      "input": "MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
+      "payload": {
+        "alert": "MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
+        "severity": "P2"
+      },
+      "error": null,
+      "mode": "deterministic",
+      "route_reason": null,
+      "root_cause": "rc:slow-sql",
+      "false_positive": true
+    },
+    {
+      "case": "single_transient",
+      "input": "应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
+      "payload": {
+        "alert": "应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
+        "severity": "P2"
+      },
+      "error": null,
+      "mode": "deterministic",
+      "route_reason": null,
+      "root_cause": "rc:replica-loss",
+      "false_positive": true
+    },
+    {
+      "case": "already_recovered",
+      "input": "复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
+      "payload": {
+        "alert": "复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
+        "severity": "P2"
+      },
+      "error": null,
+      "mode": "deterministic",
+      "route_reason": null,
+      "root_cause": "rc:slow-sql",
+      "false_positive": true
+    },
+    {
+      "case": "informational",
+      "input": "例行配置变更：已把 long_query_time 从 0.1s 调整为 1s",
+      "payload": {
+        "alert": "例行配置变更：已把 long_query_time 从 0.1s 调整为 1s"
+      },
+      "error": null,
+      "mode": "agentic",
+      "route_reason": null,
+      "root_cause": "rc:replica-loss",
+      "false_positive": true
+    },
+    {
+      "case": "unrelated_alert",
+      "input": "Grafana 自身的面板渲染耗时偏高",
+      "payload": {
+        "alert": "Grafana 自身的面板渲染耗时偏高",
+        "severity": "P3"
+      },
+      "error": null,
+      "mode": "deterministic",
+      "route_reason": null,
+      "root_cause": "rc:replica-loss",
+      "false_positive": true
+    },
+    {
+      "case": "out_of_scope",
+      "input": "今天天气怎么样？",
+      "payload": {
+        "alert": "今天天气怎么样？"
+      },
+      "error": null,
+      "mode": "agentic",
+      "route_reason": null,
+      "root_cause": "rc:slow-sql",
+      "false_positive": true
+    },
+    {
+      "case": "metrics_only_ok",
+      "input": "t_txn 行数增长与往常一致，副本延迟为 0",
+      "payload": {
+        "alert": "t_txn 行数增长与往常一致，副本延迟为 0"
+      },
+      "error": null,
+      "mode": "agentic",
+      "route_reason": null,
+      "root_cause": "rc:replica-loss",
+      "false_positive": true
+    }
+  ]
+}

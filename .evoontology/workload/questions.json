@@ -2865,6 +2865,13 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f5378d63bea84005b676c63eae52d405.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_06ffac2f56f242c0802560bdd054e825.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_06ffac2f56f242c0802560bdd054e825.json"
+          ]
         }
       ],
       "topics": [],
@@ -3335,7 +3342,230 @@
       "topics": [],
       "recorded_at": "2026-10-08T14:07:50.201988+00:00",
       "purpose": "construction"
+    },
+    {
+      "id": "q_a1c05a3ea413cef0",
+      "question": "系统当前状态正常，没有异常",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c235abf2ae06443cbbb3d7f9789d6991.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c235abf2ae06443cbbb3d7f9789d6991.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c8965083f9f74dddb70cae9435ce0c95.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c8965083f9f74dddb70cae9435ce0c95.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:15:26.536779+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_f6e36b9c6be099e9",
+      "question": "MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f917e5281c104ee09773840b362c7a36.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f917e5281c104ee09773840b362c7a36.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:15:27.297492+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_61fb8e9206aee12d",
+      "question": "应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b396445dc81d41cd841573ba5390ec9e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b396445dc81d41cd841573ba5390ec9e.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:15:27.957509+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_131e52cbd8c16316",
+      "question": "复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_76f372fa605749e9a5a70c93078f6b16.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_76f372fa605749e9a5a70c93078f6b16.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:16:23.955482+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_ebdeb79523fae5d8",
+      "question": "例行配置变更：已把 long_query_time 从 0.1s 调整为 1s",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_744cc380c2f343acba91ec6c806cd4fd.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_744cc380c2f343acba91ec6c806cd4fd.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:16:51.267053+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_d01038e3c15b4ca8",
+      "question": "Grafana 自身的面板渲染耗时偏高",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3f6f763b72ab491cbfbaab76eaa0c42c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3f6f763b72ab491cbfbaab76eaa0c42c.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:17:35.429161+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_de688223511b1a8c",
+      "question": "今天天气怎么样？",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_332ffc80fc02421cac0a8474b212b043.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_332ffc80fc02421cac0a8474b212b043.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:18:14.951464+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_95d3a0328731fcf8",
+      "question": "t_txn 行数增长与往常一致，副本延迟为 0",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d6797e3bf4ce4382b94b95a587831c27.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d6797e3bf4ce4382b94b95a587831c27.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T03:18:49.217188+00:00",
+      "purpose": "construction"
     }
   ],
-  "updated_at": "2026-10-09T01:05:55.899644+00:00"
+  "updated_at": "2026-10-10T03:20:12.014208+00:00"
 }
