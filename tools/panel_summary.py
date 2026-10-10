@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """打印可调宽面板实现摘要."""
-import re, subprocess
+import re, shutil, subprocess
 from pathlib import Path
 
-ROOT = Path(r"D:\05_code\credit-card-sys-ops\rca-agent")
+ROOT = Path(__file__).resolve().parent.parent / "rca-agent"   # <repo>/rca-agent
+DOCKER = shutil.which("docker") or "docker"                   # 不写死 Docker Desktop 安装路径
 
-docker = r"C:\Program Files\Docker\Docker\resources\bin\docker.exe"
-p = subprocess.run([docker, "compose", "ps", "--format",
+p = subprocess.run([DOCKER, "compose", "ps", "--format",
                     "table {{.Service}}\t{{.Status}}"],
                    cwd=str(ROOT), capture_output=True, text=True)
 print("=== 容器状态 ===")

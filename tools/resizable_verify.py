@@ -6,7 +6,8 @@ from pathlib import Path
 import urllib.request
 
 FRONT = "http://localhost:3001"
-DIST = Path(r"D:\05_code\credit-card-sys-ops\rca-agent\frontend\dist")
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+DIST = ROOT / "rca-agent" / "frontend" / "dist"
 PASS, FAIL = 0, 0
 
 
@@ -26,8 +27,8 @@ print("=" * 72)
 
 # ── 1. 源码文件存在 ────────────────────────────────────────────────────
 print("\n[1] Source files")
-hook = Path(r"D:\05_code\credit-card-sys-ops\rca-agent\frontend\src\hooks\useResizablePanel.ts")
-page = Path(r"D:\05_code\credit-card-sys-ops\rca-agent\frontend\src\pages\AgentPage.tsx")
+hook = ROOT / "rca-agent" / "frontend" / "src" / "hooks" / "useResizablePanel.ts"
+page = ROOT / "rca-agent" / "frontend" / "src" / "pages" / "AgentPage.tsx"
 check("hook file exists", hook.exists(), hook)
 check("page file exists", page.exists(), page)
 

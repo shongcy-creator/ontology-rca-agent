@@ -7,8 +7,10 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
-sys.path.insert(0, r"D:\05_code\credit-card-sys-ops\rca-agent")
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+sys.path.insert(0, str(ROOT / "rca-agent"))
 from backend.services.llm_config import resolve_api_key   # noqa: E402
 
 try:

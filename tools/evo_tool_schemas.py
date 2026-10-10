@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 """查询 EvoOntology 演化协议工具的输入 schema。"""
 import json, subprocess, os
+from pathlib import Path
 
-EVO = r"D:\05_code\credit-card-sys-ops\vendor\EvoOntology"
-STORE = r"D:\05_code\credit-card-sys-ops\.evoontology"
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+
+EVO = str(ROOT / "vendor" / "EvoOntology")
+STORE = str(ROOT / ".evoontology")
 env = {**os.environ}
 env["PYTHONPATH"] = EVO
 env["PYTHONIOENCODING"] = "utf-8"

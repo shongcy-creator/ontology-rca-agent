@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Fix the mysqld-exporter service block in docker-compose.yml."""
 import re
+from pathlib import Path
 
-path = r"D:\05_code\credit-card-sys-ops\demo\docker-compose.yml"
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+path = str(ROOT / "demo" / "docker-compose.yml")
 content = open(path, encoding="utf-8").read()
 
 new_block = """  mysqld-exporter:

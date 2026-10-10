@@ -9,8 +9,14 @@
   5. 验证根因正确
   6. 解除故障
 """
-import json, subprocess, sys, time, threading
+import json, shutil, subprocess, sys, time, threading
 import urllib.request, urllib.error
+
+# ⚠ 本脚本的"演练体"是**顶层代码**（没有 __main__ 守卫）：`import tools.fault_drill`
+#   会立刻开始施压并注入行锁故障。做静态检查/回归时**不要 import 它**。
+#   要安全化需把下面的演练体整体包进 `def main():` 后再加守卫 —— 那是一次
+#   未经实跑验证的改写，而本脚本会注入故障、无法在回归里"跑一遍确认没坏"，
+#   因此留作已知项，而不是顺手改掉。（踩过：一次 import 探针真的把演练跑了起来。）
 
 APP = "http://localhost:8080"
 RCA = "http://localhost:3001"
@@ -53,7 +59,10 @@ def docker(*args, timeout=60):
         p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         return p.returncode, p.stdout, p.stderr
     except FileNotFoundError:
-        exe = r"C:\Program Files\Docker\Docker\resources\bin\docker.exe"
+        # PATH 上找不到 docker 时再兜一次（不写死 Docker Desktop 安装路径）
+        exe = shutil.which("docker") or shutil.which("docker.exe")
+        if not exe:
+            raise
         p = subprocess.run([exe] + list(args), capture_output=True, text=True, timeout=timeout)
         return p.returncode, p.stdout, p.stderr
 

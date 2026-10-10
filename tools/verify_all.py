@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """运行全部验证套件并汇总."""
 import subprocess, sys, time, re
+from pathlib import Path
 
 SUITES = [
     ("Production stack",   "tools/prod_verify.py"),
@@ -13,7 +14,7 @@ SUITES = [
     ("Alert firing",       "tools/alert_firing_verify.py"),
 ]
 
-ROOT = r"D:\05_code\credit-card-sys-ops"
+ROOT = Path(__file__).resolve().parent.parent           # <repo>，不写死宿主绝对路径
 PY = sys.executable
 
 results = []

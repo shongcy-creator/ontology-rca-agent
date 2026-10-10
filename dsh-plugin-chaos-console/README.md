@@ -19,8 +19,8 @@
 ## 装 / 卸
 
 ```bash
-# 装（DSH 的 plugin_manager 工具；本地路径用 file: 前缀）
-install_bundle  target=file:D:\05_code\credit-card-sys-ops\dsh-plugin-chaos-console
+# 装（DSH 的 plugin_manager 工具；本地路径用 file: 前缀，写仓库根的**相对**形式即可）
+install_bundle  target=file:<repo>\dsh-plugin-chaos-console
 # 卸
 remove_bundle   target=cc-ops-dsh-plugin-chaos-console
 ```

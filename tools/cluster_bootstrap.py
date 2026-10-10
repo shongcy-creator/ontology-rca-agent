@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 import time
@@ -65,7 +66,10 @@ def docker(args: List[str], input_bytes: Optional[bytes] = None,
     try:
         p = subprocess.run(cmd, input=input_bytes, capture_output=True, timeout=timeout)
     except FileNotFoundError:
-        exe = r"C:\Program Files\Docker\Docker\resources\bin\docker.exe"
+        # PATH 上找不到 docker 时再兜一次（不写死 Docker Desktop 安装路径）
+        exe = shutil.which("docker") or shutil.which("docker.exe")
+        if not exe:
+            raise
         p = subprocess.run([exe] + args, input=input_bytes, capture_output=True, timeout=timeout)
     return (p.returncode,
             p.stdout.decode("utf-8", "replace"),

@@ -7,14 +7,14 @@ sys.path.insert(0, str(_ROOT / "rca-agent"))
 os.environ["PYTHONPATH"] = str(_ROOT / "rca-agent")
 os.environ["PYTHONIOENCODING"] = "utf-8"
 os.environ["PROMETHEUS_URL"] = "http://localhost:9090"
-os.environ["EVO_WORKSPACE"] = "D:/05_code/credit-card-sys-ops/.evoontology"
+os.environ["EVO_WORKSPACE"] = str(_ROOT / ".evoontology")
 
 from backend.services.rca_engine import RCAEngine
 
 try:
     engine = RCAEngine(
         prometheus_url="http://localhost:9090",
-        evo_workspace="D:/05_code/credit-card-sys-ops/.evoontology"
+        evo_workspace=str(_ROOT / ".evoontology")
     )
     result = engine.infer(
         message="payment-app P99 延迟超过 500ms，MySQL 连接池耗尽",

@@ -67,8 +67,8 @@ COMPOSE_LABEL_APP = "com.docker.compose.service=" + COMPOSE_SERVICE_APP
 def docker(args: List[str], timeout: int = 120,
            input_bytes: Optional[bytes] = None) -> Tuple[int, str, str]:
     """执行 docker 子命令，返回 (rc, stdout, stderr)。"""
-    exe = shutil.which("docker") or shutil.which("docker.exe") \
-        or r"C:\Program Files\Docker\Docker\resources\bin\docker.exe"
+    exe = (os.environ.get("CC_DOCKER") or shutil.which("docker")
+           or shutil.which("docker.exe") or "docker")
     try:
         p = subprocess.run([exe] + args, input=input_bytes, capture_output=True, timeout=timeout)
     except subprocess.TimeoutExpired:

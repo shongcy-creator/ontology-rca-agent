@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 """测试 EvoOntology MCP 的拓扑查询能力：browse vs resolve"""
 import sys, json
-sys.path.insert(0, r"D:\05_code\credit-card-sys-ops\rca-agent")
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+sys.path.insert(0, str(ROOT / "rca-agent"))
 from backend.services.evo_ontology import EvoOntologyClient
 
 c = EvoOntologyClient()

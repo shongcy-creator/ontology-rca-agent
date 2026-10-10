@@ -7,13 +7,14 @@
   3. 等待告警规则从 inactive → pending → firing
   4. 确认告警携带 rca_hint / onto_constraint 标签
 """
-import json, subprocess, sys, time, threading
+import json, shutil, subprocess, sys, time, threading
 import urllib.request, urllib.error, urllib.parse
 
 APP = "http://localhost:8080"
 PROM = "http://localhost:9090"
 MYSQL_CONTAINER = "cc-mysql-core"
-DOCKER = r"C:\Program Files\Docker\Docker\resources\bin\docker.exe"
+# 走 PATH（可用 CC_DOCKER 覆盖），不写死 Docker Desktop 安装路径
+DOCKER = shutil.which("docker") or shutil.which("docker.exe") or "docker"
 
 PASS, FAIL = 0, 0
 

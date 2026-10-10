@@ -2,10 +2,11 @@
 """生成信用卡系统运维智能体本体模型审核表（多 Sheet xlsx）。"""
 
 import os
+from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 
-OUT_DIR = r"D:\05_code\credit-card-sys-ops"
+OUT_DIR = str(Path(__file__).resolve().parent)          # <repo>，不写死宿主绝对路径
 OUT_FILE = os.path.join(OUT_DIR, "本体模型设计_信用卡系统运维智能体.xlsx")
 
 ws = Workbook()

@@ -8,8 +8,9 @@
 """
 import json
 import os
+from pathlib import Path
 
-BASE = r"D:\05_code\credit-card-sys-ops"
+BASE = str(Path(__file__).resolve().parent)             # <repo>，不写死宿主绝对路径
 OUT_DIR = os.path.join(BASE, "ontology_turtle")
 os.makedirs(OUT_DIR, exist_ok=True)
 

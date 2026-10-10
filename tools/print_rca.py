@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import json
 from pathlib import Path
-data = json.loads(Path(r'D:\05_code\credit-card-sys-ops\tools\rca_result_ALERT-P99.json').read_text('utf-8-sig'))
+
+HERE = Path(__file__).resolve().parent                 # <repo>/tools，不写死宿主绝对路径
+data = json.loads((HERE / "rca_result_ALERT-P99.json").read_text('utf-8-sig'))
 print("=== topology ===")
 for n in data['topology']:
     print("  [{type}] {id} = {name}".format(type=n['type'], id=n['id'], name=n['name'][:50]))

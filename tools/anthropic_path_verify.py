@@ -4,8 +4,11 @@
 import asyncio
 import json
 import sys
+from pathlib import Path
 
-sys.path.insert(0, r"D:\05_code\credit-card-sys-ops\rca-agent")
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+sys.path.insert(0, str(ROOT / "rca-agent"))
+
 from backend.services.llm_client import LLMClient      # noqa: E402
 from backend.services.llm_config import llm_config     # noqa: E402
 

@@ -28,6 +28,13 @@
 | `tools/rca_report.py:16` | `Path('D:/05_code/credit-card-sys-ops/tools')` | `Path(__file__).resolve().parent` |
 | `tools/test_rca_engine.py:3-4` | `sys.path.insert(0, "D:/05_code/.../rca-agent")` + `PYTHONPATH` | 补最小前导 `_ROOT = _Path(__file__).resolve().parent.parent`，改用 `str(_ROOT / "rca-agent")` |
 
+> **后续补齐（本轮）**：上面这张表曾经只列了 2 个文件，但仓库里其实还有 **21 个文件、25 处**
+> 写死了 `D:\05_code\credit-card-sys-ops`（16 个 `tools/*.py` + `generate_ontology_review.py`
+> + `generate_ontology_ttl.py` + `rca-agent/run_local.py` + 2 处文档），另有 4 个脚本写死了
+> Docker Desktop 的安装路径 `C:\Program Files\Docker\...\docker.exe`。
+> 现已全部改为由 `__file__` 推导（解释器走 PATH，可用 `CC_PYTHON`/`CC_DOCKER` 覆盖），
+> 并逐个实跑回归（见 `CHANGELOG.md` 的 Unreleased → Fixed）。
+
 ### 2. Windows 专有调用
 
 | 文件 | 原 | 现 |

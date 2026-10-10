@@ -5,13 +5,16 @@ import asyncio
 import json
 import os
 import sys
+from pathlib import Path
 
-sys.path.insert(0, r"D:\05_code\credit-card-sys-ops\rca-agent")
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+
+sys.path.insert(0, str(ROOT / "rca-agent"))
 
 # 本地开发：连宿主机映射端口
 os.environ.setdefault("DB_HOST", "localhost")
 os.environ.setdefault("PROMETHEUS_URL", "http://localhost:9090")
-os.environ.setdefault("EVO_WORKSPACE", r"D:\05_code\credit-card-sys-ops\.evoontology")
+os.environ.setdefault("EVO_WORKSPACE", str(ROOT / ".evoontology"))
 os.environ.setdefault("PYTHON_EXE", sys.executable)
 # 取证账号（最小权限只读）
 os.environ.setdefault("RCA_DB_USER", "rca_readonly")

@@ -2,7 +2,8 @@
 from pathlib import Path
 import re
 
-p = Path(r'D:\05_code\credit-card-sys-ops\.evoontology\visualizations\ontology-layer-explorer.html')
+ROOT = Path(__file__).resolve().parent.parent          # <repo>，不写死宿主绝对路径
+p = ROOT / ".evoontology" / "visualizations" / "ontology-layer-explorer.html"
 print('HTML size:', p.stat().st_size, 'bytes')
 html = p.read_text('utf-8-sig')
 
