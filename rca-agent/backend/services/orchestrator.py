@@ -100,7 +100,16 @@ def _fastpath_steps(seed: dict, route: dict) -> list:
 
 def _deterministic_result(seed: dict, route: dict) -> AgentResult:
     """把确定性引擎输出包装成与 Agent 一致的结果结构。"""
-    rc = seed.get("root_cause") or {}
+    # ── 无故障出口：路由侧已判定"无故障"，这里不拼装任何根因/证据/动作 ──
+    _nf = (route.get("signals") or {}).get("no_fault")
+    if _nf:
+        rc = {"category": "无故障", "entity_id": "",
+              "description": "未发现可报告的故障证据（依据：%s）。确定性引擎直接判定无故障，"
+                             "未调用 LLM（零 token）。" % _nf}
+        seed = dict(seed, confidence=0.95, thresholds_triggered=[], candidates=[],
+                    topology=[], topology_edges=[], root_cause_path=[])
+    else:
+        rc = seed.get("root_cause") or {}
     thresholds = seed.get("thresholds_triggered") or []
     evidence = []
     for t in thresholds:
@@ -123,11 +132,17 @@ def _deterministic_result(seed: dict, route: dict) -> AgentResult:
     # "确认容器是否因内存/CPU 受限被杀"这种既不准确也不可执行的动作。
     # 取不到（老版本本体 / 未登记动作的术语）才回落到按类别的通用建议。
     # 每条动作都带 `source`，界面可据此显示"这条建议来自本体还是兜底表"。
-    actions = _ontology_actions(rc)
-    if not actions:
-        actions = _suggest_actions(rc.get("category", ""))
-        actions = [dict(a, source="category") for a in actions]
-    steps = _fastpath_steps(seed, route)
+    if _nf:
+        # 无故障时不建议任何处置动作（也避免按类别直查兜底表）
+        actions = []
+    else:
+        actions = _ontology_actions(rc)
+        if not actions:
+            actions = _suggest_actions(rc.get("category", ""))
+            actions = [dict(a, source="category") for a in actions]
+    steps = [] if _nf else _fastpath_steps(seed, route)
+    _summary = (("判定为无故障：%s。未给出根因，也未调用 LLM。" % _nf) if _nf else
+                ("命中已知本体模式（%s），确定性引擎直接定论" % route.get("reason", "")))
 
     return AgentResult(
         run_id="",
@@ -142,7 +157,7 @@ def _deterministic_result(seed: dict, route: dict) -> AgentResult:
         topology=(seed.get("topology") or []),
         topology_edges=(seed.get("topology_edges") or []),
         root_cause_path=(seed.get("root_cause_path") or []),
-        reasoning_summary="命中已知本体模式（%s），确定性引擎直接定论" % route.get("reason", ""),
+        reasoning_summary=_summary,
         next_actions=actions,
         # 快路径也要有"推理过程"（供聊天框展示）；steps_used 要如实反映条数，
         # 否则界面上会出现"展示了 9 步推理、却写着 0 步"的割裂

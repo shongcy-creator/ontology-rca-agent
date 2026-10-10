@@ -3427,6 +3427,62 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_05a03e1586b34cf08834fd2883dbe041.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d07bb322df5f487aa19efa102c4061c4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d07bb322df5f487aa19efa102c4061c4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8fcec35335a940aaaff11f02f7be72b8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8fcec35335a940aaaff11f02f7be72b8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ac5d9d605faf43a3b690600771c607de.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ac5d9d605faf43a3b690600771c607de.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0f5345d36faa4fe09cbaa8e8140210c5.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0f5345d36faa4fe09cbaa8e8140210c5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b6af84639e364c09bd41d059a6199945.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b6af84639e364c09bd41d059a6199945.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8e006e63f81341a08035a4722ed15d66.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8e006e63f81341a08035a4722ed15d66.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f82ab3bc8a5440cab6071cad5dc8c53c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f82ab3bc8a5440cab6071cad5dc8c53c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bd2f89bd787147d4b398fb20f7835473.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bd2f89bd787147d4b398fb20f7835473.json"
+          ]
         }
       ],
       "topics": [],
@@ -3612,6 +3668,48 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_ca3db4bb24bb43fca8515339f6897d6e.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8261c3bfaf6f4b0a8f972f7462293a0d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8261c3bfaf6f4b0a8f972f7462293a0d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0d69d19ccd044ab8a226d2185770f90b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0d69d19ccd044ab8a226d2185770f90b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_094594f320234853bf53a7e9c72ad5c1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_094594f320234853bf53a7e9c72ad5c1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_87b96797eae84541bd2b8e16b15bf09a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_87b96797eae84541bd2b8e16b15bf09a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e2f5e20ae3924e2c90b5a69cc245a0cd.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e2f5e20ae3924e2c90b5a69cc245a0cd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ddf5a8beb3344a24ad2ad489e125d47e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ddf5a8beb3344a24ad2ad489e125d47e.json"
+          ]
         }
       ],
       "topics": [],
@@ -3722,6 +3820,55 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_e7bcace1d0774d86aefa5767138dc97d.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1d9107869d86453a9dc33f2d62e44ca4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1d9107869d86453a9dc33f2d62e44ca4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bcb2ce519c7e4c74b3813498d6ba3485.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bcb2ce519c7e4c74b3813498d6ba3485.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_df3d960020324b8ea453b7ae3017afbf.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_df3d960020324b8ea453b7ae3017afbf.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8827a952de1e41fb8e22ec416fe8744c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8827a952de1e41fb8e22ec416fe8744c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_de4932926b9a4dc3b70010d75c6ac26f.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_de4932926b9a4dc3b70010d75c6ac26f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3cd6ce77e6f94850a84d90ef608dcf1a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3cd6ce77e6f94850a84d90ef608dcf1a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a9f75aadfa5c4a62b6bcbfe700280cf9.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a9f75aadfa5c4a62b6bcbfe700280cf9.json"
+          ]
         }
       ],
       "topics": [],
@@ -3776,6 +3923,48 @@
           "source_ref": "/app/.evoontology/trajectories/task_71c07dc16fab45bfae8c6d88aa4ea96b.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_71c07dc16fab45bfae8c6d88aa4ea96b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_027a83f781e746038caad6ce32200cd9.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_027a83f781e746038caad6ce32200cd9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a8181b894fe84ddbbe8a8e413248a1c6.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a8181b894fe84ddbbe8a8e413248a1c6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_2e9a69de27ef4f2a9031fddbc61fd0e1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_2e9a69de27ef4f2a9031fddbc61fd0e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_4120d5da3fde4c1db55d2acb4c4da98c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_4120d5da3fde4c1db55d2acb4c4da98c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ecd9e046209e44e18a14fe5cece59b58.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ecd9e046209e44e18a14fe5cece59b58.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f81a08d7dd21444bac798b4a354af8d7.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f81a08d7dd21444bac798b4a354af8d7.json"
           ]
         }
       ],
@@ -3839,6 +4028,48 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_d4b7d5cd17014bf3a1c4148a4c00ff33.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1e36ca0a9c6748e085c9f14ef52b4d8d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1e36ca0a9c6748e085c9f14ef52b4d8d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e205e8b04ba14341bffbd29f3b6372da.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e205e8b04ba14341bffbd29f3b6372da.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_19ec22c0fd5648ad87a102722bdeaf09.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_19ec22c0fd5648ad87a102722bdeaf09.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a1307344ee1a4e2b839696f6fe91a5c4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a1307344ee1a4e2b839696f6fe91a5c4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_352c80863cc34f44b03ba590e755e257.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_352c80863cc34f44b03ba590e755e257.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a9480afa5e564dabb40812ff19c77d86.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a9480afa5e564dabb40812ff19c77d86.json"
+          ]
         }
       ],
       "topics": [],
@@ -3900,6 +4131,62 @@
           "source_ref": "/app/.evoontology/trajectories/task_c57cd2a527364515a4d6b1a1c2612576.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_c57cd2a527364515a4d6b1a1c2612576.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_56805c6da5d7423cb2f0f21b4ad4f6d1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_56805c6da5d7423cb2f0f21b4ad4f6d1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ea81552195f446948e9d4bc71efaec06.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ea81552195f446948e9d4bc71efaec06.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f442a623a88b488ea0e27f17ed31eca2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f442a623a88b488ea0e27f17ed31eca2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a3e3a10de6c448e0b7fe0badaa34838c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a3e3a10de6c448e0b7fe0badaa34838c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_63083cabe5544ed48dc45cf26455597e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_63083cabe5544ed48dc45cf26455597e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_884e35dab6b849d9af6c32f5d4ecf1d8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_884e35dab6b849d9af6c32f5d4ecf1d8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_85214fdc5f924200b2b13b643282a8a8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_85214fdc5f924200b2b13b643282a8a8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_4b50ce96d3964d7e828c939a7a354a57.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_4b50ce96d3964d7e828c939a7a354a57.json"
           ]
         }
       ],
@@ -3963,6 +4250,48 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_18b46eac5e2040458303da424af1ef09.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b6c8a301b01e460cbe475916ac319f3e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b6c8a301b01e460cbe475916ac319f3e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a071132eae8d402f98bf164041423f94.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a071132eae8d402f98bf164041423f94.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_69c74ad3e3134a2187fe25dec354e579.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_69c74ad3e3134a2187fe25dec354e579.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d3ff22098ba24b99a877d359edfaea8e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d3ff22098ba24b99a877d359edfaea8e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8839e567c0b34b08878686db640218f5.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8839e567c0b34b08878686db640218f5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a7a96a67625b44678a75ab3f060a6b9a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a7a96a67625b44678a75ab3f060a6b9a.json"
+          ]
         }
       ],
       "topics": [],
@@ -4004,12 +4333,149 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_ee3d20829c494820aafc9875bc8554c7.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_17a88dfdf12443be9e42d4b74f27f00e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_17a88dfdf12443be9e42d4b74f27f00e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7e56e79f08bb4b0199517e5cf4889074.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7e56e79f08bb4b0199517e5cf4889074.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e477c9439ffa4cbbb77717af7458890a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e477c9439ffa4cbbb77717af7458890a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b0651f648f304cd883cc7c4b70ab83e1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b0651f648f304cd883cc7c4b70ab83e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6ad9a9bb496d417c902df34ab915eb32.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6ad9a9bb496d417c902df34ab915eb32.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7d7f5066c114492ab62f278f8a400e82.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7d7f5066c114492ab62f278f8a400e82.json"
+          ]
         }
       ],
       "topics": [],
       "recorded_at": "2026-10-10T05:06:02.653833+00:00",
       "purpose": "construction"
+    },
+    {
+      "id": "q_73e1f9df44200750",
+      "question": "主库被置为只读，全部写交易失败，健康检查与读接口全部正常",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c6ca4c8238ea461aabe5b2b5ced1a482.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c6ca4c8238ea461aabe5b2b5ced1a482.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fb04212c4bfe4365b59ad7c536c0d4ca.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fb04212c4bfe4365b59ad7c536c0d4ca.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T06:57:53.070240+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_39fa75a5989e73e4",
+      "question": "持续制造慢查询：全表扫描 + 连接放大，慢查询数持续升高",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5bb1247c867b4ce38e0b068a42669f48.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5bb1247c867b4ce38e0b068a42669f48.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bd63799e0c384af0a0179e4020b8fd7e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bd63799e0c384af0a0179e4020b8fd7e.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T06:57:55.405027+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_b9853337721a0a2b",
+      "question": "只读副本复制延迟持续升高，Seconds_Behind_Source 达到 120s，尚未恢复",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1a5ce6e004fb4231829b08ce9872bd12.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1a5ce6e004fb4231829b08ce9872bd12.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-10T06:59:25.853661+00:00",
+      "purpose": "construction"
     }
   ],
-  "updated_at": "2026-10-10T05:14:41.009267+00:00"
+  "updated_at": "2026-10-10T07:11:39.632348+00:00"
 }

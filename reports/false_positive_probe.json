@@ -6,16 +6,16 @@
   "total_runs": 24,
   "requests_failed": 0,
   "valid": true,
-  "false_positive_rate": 0.9167,
-  "decline_stability": 0.75,
+  "false_positive_rate": 0.125,
+  "decline_stability": 1.0,
   "by_path": {
     "deterministic": {
-      "runs": 15,
-      "fp_rate": 1.0
+      "runs": 23,
+      "fp_rate": 0.087
     },
     "agentic": {
-      "runs": 9,
-      "fp_rate": 0.7778
+      "runs": 1,
+      "fp_rate": 1.0
     }
   },
   "supersedes": "earlier runs of this probe (0/8 when the requests were rejected with 422, then 8/8 when the engine's explicit no-fault verdict was counted as an assertion) — both were measurement errors, not engine behaviour",
@@ -26,27 +26,26 @@
       "runs": [
         {
           "verdict": "decline",
-          "mode": "agentic",
-          "detail": "数据"
-        },
-        {
-          "verdict": "assert",
           "mode": "deterministic",
-          "detail": "依赖"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
-          "mode": "agentic",
-          "detail": "依赖"
+          "verdict": "decline",
+          "mode": "deterministic",
+          "detail": "无故障"
+        },
+        {
+          "verdict": "decline",
+          "mode": "deterministic",
+          "detail": "无故障"
         }
       ],
       "n": 3,
-      "assert": 2,
-      "decline": 1,
-      "fp_rate": 0.667,
-      "stable": false,
+      "assert": 0,
+      "decline": 3,
+      "fp_rate": 0.0,
+      "stable": true,
       "modes": [
-        "agentic",
         "deterministic"
       ]
     },
@@ -55,25 +54,25 @@
       "input": "MySQLSlowQueries：MySQL 慢查询数偏高（该告警在本次变更前就已存在）",
       "runs": [
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         }
       ],
       "n": 3,
-      "assert": 3,
-      "decline": 0,
-      "fp_rate": 1.0,
+      "assert": 0,
+      "decline": 3,
+      "fp_rate": 0.0,
       "stable": true,
       "modes": [
         "deterministic"
@@ -84,25 +83,25 @@
       "input": "AppHighErrorRate：应用副本 1 在 12:00:03 出现过一次 HTTP 500，之后 30 分钟无复现",
       "runs": [
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "资源"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "资源"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "资源"
+          "detail": "无故障"
         }
       ],
       "n": 3,
-      "assert": 3,
-      "decline": 0,
-      "fp_rate": 1.0,
+      "assert": 0,
+      "decline": 3,
+      "fp_rate": 0.0,
       "stable": true,
       "modes": [
         "deterministic"
@@ -113,25 +112,25 @@
       "input": "MySQLReplicationBroken：复制中断告警已于 5 分钟前恢复，当前 io/sql 线程均为 ON",
       "runs": [
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         }
       ],
       "n": 3,
-      "assert": 3,
-      "decline": 0,
-      "fp_rate": 1.0,
+      "assert": 0,
+      "decline": 3,
+      "fp_rate": 0.0,
       "stable": true,
       "modes": [
         "deterministic"
@@ -143,27 +142,27 @@
       "runs": [
         {
           "verdict": "decline",
-          "mode": "agentic",
-          "detail": "配置"
+          "mode": "deterministic",
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
-          "mode": "agentic",
-          "detail": "配置"
+          "verdict": "decline",
+          "mode": "deterministic",
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
-          "mode": "agentic",
-          "detail": "配置"
+          "verdict": "decline",
+          "mode": "deterministic",
+          "detail": "无故障"
         }
       ],
       "n": 3,
-      "assert": 2,
-      "decline": 1,
-      "fp_rate": 0.667,
-      "stable": false,
+      "assert": 0,
+      "decline": 3,
+      "fp_rate": 0.0,
+      "stable": true,
       "modes": [
-        "agentic"
+        "deterministic"
       ]
     },
     {
@@ -172,8 +171,8 @@
       "runs": [
         {
           "verdict": "assert",
-          "mode": "agentic",
-          "detail": "配置"
+          "mode": "deterministic",
+          "detail": "数据"
         },
         {
           "verdict": "assert",
@@ -183,7 +182,7 @@
         {
           "verdict": "assert",
           "mode": "agentic",
-          "detail": "配置"
+          "detail": "资源"
         }
       ],
       "n": 3,
@@ -201,28 +200,27 @@
       "input": "今天天气怎么样？",
       "runs": [
         {
-          "verdict": "assert",
-          "mode": "agentic",
-          "detail": "配置"
-        },
-        {
-          "verdict": "assert",
-          "mode": "agentic",
-          "detail": "数据"
-        },
-        {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "?"
+          "detail": "无故障"
+        },
+        {
+          "verdict": "decline",
+          "mode": "deterministic",
+          "detail": "无故障"
+        },
+        {
+          "verdict": "decline",
+          "mode": "deterministic",
+          "detail": "无故障"
         }
       ],
       "n": 3,
-      "assert": 3,
-      "decline": 0,
-      "fp_rate": 1.0,
+      "assert": 0,
+      "decline": 3,
+      "fp_rate": 0.0,
       "stable": true,
       "modes": [
-        "agentic",
         "deterministic"
       ]
     },
@@ -231,25 +229,25 @@
       "input": "t_txn 行数增长与往常一致，副本延迟为 0",
       "runs": [
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         },
         {
-          "verdict": "assert",
+          "verdict": "decline",
           "mode": "deterministic",
-          "detail": "数据"
+          "detail": "无故障"
         }
       ],
       "n": 3,
-      "assert": 3,
-      "decline": 0,
-      "fp_rate": 1.0,
+      "assert": 0,
+      "decline": 3,
+      "fp_rate": 0.0,
       "stable": true,
       "modes": [
         "deterministic"

@@ -151,6 +151,34 @@ def decide(seed: Optional[dict], cfg: Optional[dict] = None,
         "ontology_version": sc.version or None,
     }
 
+    # ── 无故障出口（新增）────────────────────────────────────────────
+    # 契约与验收：docs/设计_无故障出口.md
+    # 实测背景：8 个"系统其实没坏"的输入里，快路径 15/15 全部断言了故障
+    # （含"复制中断已恢复、io/sql 均为 ON"这种明确陈述）。
+    #
+    # 安全设计（防退化成"什么都不报"），三者叠加：
+    #   ① 必须有**显式**的正常/恢复/未复现/无关陈述；
+    #   ② 出现"当前仍在故障"的措辞（失败/正在/持续/不可用/拒绝/超时/升高）→ 不拒答；
+    #   ③ 只要有阈值触发 → 不拒答。
+    # 用**正则短语**而不是字面量：实测"已于 5 分钟前恢复"匹配不到字面量"已恢复"，
+    # 于是本该拒答的输入被判成了 db-replica-loss。
+    import re as _re
+    _NF_PATTERNS = (r"已(经)?[^，。；、]{0,10}恢复", r"恢复[^，。；、]{0,6}(正常|完成|成功|一致|ON)",
+                    r"已(经)?(回滚|结束|关闭|停止|下线)", r"无(复现|异常|告警|变化|故障|问题)",
+                    r"(状态|一切|运行|指标)正常", r"(与|和)往常一致", r"变更前就已存在",
+                    r"例行", r"无关文本", r"天气", r"未见异常", r"不需要(处理|关注)")
+    _NF_ACTIVE = ("失败", "正在", "持续", "仍在", "不可用", "拒绝", "超时", "升高")
+    _nf_hits = sorted({m.group(0) for p in _NF_PATTERNS for m in _re.finditer(p, message)})
+    _nf_active = sorted({w for w in _NF_ACTIVE if w in message})
+    if _nf_hits and not _nf_active and not triggered:
+        return RouteDecision(
+            mode="deterministic",
+            reason="判定无故障（依据：%s）" % "、".join(_nf_hits),
+            threshold=threshold, seed_confidence=conf,
+            matched_constraint=False, known_root_cause=False,
+            signals=dict(signals, no_fault="、".join(_nf_hits)),
+        )
+
     # ── 判定 ──────────────────────────────────────────────────────
     if unknown_category:
         return RouteDecision(
