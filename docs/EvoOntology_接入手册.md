@@ -83,8 +83,8 @@ python -m evoontology.visualization --root .evoontology --no-browser
 ### 3.1 一次性接入
 
 ```bash
-# 方式 A: 临时 overlay (本次会话)
-dsh web --patch "D:\05_code\credit-card-sys-ops\config\evoontology.cordis.yml"
+# 方式 A: 临时 overlay (本次会话)。**在仓库根执行**（overlay 里的路径都是相对的）
+dsh web --patch "config/evoontology.cordis.yml"
 
 # 方式 B: 跨 profile 持久化
 # 把 config/evoontology.cordis.yml 的 insert 段落合并到 $DSH_HOME/cordis.patch.yml
@@ -106,8 +106,9 @@ DSH 启动后，工具会以 `mcp__evoontology__<tool>` 形式注册。冒烟：
 
 ### 3.3 环境注意
 
-- `command` 指向 DSH 自带运行时 `C:\Users\41187\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe`
-- `env.PYTHONPATH` 指向 `vendor/EvoOntology`（core 包）
+- `command` = `python`（PATH 上的 Python ≥3.10）。要固定用 DSH 自带运行时，写成 `%USERPROFILE%\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe` —— **不要**提交展开后的绝对路径（会把用户名与家目录布局一起带进仓库，且换机器即失效）
+- `cwd` = 启动目录（**须在仓库根启动** `dsh web --patch ...`）；`--store` 已省略：MCP server 的 store 默认就是 `<cwd>/.evoontology`（`vendor/EvoOntology/evoontology/workspace.py::resolve_workspace`）
+- `env.PYTHONPATH` 指向 `vendor/EvoOntology`（core 包，相对 `cwd`）
 - `env.PYTHONIOENCODING=utf-8`（Windows 代码页防 mojibake；server 内部也做了 `force_utf8_stdio`）
 - DSH 会自动清洗含 `KEY/PASSWORD/SECRET/TOKEN` 的 env，本项目 MCP server 无敏感依赖
 

@@ -1,5 +1,5 @@
 # DSH 接入 EvoOntology MCP Server 的 Cordis overlay
-# 用法: dsh web --patch "$PWD/config/evoontology.cordis.yml"
+# 用法: 在**仓库根**执行 `dsh web --patch "$PWD/config/evoontology.cordis.yml"`
 # 说明:
 #   - EvoOntology 核心 (vendor/EvoOntology/evoontology) 自带零依赖 stdio MCP server
 #   - DSH 通过 @deepseek-ai/dsh-mcp-client 启动该子进程, 工具以 mcp__evoontology__<tool> 形式注册
@@ -7,8 +7,21 @@
 #   - 启动时自动清洗含 KEY/PASSWORD/SECRET/TOKEN 及 DSH_* 的环境变量, 本项目无敏感 env 依赖
 #
 # 前置条件:
-#   - Python >= 3.10 在 PATH (此处用 DSH 自带运行时)
+#   - Python >= 3.10 在 PATH
 #   - 已运行 tools/init_evo_ontology.py 生成 .evoontology/ontology_v0
+#
+# ── 路径为什么不写绝对路径 ────────────────────────────────────────────────
+# 原先 `command` 指向**某个用户目录下**的 DSH 自带运行时
+#   (`%USERPROFILE%\.dsh\dsh-runtimes\...\python.exe` —— 当时写的是展开后的绝对路径),
+# 而 `cwd` / `--store` / `PYTHONPATH` 也都写死了仓库的宿主绝对路径。
+# 两个后果: ① 把用户名与家目录布局提交进仓库; ② 换机器、换用户名就跑不起来。
+# 现在全部改成**相对于启动目录**的相对路径 -> 因此必须在仓库根启动 (见上面"用法")。
+# 想用 DSH 自带运行时, 把 command 换成下面这行 (用 %USERPROFILE%, 不要再展开成绝对路径):
+#   command: '%USERPROFILE%\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe'
+#
+# `--store` 已省略: MCP server 的 store 默认就是 `<cwd>/.evoontology`
+# (见 vendor/EvoOntology/evoontology/workspace.py::resolve_workspace),
+# cwd 为仓库根时即指向仓库内工作区, 不必再写一遍绝对路径。
 #
 # 跨 profile 持久化: 将下方 insert 合并到 $DSH_HOME/cordis.patch.yml
 
@@ -18,15 +31,13 @@ insert:
     config:
       serverName: evoontology
       transport: stdio
-      command: 'C:\Users\41187\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe'
+      command: 'python'
       args:
         - -m
         - evoontology.runtime.mcp_server
-        - --store
-        - 'D:\05_code\credit-card-sys-ops\.evoontology'
-      cwd: 'D:\05_code\credit-card-sys-ops'
+      cwd: '.'
       env:
-        PYTHONPATH: 'D:\05_code\credit-card-sys-ops\vendor\EvoOntology'
+        PYTHONPATH: 'vendor/EvoOntology'
         PYTHONIOENCODING: 'utf-8'
       # 可选: 启动失败时不阻塞 harness, 仅工具不可用
       # failOnStartupError: false
