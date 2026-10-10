@@ -89,6 +89,7 @@ First public snapshot: an ontology-driven RCA agent **plus** the benchmark that 
 
 ### Known issues
 
+- **The e2e accuracy counted unmeasurable scenarios as hits.** When a scenario's declared alerts never fire, the harness sends the engine a placeholder ("no corresponding alert") and whatever it answers was still scored as a hit — inflating `diagnosis_accuracy` to 1.0. The honest three-state view is: hit / miss / **not measurable** (excluded from the denominator). Recomputed over the measurable set the strict figure is 19/20. The verifier itself still needs the three-state split in code.
 - **The deterministic engine has no no-fault exit.** A false-positive probe with healthy inputs (8 cases x 3 runs) shows **22/24 = 91.7% false positives**; the deterministic fast path asserted a fault in **15/15** runs, including input that explicitly states the incident is over. This axis was never evaluated before. Contract and acceptance criteria: `docs/设计_无故障出口.md`; the probe is its regression gate.
 - **Routing is not deterministic for identical input.** The same input routes to the deterministic path in some runs and to the LLM agent in others, so the published e2e (16/18) and A/B (17 to 18) numbers carry run-to-run variance that has not been quantified.
 - **Overfitting, measured and published**: on held-out alert phrasings that were never tuned
