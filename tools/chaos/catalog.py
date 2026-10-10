@@ -1346,7 +1346,14 @@ _register(Fault(
     ],
     expected_root_cause="应用集群内存资源不足，全部副本面临 OOM Kill 风险",
     ontology_terms=["app:payment-app", "metric:mem-pressure", "rc:cluster-capacity"],
-    alert_names=["AppContainerMemoryPressure"],
+    # 诊断输入必须是**集群级**告警：本场景 selector=app-all（3 个副本各 220MB），
+    # 而 AppContainerMemoryPressure 是逐容器视角、措辞是"存在 OOM Kill 风险"。
+    # 实测：声明它时，本场景与 app_memory_stress（selector=roundrobin，**单副本** 200MB）
+    # 拿到的是逐字节相同的 rca_hint，两个语义不同的故障在输入上无法区分 ——
+    # 确定性引擎只能给同一个 top1，严格命中被钉死在 19/20（证据：
+    # reports/oom_counterfactual.json）。AppClusterMemoryCapacity 用"同时越限副本数 >= 3"
+    # 做判据，单副本压力不会触发它，这才是本场景该喂给引擎的信号。
+    alert_names=["AppClusterMemoryCapacity"],
     blast_radius="应用层整体（P1），可能全副本同时被 OOM Kill",
 ))
 

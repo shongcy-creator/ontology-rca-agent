@@ -183,6 +183,32 @@ groups:
           description: "workingset={{ $value | humanizePercentage }}，逼近 mem_limit，随时可能被 OOM Kill"
           rca_hint: "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启"
 
+      # 集群级容量：**多个副本同时**逼近 cgroup 上限 → 集群整体内存容量不足。
+      #
+      # 为什么必须单独有这一条（实测教训，证据见 reports/oom_counterfactual.json）：
+      # `AppContainerMemoryPressure` 是**逐容器**视角，rca_hint 的措辞是"存在 OOM Kill 风险"。
+      # 于是「全部副本同时逼近上限」（集群容量问题，res_cluster_memory）与
+      # 「单副本内存压力」（容器问题，app_memory_stress）拿到的是**逐字节相同**的告警文本 ——
+      # 两个语义不同的故障在输入上无法区分，确定性引擎只能给出同一个 top1，
+      # 严格命中因此被钉死在 19/20（改关键词救不回来，因为那是输入撞车，不是知识缺口）。
+      # 判据刻意用「同时越限的副本数」：单副本压力永远不满足 >= 3，这就是集群级信号。
+      - alert: AppClusterMemoryCapacity
+        expr: |
+          count(
+            cc_container_memory_working_set_bytes
+            / (cc_container_memory_limit_bytes > 0) > 0.85
+          ) >= 3
+        for: 1m
+        labels:
+          severity: P1
+          layer: resource
+          component: payment-app-cluster
+          onto_constraint: con:cluster-capacity
+        annotations:
+          summary: "应用集群 {{ $value }} 个副本同时内存越限（≥3），集群整体容量不足"
+          description: "全部副本同时逼近 mem_limit：属集群整体内存容量不足（应扩容或提配额），而不是某一个容器的内存问题"
+          rca_hint: "payment-app 应用集群全部副本同时内存越限（3/3 副本 working set 逼近 cgroup 上限），集群整体内存容量不足，需扩容或提高配额"
+
       # CPU 配额节流（cpus=0.5）：nr_throttled 持续增长说明被 CPU 限制压制
       - alert: AppContainerCpuThrottled
         expr: rate(cc_container_cpu_nr_throttled_total[5m]) > 0.1

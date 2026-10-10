@@ -4,6 +4,62 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `tools/ontology_ab_replay.py` — replays the **real** alert texts archived by the e2e run
+  (`.chaos/rca_diagnosis_report.json` → `alert_text`) against any two ontology versions and reports
+  **paired strict hits**. Same inputs, so any delta can only come from the ontology.
+- `tools/oom_evidence_counterfactual.py` — builds keyword-tightening variants of
+  `con:oom-detection` and scores them on those inputs, to test whether a proposed tightening can
+  actually move the number (instead of assuming it did).
+
+### Findings — published as a negative result
+
+- **The round-6 keyword tightening is invisible to the engine on real inputs.** Replaying the
+  archived alert texts gives `ontology_v5 → ontology_v6` = **19/20 → 19/20 (Δ0, zero cases flipped)**,
+  while the round's own gate recorded `0/9 → 9/9` on its `memory_semantics` invariants. The words were
+  removed from the *constraint*, but the engine's conclusion is driven by the *Term* dictionary:
+  `rc:oom-kill`'s own id/name/scoring-keywords still contain `oom` / `kill` / `被内核杀死`, and the
+  text-fit term saturates at `min(weighted, 3)/3`, so `negative_keywords` cannot pull it below a
+  competitor either. A stronger tightening is therefore a **no-op**, not an improvement.
+- **The strict metric has a structural ceiling of 19/20 on the current benchmark.** `app_memory_stress`
+  and `res_cluster_memory` receive a **byte-identical** alert text (both declare
+  `AppContainerMemoryPressure`, so both get the same `rca_hint`), yet accept disjoint root causes
+  (`{metric:mem-pressure, rc:oom-kill}` vs `{rc:cluster-capacity, metric:mem-pressure}`). One input
+  yields one top-1, so at most one of the pair can hit — unless the engine concludes with an
+  *observation* (`metric:mem-pressure`), which is the "conclusion lands on an observation" defect the
+  role weights exist to prevent. Reaching 20/20 needs a change to the **ground truth** or to the
+  **input**, not to the ontology; changing the ground truth would be the "edit the number to make the
+  check green" move this repo refuses.
+- **Live re-test confirms it**: injecting `res_cluster_memory` under the published `ontology_v6`
+  (real alert, real deterministic engine) still returns `rc:oom-kill` → strict miss
+  ([`reports/rca_retest_res_cluster_memory.json`](reports/rca_retest_res_cluster_memory.json)).
+- `AppContainerOOMKilled` declares `onto_constraint: con:container-oom`, which **does not exist** in
+  the ontology (`ontology_v6` has `con:oom-detection`), so that alert's wiring to the ontology is dead.
+
+### Fixed
+
+- **The input collision behind the last strict miss.** `res_cluster_memory` (cluster-wide: all 3
+  replicas × 220 MB) declared `AppContainerMemoryPressure`, whose `rca_hint` is worded as a
+  *per-container* risk ("存在 OOM Kill 风险") — so it was fed a **byte-identical** input to
+  `app_memory_stress` (single replica × 200 MB) while accepting a different root cause.
+  Added the missing **cluster-level** alert `AppClusterMemoryCapacity`
+  (`count(working_set/limit > 0.85) >= 3`, `onto_constraint: con:cluster-capacity`) and made the
+  scenario declare it. A single-replica stress cannot satisfy `>= 3`; the live re-test confirms it —
+  the new alert fires for `res_cluster_memory` and **not** for `app_memory_stress`
+  ([`reports/rca_retest_oom_input_fix.json`](reports/rca_retest_oom_input_fix.json)).
+- **Verified on a full 21-scenario re-run** (real injection + real alerts + real engine, same
+  `ontology_v6`, same ground truth): strict **19/20 → 20/20**, with **exactly one case changed**
+  (`res_cluster_memory`: `rc:oom-kill` → `rc:cluster-capacity`) and **0 regressions**
+  ([`reports/e2e_postfix_ab.json`](reports/e2e_postfix_ab.json),
+  [`reports/rca_diagnosis_report_postfix.json`](reports/rca_diagnosis_report_postfix.json)).
+  The new alert fired for `res_cluster_memory` **only**, and the single-replica control
+  (`app_memory_stress`) kept `rc:oom-kill`. The `+1` comes from fixing the **input**, not from a
+  keyword edit — round 6's ontology tightening moved nothing on the same kind of replay
+  ([`reports/oom_evidence_replay.json`](reports/oom_evidence_replay.json)).
+
 ## [0.1.0] — 2026-10-09
 
 First public snapshot: an ontology-driven RCA agent **plus** the benchmark that measures it.

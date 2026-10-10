@@ -1,0 +1,1981 @@
+{
+  "mode": "input_ab",
+  "report": ".chaos/rca_diagnosis_report.json",
+  "report_b": ".chaos/rca_diagnosis_report_postfix.json",
+  "top_k": 5,
+  "candidate_records": "",
+  "label_a": "改前输入",
+  "label_b": "改后输入",
+  "parent": {
+    "version": "改前输入",
+    "available": true,
+    "terms": 56,
+    "constraints": 30,
+    "relations": 87,
+    "n_total": 21,
+    "n_measurable": 20,
+    "strict": 19,
+    "topk": 20,
+    "strict_seconds": 0,
+    "top1_distribution": {
+      "rc:cpu-throttle": 2,
+      "rc:gateway-down": 1,
+      "rc:replica-loss": 4,
+      "rc:oom-kill": 3,
+      "rc:net-fault": 2,
+      "rc:db-replica-loss": 2,
+      "rc:db-cpu-starve": 1,
+      "rc:tmp-disk": 2,
+      "rc:primary-readonly": 1,
+      "rc:replica-lag": 1,
+      "rc:row-lock": 1,
+      "rc:slow-sql": 1
+    },
+    "rows": [
+      {
+        "scenario": "app_cpu_stress",
+        "alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+        "expected": [
+          "rc:cpu-throttle",
+          "metric:cpu-throttle"
+        ],
+        "measurable": true,
+        "top1": "rc:cpu-throttle",
+        "top1_name": "根因：容器 CPU 配额节流",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:cpu-throttle",
+          "rc:db-cpu-starve",
+          "rc:tmp-disk",
+          "metric:cpu-throttle",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:pool-waiting"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "quota",
+          "throttle",
+          "排队",
+          "节流"
+        ],
+        "e2e_top1": "rc:cpu-throttle",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_gateway_stop",
+        "alert_text": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503",
+        "expected": [
+          "rc:gateway-down"
+        ],
+        "measurable": true,
+        "top1": "rc:gateway-down",
+        "top1_name": "根因：应用网关不可用",
+        "top1_score": 0.98,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:gateway-down",
+          "env:gateway",
+          "rc:replica-hang",
+          "metric:gateway-probe",
+          "rc:replica-loss"
+        ],
+        "constraint_hits": [
+          "con:gateway-availability",
+          "con:gateway-down",
+          "con:replica-hang-detection"
+        ],
+        "matched_keywords": [
+          "502",
+          "503",
+          "gateway",
+          "入口",
+          "探活失败",
+          "网关",
+          "负载均衡"
+        ],
+        "e2e_top1": "rc:gateway-down",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_kill_replica",
+        "alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+        "expected": [
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "app:payment-app-cluster",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:app-mem-limit",
+          "con:oom-detection",
+          "con:replica-loss-detection",
+          "con:change-correlation"
+        ],
+        "matched_keywords": [
+          "cluster",
+          "oom",
+          "replica",
+          "replicas",
+          "replicas 不足",
+          "副本",
+          "重启"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_memory_stress",
+        "alert_text": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+        "expected": [
+          "metric:mem-pressure",
+          "rc:oom-kill"
+        ],
+        "measurable": true,
+        "top1": "rc:oom-kill",
+        "top1_name": "根因：容器内存超限被 OOM Kill",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "metric:mem-pressure",
+          "metric:oom-kill-count",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-mem-limit",
+          "con:oom-detection",
+          "con:change-correlation"
+        ],
+        "matched_keywords": [
+          "oom",
+          "内存",
+          "被内核杀死",
+          "重启"
+        ],
+        "e2e_top1": "rc:oom-kill",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_network_delay",
+        "alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时",
+        "expected": [
+          "rc:net-fault",
+          "metric:net-delay"
+        ],
+        "measurable": true,
+        "top1": "rc:net-fault",
+        "top1_name": "根因：网络延迟/丢包",
+        "top1_score": 0.91,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:net-fault",
+          "rc:mem-pressure",
+          "metric:cpu-throttle",
+          "metric:mem-pressure",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:net-quality",
+          "con:app-mem-limit",
+          "con:p99-threshold",
+          "con:app-replica-quorum",
+          "con:replica-lag"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "memory",
+          "p99",
+          "throttle",
+          "丢包",
+          "内存",
+          "副本",
+          "延迟",
+          "网络",
+          "节流"
+        ],
+        "e2e_top1": "rc:net-fault",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_network_loss",
+        "alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时",
+        "expected": [
+          "rc:net-fault",
+          "metric:net-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:net-fault",
+        "top1_name": "根因：网络延迟/丢包",
+        "top1_score": 0.91,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:net-fault",
+          "rc:mem-pressure",
+          "metric:cpu-throttle",
+          "metric:mem-pressure",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:net-quality",
+          "con:app-mem-limit",
+          "con:p99-threshold",
+          "con:app-replica-quorum",
+          "con:replica-lag"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "memory",
+          "p99",
+          "throttle",
+          "丢包",
+          "内存",
+          "副本",
+          "延迟",
+          "网络",
+          "节流"
+        ],
+        "e2e_top1": "rc:net-fault",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_oom_kill",
+        "alert_text": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高；payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+        "expected": [
+          "rc:oom-kill",
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:oom-kill",
+        "top1_name": "根因：容器内存超限被 OOM Kill",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "metric:mem-pressure",
+          "metric:oom-kill-count",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:oom-detection",
+          "con:app-mem-limit",
+          "con:replica-lag",
+          "con:change-correlation",
+          "con:net-quality",
+          "con:p99-threshold"
+        ],
+        "matched_keywords": [
+          "oom",
+          "oom_kill 计数增加",
+          "内存",
+          "延迟",
+          "被内核杀死",
+          "重启"
+        ],
+        "e2e_top1": "rc:oom-kill",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_pause_replica",
+        "alert_text": "payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+        "expected": [
+          "rc:replica-hang",
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.69,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "app:payment-app-cluster",
+          "rc:cluster-capacity",
+          "metric:replica-healthy-count",
+          "app:instance-1"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:cluster-capacity",
+          "con:cluster-cpu-capacity"
+        ],
+        "matched_keywords": [
+          "副本",
+          "集群",
+          "集群容量"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_stop_replica",
+        "alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+        "expected": [
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "app:payment-app-cluster",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:app-mem-limit",
+          "con:oom-detection",
+          "con:replica-loss-detection",
+          "con:change-correlation"
+        ],
+        "matched_keywords": [
+          "cluster",
+          "oom",
+          "replica",
+          "replicas",
+          "replicas 不足",
+          "副本",
+          "重启"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_conn_saturation",
+        "alert_text": "监控无对应告警，但业务侧出现异常（层级=数据库层）",
+        "expected": [
+          "rc:conn-exhaust"
+        ],
+        "measurable": false,
+        "top1": "rc:db-replica-loss",
+        "top1_name": "根因：数据库只读副本丢失",
+        "top1_score": 0.55,
+        "strict_hit": false,
+        "topk_hit": true,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:conn-exhaust",
+          "rc:db-cpu-starve",
+          "metric:db-cpu",
+          "env:cluster"
+        ],
+        "constraint_hits": [],
+        "matched_keywords": [],
+        "e2e_top1": "rc:db-replica-loss",
+        "e2e_strict_hit": false
+      },
+      {
+        "scenario": "db_cpu_stress",
+        "alert_text": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+        "expected": [
+          "rc:db-cpu-starve"
+        ],
+        "measurable": true,
+        "top1": "rc:db-cpu-starve",
+        "top1_name": "根因：数据库 CPU 资源不足",
+        "top1_score": 0.95,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:db-cpu-starve",
+          "rc:cpu-throttle",
+          "metric:db-cpu",
+          "db:mysql-core",
+          "rc:cluster-capacity"
+        ],
+        "constraint_hits": [
+          "con:db-cpu-capacity",
+          "con:app-cpu-throttle"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "cpu 资源",
+          "threads_running",
+          "数据库 cpu"
+        ],
+        "e2e_top1": "rc:db-cpu-starve",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_disk_temp_tables",
+        "alert_text": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+        "expected": [
+          "rc:tmp-disk"
+        ],
+        "measurable": true,
+        "top1": "rc:tmp-disk",
+        "top1_name": "根因：排序内存不足导致磁盘临时表",
+        "top1_score": 0.95,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:tmp-disk",
+          "rc:oom-kill",
+          "metric:db-tmp-disk",
+          "db:mysql-core",
+          "rc:cluster-capacity"
+        ],
+        "constraint_hits": [
+          "con:tmp-disk",
+          "con:app-mem-limit",
+          "con:db-tmp-table"
+        ],
+        "matched_keywords": [
+          "tmp_disk",
+          "tmp_disk_tables",
+          "临时表",
+          "内存",
+          "内存不足",
+          "排序内存不足",
+          "落盘"
+        ],
+        "e2e_top1": "rc:tmp-disk",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_primary_readonly",
+        "alert_text": "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题；5xx 错误率突增，请求大量失败",
+        "expected": [
+          "rc:primary-readonly"
+        ],
+        "measurable": true,
+        "top1": "rc:primary-readonly",
+        "top1_name": "根因：主库被置为只读",
+        "top1_score": 0.98,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:primary-readonly",
+          "db:primary",
+          "metric:http-error-rate",
+          "db:mysql-core",
+          "db:mysql-cluster"
+        ],
+        "constraint_hits": [
+          "con:db-role",
+          "con:app-error-budget",
+          "con:app-replica-quorum"
+        ],
+        "matched_keywords": [
+          "5xx",
+          "read_only",
+          "super_read_only",
+          "副本",
+          "只读",
+          "配置漂移",
+          "错误率"
+        ],
+        "e2e_top1": "rc:primary-readonly",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_replica_io_stop",
+        "alert_text": "MySQL 主从复制中断 replication broken，副本 IO/SQL 线程停止，副本数据滞后",
+        "expected": [
+          "rc:db-replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:db-replica-loss",
+        "top1_name": "根因：数据库只读副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:replica-lag",
+          "db:mysql-replica",
+          "rc:replica-loss",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:replica-down",
+          "con:db-replica-down",
+          "con:replica-lag"
+        ],
+        "matched_keywords": [
+          "replica",
+          "replication broken",
+          "主从",
+          "副本",
+          "复制中断"
+        ],
+        "e2e_top1": "rc:db-replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_replica_kill",
+        "alert_text": "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果",
+        "expected": [
+          "rc:db-replica-loss",
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "rc:db-replica-loss",
+          "db:mysql-replica",
+          "db:primary",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:db-replica-down",
+          "con:db-role",
+          "con:replica-down",
+          "con:replica-loss-detection"
+        ],
+        "matched_keywords": [
+          "replica",
+          "副本",
+          "副本丢失",
+          "只读"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_replica_lag",
+        "alert_text": "MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+        "expected": [
+          "rc:replica-lag"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-lag",
+        "top1_name": "根因：主从复制延迟",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-lag",
+          "db:mysql-replica",
+          "db:primary",
+          "rc:db-replica-loss",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:replica-lag",
+          "con:app-replica-quorum",
+          "con:db-role",
+          "con:net-quality",
+          "con:p99-threshold"
+        ],
+        "matched_keywords": [
+          "lag",
+          "replica",
+          "replication lag",
+          "主从",
+          "副本",
+          "只读",
+          "复制延迟",
+          "延迟",
+          "陈旧"
+        ],
+        "e2e_top1": "rc:replica-lag",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_row_lock_hold",
+        "alert_text": "payment-app 整体 P99 latency > 500ms（所有副本同时偏高，非单副本偏斜）—— 判据：P99>500ms 且副本间无显著差异。常见原因按可能性：① 数据库层变慢（慢查询/行锁等待/DB CPU 不足）② 连接池耗尽 ③ 下游依赖退化；5xx 错误率突增，请求大量失败；MySQL connection pool exhausted, payment-app P99 lat",
+        "expected": [
+          "rc:row-lock"
+        ],
+        "measurable": true,
+        "top1": "rc:row-lock",
+        "top1_name": "根因：InnoDB 行锁等待",
+        "top1_score": 0.94,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:row-lock",
+          "rc:db-cpu-starve",
+          "db:mysql-replica",
+          "metric:mysql-p99",
+          "metric:http-error-rate"
+        ],
+        "constraint_hits": [
+          "con:pool-waiting",
+          "con:app-error-budget",
+          "con:pool-exhaust",
+          "con:row-lock",
+          "con:app-cpu-throttle",
+          "con:p99-threshold"
+        ],
+        "matched_keywords": [
+          "5xx",
+          "cpu",
+          "cpu 不足",
+          "exhausted",
+          "latency",
+          "p99",
+          "queue",
+          "waiting",
+          "排队",
+          "行锁",
+          "连接池",
+          "锁等待",
+          "错误率"
+        ],
+        "e2e_top1": "rc:row-lock",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_slow_query_flood",
+        "alert_text": "MySQL 慢查询增多，t_txn 表响应变慢",
+        "expected": [
+          "rc:slow-sql"
+        ],
+        "measurable": true,
+        "top1": "rc:slow-sql",
+        "top1_name": "根因：t_txn 慢查询致连接耗尽",
+        "top1_score": 0.98,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:slow-sql",
+          "db:mysql-replica",
+          "table:t_txn",
+          "db:mysql-core",
+          "db:mysql-cluster"
+        ],
+        "constraint_hits": [],
+        "matched_keywords": [],
+        "e2e_top1": "rc:slow-sql",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "res_cluster_cpu",
+        "alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+        "expected": [
+          "rc:cluster-capacity",
+          "rc:cpu-throttle"
+        ],
+        "measurable": true,
+        "top1": "rc:cpu-throttle",
+        "top1_name": "根因：容器 CPU 配额节流",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:cpu-throttle",
+          "rc:db-cpu-starve",
+          "rc:tmp-disk",
+          "metric:cpu-throttle",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:pool-waiting"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "quota",
+          "throttle",
+          "排队",
+          "节流"
+        ],
+        "e2e_top1": "rc:cpu-throttle",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "res_cluster_memory",
+        "alert_text": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+        "expected": [
+          "rc:cluster-capacity",
+          "metric:mem-pressure"
+        ],
+        "measurable": true,
+        "top1": "rc:oom-kill",
+        "top1_name": "根因：容器内存超限被 OOM Kill",
+        "top1_score": 0.99,
+        "strict_hit": false,
+        "topk_hit": true,
+        "top5": [
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "metric:mem-pressure",
+          "metric:oom-kill-count",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-mem-limit",
+          "con:oom-detection",
+          "con:change-correlation"
+        ],
+        "matched_keywords": [
+          "oom",
+          "内存",
+          "被内核杀死",
+          "重启"
+        ],
+        "e2e_top1": "rc:oom-kill",
+        "e2e_strict_hit": false
+      },
+      {
+        "scenario": "res_db_memory",
+        "alert_text": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+        "expected": [
+          "rc:tmp-disk"
+        ],
+        "measurable": true,
+        "top1": "rc:tmp-disk",
+        "top1_name": "根因：排序内存不足导致磁盘临时表",
+        "top1_score": 0.95,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:tmp-disk",
+          "rc:oom-kill",
+          "metric:db-tmp-disk",
+          "db:mysql-core",
+          "rc:cluster-capacity"
+        ],
+        "constraint_hits": [
+          "con:tmp-disk",
+          "con:app-mem-limit",
+          "con:db-tmp-table"
+        ],
+        "matched_keywords": [
+          "tmp_disk",
+          "tmp_disk_tables",
+          "临时表",
+          "内存",
+          "内存不足",
+          "排序内存不足",
+          "落盘"
+        ],
+        "e2e_top1": "rc:tmp-disk",
+        "e2e_strict_hit": true
+      }
+    ],
+    "overridden_scenarios": []
+  },
+  "candidate": {
+    "version": "改后输入",
+    "available": true,
+    "terms": 56,
+    "constraints": 30,
+    "relations": 87,
+    "n_total": 21,
+    "n_measurable": 20,
+    "strict": 20,
+    "topk": 20,
+    "strict_seconds": 0,
+    "top1_distribution": {
+      "rc:cpu-throttle": 2,
+      "rc:gateway-down": 1,
+      "rc:replica-loss": 4,
+      "rc:oom-kill": 2,
+      "rc:net-fault": 2,
+      "rc:db-replica-loss": 2,
+      "rc:db-cpu-starve": 1,
+      "rc:tmp-disk": 2,
+      "rc:primary-readonly": 1,
+      "rc:replica-lag": 1,
+      "rc:row-lock": 1,
+      "rc:slow-sql": 1,
+      "rc:cluster-capacity": 1
+    },
+    "rows": [
+      {
+        "scenario": "app_cpu_stress",
+        "alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+        "expected": [
+          "rc:cpu-throttle",
+          "metric:cpu-throttle"
+        ],
+        "measurable": true,
+        "top1": "rc:cpu-throttle",
+        "top1_name": "根因：容器 CPU 配额节流",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:cpu-throttle",
+          "rc:db-cpu-starve",
+          "rc:tmp-disk",
+          "metric:cpu-throttle",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:pool-waiting"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "quota",
+          "throttle",
+          "排队",
+          "节流"
+        ],
+        "e2e_top1": "rc:cpu-throttle",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_gateway_stop",
+        "alert_text": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503",
+        "expected": [
+          "rc:gateway-down"
+        ],
+        "measurable": true,
+        "top1": "rc:gateway-down",
+        "top1_name": "根因：应用网关不可用",
+        "top1_score": 0.98,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:gateway-down",
+          "env:gateway",
+          "rc:replica-hang",
+          "metric:gateway-probe",
+          "rc:replica-loss"
+        ],
+        "constraint_hits": [
+          "con:gateway-availability",
+          "con:gateway-down",
+          "con:replica-hang-detection"
+        ],
+        "matched_keywords": [
+          "502",
+          "503",
+          "gateway",
+          "入口",
+          "探活失败",
+          "网关",
+          "负载均衡"
+        ],
+        "e2e_top1": "rc:gateway-down",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_kill_replica",
+        "alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+        "expected": [
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "app:payment-app-cluster",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:app-mem-limit",
+          "con:oom-detection",
+          "con:replica-loss-detection",
+          "con:change-correlation"
+        ],
+        "matched_keywords": [
+          "cluster",
+          "oom",
+          "replica",
+          "replicas",
+          "replicas 不足",
+          "副本",
+          "重启"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_memory_stress",
+        "alert_text": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+        "expected": [
+          "metric:mem-pressure",
+          "rc:oom-kill"
+        ],
+        "measurable": true,
+        "top1": "rc:oom-kill",
+        "top1_name": "根因：容器内存超限被 OOM Kill",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "metric:mem-pressure",
+          "metric:oom-kill-count",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-mem-limit",
+          "con:oom-detection",
+          "con:change-correlation"
+        ],
+        "matched_keywords": [
+          "oom",
+          "内存",
+          "被内核杀死",
+          "重启"
+        ],
+        "e2e_top1": "rc:oom-kill",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_network_delay",
+        "alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时",
+        "expected": [
+          "rc:net-fault",
+          "metric:net-delay"
+        ],
+        "measurable": true,
+        "top1": "rc:net-fault",
+        "top1_name": "根因：网络延迟/丢包",
+        "top1_score": 0.91,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:net-fault",
+          "rc:mem-pressure",
+          "metric:cpu-throttle",
+          "metric:mem-pressure",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:net-quality",
+          "con:app-mem-limit",
+          "con:p99-threshold",
+          "con:app-replica-quorum",
+          "con:replica-lag"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "memory",
+          "p99",
+          "throttle",
+          "丢包",
+          "内存",
+          "副本",
+          "延迟",
+          "网络",
+          "节流"
+        ],
+        "e2e_top1": "rc:net-fault",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_network_loss",
+        "alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时",
+        "expected": [
+          "rc:net-fault",
+          "metric:net-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:net-fault",
+        "top1_name": "根因：网络延迟/丢包",
+        "top1_score": 0.91,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:net-fault",
+          "rc:mem-pressure",
+          "metric:cpu-throttle",
+          "metric:mem-pressure",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:net-quality",
+          "con:app-mem-limit",
+          "con:p99-threshold",
+          "con:app-replica-quorum",
+          "con:replica-lag"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "memory",
+          "p99",
+          "throttle",
+          "丢包",
+          "内存",
+          "副本",
+          "延迟",
+          "网络",
+          "节流"
+        ],
+        "e2e_top1": "rc:net-fault",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_oom_kill",
+        "alert_text": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高",
+        "expected": [
+          "rc:oom-kill",
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:oom-kill",
+        "top1_name": "根因：容器内存超限被 OOM Kill",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "metric:mem-pressure",
+          "metric:oom-kill-count",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:oom-detection",
+          "con:app-mem-limit",
+          "con:replica-lag",
+          "con:change-correlation",
+          "con:net-quality",
+          "con:p99-threshold"
+        ],
+        "matched_keywords": [
+          "oom",
+          "oom_kill 计数增加",
+          "内存",
+          "延迟",
+          "被内核杀死",
+          "重启"
+        ],
+        "e2e_top1": "rc:oom-kill",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_pause_replica",
+        "alert_text": "payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+        "expected": [
+          "rc:replica-hang",
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.69,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "app:payment-app-cluster",
+          "rc:cluster-capacity",
+          "metric:replica-healthy-count",
+          "app:instance-1"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:cluster-capacity",
+          "con:cluster-cpu-capacity"
+        ],
+        "matched_keywords": [
+          "副本",
+          "集群",
+          "集群容量"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "app_stop_replica",
+        "alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+        "expected": [
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "rc:oom-kill",
+          "rc:mem-pressure",
+          "app:payment-app-cluster",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:app-mem-limit",
+          "con:oom-detection",
+          "con:replica-loss-detection",
+          "con:change-correlation"
+        ],
+        "matched_keywords": [
+          "cluster",
+          "oom",
+          "replica",
+          "replicas",
+          "replicas 不足",
+          "副本",
+          "重启"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_conn_saturation",
+        "alert_text": "监控无对应告警，但业务侧出现异常（层级=数据库层）",
+        "expected": [
+          "rc:conn-exhaust"
+        ],
+        "measurable": false,
+        "top1": "rc:db-replica-loss",
+        "top1_name": "根因：数据库只读副本丢失",
+        "top1_score": 0.55,
+        "strict_hit": false,
+        "topk_hit": true,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:conn-exhaust",
+          "rc:db-cpu-starve",
+          "metric:db-cpu",
+          "env:cluster"
+        ],
+        "constraint_hits": [],
+        "matched_keywords": [],
+        "e2e_top1": "rc:db-replica-loss",
+        "e2e_strict_hit": false
+      },
+      {
+        "scenario": "db_cpu_stress",
+        "alert_text": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+        "expected": [
+          "rc:db-cpu-starve"
+        ],
+        "measurable": true,
+        "top1": "rc:db-cpu-starve",
+        "top1_name": "根因：数据库 CPU 资源不足",
+        "top1_score": 0.95,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:db-cpu-starve",
+          "rc:cpu-throttle",
+          "metric:db-cpu",
+          "db:mysql-core",
+          "rc:cluster-capacity"
+        ],
+        "constraint_hits": [
+          "con:db-cpu-capacity",
+          "con:app-cpu-throttle"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "cpu 资源",
+          "threads_running",
+          "数据库 cpu"
+        ],
+        "e2e_top1": "rc:db-cpu-starve",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_disk_temp_tables",
+        "alert_text": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+        "expected": [
+          "rc:tmp-disk"
+        ],
+        "measurable": true,
+        "top1": "rc:tmp-disk",
+        "top1_name": "根因：排序内存不足导致磁盘临时表",
+        "top1_score": 0.95,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:tmp-disk",
+          "rc:oom-kill",
+          "metric:db-tmp-disk",
+          "db:mysql-core",
+          "rc:cluster-capacity"
+        ],
+        "constraint_hits": [
+          "con:tmp-disk",
+          "con:app-mem-limit",
+          "con:db-tmp-table"
+        ],
+        "matched_keywords": [
+          "tmp_disk",
+          "tmp_disk_tables",
+          "临时表",
+          "内存",
+          "内存不足",
+          "排序内存不足",
+          "落盘"
+        ],
+        "e2e_top1": "rc:tmp-disk",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_primary_readonly",
+        "alert_text": "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题；5xx 错误率突增，请求大量失败",
+        "expected": [
+          "rc:primary-readonly"
+        ],
+        "measurable": true,
+        "top1": "rc:primary-readonly",
+        "top1_name": "根因：主库被置为只读",
+        "top1_score": 0.98,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:primary-readonly",
+          "db:primary",
+          "metric:http-error-rate",
+          "db:mysql-core",
+          "db:mysql-cluster"
+        ],
+        "constraint_hits": [
+          "con:db-role",
+          "con:app-error-budget",
+          "con:app-replica-quorum"
+        ],
+        "matched_keywords": [
+          "5xx",
+          "read_only",
+          "super_read_only",
+          "副本",
+          "只读",
+          "配置漂移",
+          "错误率"
+        ],
+        "e2e_top1": "rc:primary-readonly",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_replica_io_stop",
+        "alert_text": "MySQL 主从复制中断 replication broken，副本 IO/SQL 线程停止，副本数据滞后",
+        "expected": [
+          "rc:db-replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:db-replica-loss",
+        "top1_name": "根因：数据库只读副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:db-replica-loss",
+          "rc:replica-lag",
+          "db:mysql-replica",
+          "rc:replica-loss",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:replica-down",
+          "con:db-replica-down",
+          "con:replica-lag"
+        ],
+        "matched_keywords": [
+          "replica",
+          "replication broken",
+          "主从",
+          "副本",
+          "复制中断"
+        ],
+        "e2e_top1": "rc:db-replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_replica_kill",
+        "alert_text": "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果",
+        "expected": [
+          "rc:db-replica-loss",
+          "rc:replica-loss"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-loss",
+        "top1_name": "根因：应用副本丢失",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-loss",
+          "rc:db-replica-loss",
+          "db:mysql-replica",
+          "db:primary",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:db-replica-down",
+          "con:db-role",
+          "con:replica-down",
+          "con:replica-loss-detection"
+        ],
+        "matched_keywords": [
+          "replica",
+          "副本",
+          "副本丢失",
+          "只读"
+        ],
+        "e2e_top1": "rc:replica-loss",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_replica_lag",
+        "alert_text": "MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+        "expected": [
+          "rc:replica-lag"
+        ],
+        "measurable": true,
+        "top1": "rc:replica-lag",
+        "top1_name": "根因：主从复制延迟",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:replica-lag",
+          "db:mysql-replica",
+          "db:primary",
+          "rc:db-replica-loss",
+          "rc:replica-hang"
+        ],
+        "constraint_hits": [
+          "con:replica-lag",
+          "con:app-replica-quorum",
+          "con:db-role",
+          "con:net-quality",
+          "con:p99-threshold"
+        ],
+        "matched_keywords": [
+          "lag",
+          "replica",
+          "replication lag",
+          "主从",
+          "副本",
+          "只读",
+          "复制延迟",
+          "延迟",
+          "陈旧"
+        ],
+        "e2e_top1": "rc:replica-lag",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_row_lock_hold",
+        "alert_text": "payment-app 整体 P99 latency > 500ms（所有副本同时偏高，非单副本偏斜）—— 判据：P99>500ms 且副本间无显著差异。常见原因按可能性：① 数据库层变慢（慢查询/行锁等待/DB CPU 不足）② 连接池耗尽 ③ 下游依赖退化；5xx 错误率突增，请求大量失败；MySQL connection pool exhausted, payment-app P99 lat",
+        "expected": [
+          "rc:row-lock"
+        ],
+        "measurable": true,
+        "top1": "rc:row-lock",
+        "top1_name": "根因：InnoDB 行锁等待",
+        "top1_score": 0.94,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:row-lock",
+          "rc:db-cpu-starve",
+          "db:mysql-replica",
+          "metric:mysql-p99",
+          "metric:http-error-rate"
+        ],
+        "constraint_hits": [
+          "con:pool-waiting",
+          "con:app-error-budget",
+          "con:pool-exhaust",
+          "con:row-lock",
+          "con:app-cpu-throttle",
+          "con:p99-threshold"
+        ],
+        "matched_keywords": [
+          "5xx",
+          "cpu",
+          "cpu 不足",
+          "exhausted",
+          "latency",
+          "p99",
+          "queue",
+          "waiting",
+          "排队",
+          "行锁",
+          "连接池",
+          "锁等待",
+          "错误率"
+        ],
+        "e2e_top1": "rc:row-lock",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "db_slow_query_flood",
+        "alert_text": "MySQL 慢查询增多，t_txn 表响应变慢",
+        "expected": [
+          "rc:slow-sql"
+        ],
+        "measurable": true,
+        "top1": "rc:slow-sql",
+        "top1_name": "根因：t_txn 慢查询致连接耗尽",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:slow-sql",
+          "db:mysql-replica",
+          "table:t_txn",
+          "db:mysql-core",
+          "db:mysql-cluster"
+        ],
+        "constraint_hits": [],
+        "matched_keywords": [],
+        "e2e_top1": "rc:slow-sql",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "res_cluster_cpu",
+        "alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+        "expected": [
+          "rc:cluster-capacity",
+          "rc:cpu-throttle"
+        ],
+        "measurable": true,
+        "top1": "rc:cpu-throttle",
+        "top1_name": "根因：容器 CPU 配额节流",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:cpu-throttle",
+          "rc:db-cpu-starve",
+          "rc:tmp-disk",
+          "metric:cpu-throttle",
+          "app:payment-app-cluster"
+        ],
+        "constraint_hits": [
+          "con:app-cpu-throttle",
+          "con:pool-waiting"
+        ],
+        "matched_keywords": [
+          "cpu",
+          "quota",
+          "throttle",
+          "排队",
+          "节流"
+        ],
+        "e2e_top1": "rc:cpu-throttle",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "res_cluster_memory",
+        "alert_text": "payment-app 应用集群全部副本同时内存越限（3/3 副本 working set 逼近 cgroup 上限），集群整体内存容量不足，需扩容或提高配额",
+        "expected": [
+          "rc:cluster-capacity",
+          "metric:mem-pressure"
+        ],
+        "measurable": true,
+        "top1": "rc:cluster-capacity",
+        "top1_name": "根因：集群整体容量不足",
+        "top1_score": 0.99,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:cluster-capacity",
+          "app:payment-app-cluster",
+          "rc:mem-pressure",
+          "rc:oom-kill",
+          "rc:tmp-disk"
+        ],
+        "constraint_hits": [
+          "con:app-replica-quorum",
+          "con:cluster-capacity",
+          "con:app-mem-limit",
+          "con:app-cpu-throttle",
+          "con:cluster-cpu-capacity",
+          "con:mem-pressure"
+        ],
+        "matched_keywords": [
+          "working set",
+          "全部副本",
+          "内存",
+          "副本",
+          "容量不足",
+          "配额",
+          "集群"
+        ],
+        "e2e_top1": "rc:cluster-capacity",
+        "e2e_strict_hit": true
+      },
+      {
+        "scenario": "res_db_memory",
+        "alert_text": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+        "expected": [
+          "rc:tmp-disk"
+        ],
+        "measurable": true,
+        "top1": "rc:tmp-disk",
+        "top1_name": "根因：排序内存不足导致磁盘临时表",
+        "top1_score": 0.95,
+        "strict_hit": true,
+        "topk_hit": true,
+        "top5": [
+          "rc:tmp-disk",
+          "rc:oom-kill",
+          "metric:db-tmp-disk",
+          "db:mysql-core",
+          "rc:cluster-capacity"
+        ],
+        "constraint_hits": [
+          "con:tmp-disk",
+          "con:app-mem-limit",
+          "con:db-tmp-table"
+        ],
+        "matched_keywords": [
+          "tmp_disk",
+          "tmp_disk_tables",
+          "临时表",
+          "内存",
+          "内存不足",
+          "排序内存不足",
+          "落盘"
+        ],
+        "e2e_top1": "rc:tmp-disk",
+        "e2e_strict_hit": true
+      }
+    ],
+    "overridden_scenarios": [
+      "app_cpu_stress",
+      "app_gateway_stop",
+      "app_kill_replica",
+      "app_memory_stress",
+      "app_network_delay",
+      "app_network_loss",
+      "app_oom_kill",
+      "app_pause_replica",
+      "app_stop_replica",
+      "db_conn_saturation",
+      "db_cpu_stress",
+      "db_disk_temp_tables",
+      "db_primary_readonly",
+      "db_replica_io_stop",
+      "db_replica_kill",
+      "db_replica_lag",
+      "db_row_lock_hold",
+      "db_slow_query_flood",
+      "res_cluster_cpu",
+      "res_cluster_memory",
+      "res_db_memory"
+    ]
+  },
+  "improved": [
+    "res_cluster_memory"
+  ],
+  "regressed": [],
+  "paired": [
+    {
+      "scenario": "app_cpu_stress",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:cpu-throttle",
+      "candidate_top1": "rc:cpu-throttle",
+      "candidate_alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+      "expected": [
+        "rc:cpu-throttle",
+        "metric:cpu-throttle"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-cpu-throttle",
+        "con:pool-waiting"
+      ]
+    },
+    {
+      "scenario": "app_gateway_stop",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:gateway-down",
+      "candidate_top1": "rc:gateway-down",
+      "candidate_alert_text": "应用网关 gateway 探活失败，负载均衡入口不可用，外部请求 502/503",
+      "expected": [
+        "rc:gateway-down"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:gateway-availability",
+        "con:gateway-down",
+        "con:replica-hang-detection"
+      ]
+    },
+    {
+      "scenario": "app_kill_replica",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:replica-loss",
+      "candidate_top1": "rc:replica-loss",
+      "candidate_alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+      "expected": [
+        "rc:replica-loss"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-replica-quorum",
+        "con:app-mem-limit",
+        "con:oom-detection",
+        "con:replica-loss-detection",
+        "con:change-correlation"
+      ]
+    },
+    {
+      "scenario": "app_memory_stress",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:oom-kill",
+      "candidate_top1": "rc:oom-kill",
+      "candidate_alert_text": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+      "expected": [
+        "metric:mem-pressure",
+        "rc:oom-kill"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-mem-limit",
+        "con:oom-detection",
+        "con:change-correlation"
+      ]
+    },
+    {
+      "scenario": "app_network_delay",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:net-fault",
+      "candidate_top1": "rc:net-fault",
+      "candidate_alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时",
+      "expected": [
+        "rc:net-fault",
+        "metric:net-delay"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-cpu-throttle",
+        "con:net-quality",
+        "con:app-mem-limit",
+        "con:p99-threshold",
+        "con:app-replica-quorum",
+        "con:replica-lag"
+      ]
+    },
+    {
+      "scenario": "app_network_loss",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:net-fault",
+      "candidate_top1": "rc:net-fault",
+      "candidate_alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时",
+      "expected": [
+        "rc:net-fault",
+        "metric:net-loss"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-cpu-throttle",
+        "con:net-quality",
+        "con:app-mem-limit",
+        "con:p99-threshold",
+        "con:app-replica-quorum",
+        "con:replica-lag"
+      ]
+    },
+    {
+      "scenario": "app_oom_kill",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:oom-kill",
+      "candidate_top1": "rc:oom-kill",
+      "candidate_alert_text": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高",
+      "expected": [
+        "rc:oom-kill",
+        "rc:replica-loss"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:oom-detection",
+        "con:app-mem-limit",
+        "con:replica-lag",
+        "con:change-correlation",
+        "con:net-quality",
+        "con:p99-threshold"
+      ]
+    },
+    {
+      "scenario": "app_pause_replica",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:replica-loss",
+      "candidate_top1": "rc:replica-loss",
+      "candidate_alert_text": "payment-app 单个副本 instance 健康探针失败，负载被其余副本承担，集群容量下降",
+      "expected": [
+        "rc:replica-hang",
+        "rc:replica-loss"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-replica-quorum",
+        "con:cluster-capacity",
+        "con:cluster-cpu-capacity"
+      ]
+    },
+    {
+      "scenario": "app_stop_replica",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:replica-loss",
+      "candidate_top1": "rc:replica-loss",
+      "candidate_alert_text": "payment-app 应用副本数量下降，cluster replicas 不足，可能存在容器 OOM Kill 或崩溃重启",
+      "expected": [
+        "rc:replica-loss"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-replica-quorum",
+        "con:app-mem-limit",
+        "con:oom-detection",
+        "con:replica-loss-detection",
+        "con:change-correlation"
+      ]
+    },
+    {
+      "scenario": "db_conn_saturation",
+      "tag": "· 仍未命中",
+      "parent_top1": "rc:db-replica-loss",
+      "candidate_top1": "rc:db-replica-loss",
+      "candidate_alert_text": "监控无对应告警，但业务侧出现异常（层级=数据库层）",
+      "expected": [
+        "rc:conn-exhaust"
+      ],
+      "parent_strict": false,
+      "candidate_strict": false,
+      "candidate_constraint_hits": []
+    },
+    {
+      "scenario": "db_cpu_stress",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:db-cpu-starve",
+      "candidate_top1": "rc:db-cpu-starve",
+      "candidate_alert_text": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+      "expected": [
+        "rc:db-cpu-starve"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:db-cpu-capacity",
+        "con:app-cpu-throttle"
+      ]
+    },
+    {
+      "scenario": "db_disk_temp_tables",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:tmp-disk",
+      "candidate_top1": "rc:tmp-disk",
+      "candidate_alert_text": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+      "expected": [
+        "rc:tmp-disk"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:tmp-disk",
+        "con:app-mem-limit",
+        "con:db-tmp-table"
+      ]
+    },
+    {
+      "scenario": "db_primary_readonly",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:primary-readonly",
+      "candidate_top1": "rc:primary-readonly",
+      "candidate_alert_text": "MySQL 主库 primary 被置为只读（global read_only/super_read_only=1）：写路径全部失败（INSERT/UPDATE 报错），而读路径、探活、副本复制都正常 —— 这是配置漂移，不是性能问题；5xx 错误率突增，请求大量失败",
+      "expected": [
+        "rc:primary-readonly"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:db-role",
+        "con:app-error-budget",
+        "con:app-replica-quorum"
+      ]
+    },
+    {
+      "scenario": "db_replica_io_stop",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:db-replica-loss",
+      "candidate_top1": "rc:db-replica-loss",
+      "candidate_alert_text": "MySQL 主从复制中断 replication broken，副本 IO/SQL 线程停止，副本数据滞后",
+      "expected": [
+        "rc:db-replica-loss"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-replica-quorum",
+        "con:replica-down",
+        "con:db-replica-down",
+        "con:replica-lag"
+      ]
+    },
+    {
+      "scenario": "db_replica_kill",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:replica-loss",
+      "candidate_top1": "rc:replica-loss",
+      "candidate_alert_text": "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果",
+      "expected": [
+        "rc:db-replica-loss",
+        "rc:replica-loss"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-replica-quorum",
+        "con:db-replica-down",
+        "con:db-role",
+        "con:replica-down",
+        "con:replica-loss-detection"
+      ]
+    },
+    {
+      "scenario": "db_replica_lag",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:replica-lag",
+      "candidate_top1": "rc:replica-lag",
+      "candidate_alert_text": "MySQL 主从复制延迟 replication lag 过大，只读副本数据落后主库，读请求返回陈旧数据",
+      "expected": [
+        "rc:replica-lag"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:replica-lag",
+        "con:app-replica-quorum",
+        "con:db-role",
+        "con:net-quality",
+        "con:p99-threshold"
+      ]
+    },
+    {
+      "scenario": "db_row_lock_hold",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:row-lock",
+      "candidate_top1": "rc:row-lock",
+      "candidate_alert_text": "payment-app 整体 P99 latency > 500ms（所有副本同时偏高，非单副本偏斜）—— 判据：P99>500ms 且副本间无显著差异。常见原因按可能性：① 数据库层变慢（慢查询/行锁等待/DB CPU 不足）② 连接池耗尽 ③ 下游依赖退化；5xx 错误率突增，请求大量失败；MySQL connection pool exhausted, payment-app P99 lat",
+      "expected": [
+        "rc:row-lock"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:pool-waiting",
+        "con:app-error-budget",
+        "con:pool-exhaust",
+        "con:row-lock",
+        "con:app-cpu-throttle",
+        "con:p99-threshold"
+      ]
+    },
+    {
+      "scenario": "db_slow_query_flood",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:slow-sql",
+      "candidate_top1": "rc:slow-sql",
+      "candidate_alert_text": "MySQL 慢查询增多，t_txn 表响应变慢",
+      "expected": [
+        "rc:slow-sql"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": []
+    },
+    {
+      "scenario": "res_cluster_cpu",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:cpu-throttle",
+      "candidate_top1": "rc:cpu-throttle",
+      "candidate_alert_text": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢",
+      "expected": [
+        "rc:cluster-capacity",
+        "rc:cpu-throttle"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-cpu-throttle",
+        "con:pool-waiting"
+      ]
+    },
+    {
+      "scenario": "res_cluster_memory",
+      "tag": "★ 转正",
+      "parent_top1": "rc:oom-kill",
+      "candidate_top1": "rc:cluster-capacity",
+      "candidate_alert_text": "payment-app 应用集群全部副本同时内存越限（3/3 副本 working set 逼近 cgroup 上限），集群整体内存容量不足，需扩容或提高配额",
+      "expected": [
+        "rc:cluster-capacity",
+        "metric:mem-pressure"
+      ],
+      "parent_strict": false,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:app-replica-quorum",
+        "con:cluster-capacity",
+        "con:app-mem-limit",
+        "con:app-cpu-throttle",
+        "con:cluster-cpu-capacity",
+        "con:mem-pressure"
+      ]
+    },
+    {
+      "scenario": "res_db_memory",
+      "tag": "· 仍命中",
+      "parent_top1": "rc:tmp-disk",
+      "candidate_top1": "rc:tmp-disk",
+      "candidate_alert_text": "MySQL 产生大量磁盘临时表 tmp_disk_tables，排序内存不足导致落盘，查询变慢",
+      "expected": [
+        "rc:tmp-disk"
+      ],
+      "parent_strict": true,
+      "candidate_strict": true,
+      "candidate_constraint_hits": [
+        "con:tmp-disk",
+        "con:app-mem-limit",
+        "con:db-tmp-table"
+      ]
+    }
+  ]
+}

@@ -183,7 +183,7 @@ python tools/run_all_verification.py --full            # 全流水线（数小�
 | 故障场景复现 | **21/21** | `fault_verify` 全量，[`reports/fault_verify_report.json`](reports/fault_verify_report.json) |
 | 注入期信号**全部**成立 | **20/21** | 同上（唯一未全部成立的是 `res_db_memory`，见"已知问题"） |
 | 声明的告警真的触发 | **20/21 = 95%** | `alert_coverage_check`（hold = 规则最大 `for` + 60s） |
-| 严格根因 top-1 | 在**可测量**场景上按根因术语计 **19/20 = 95.0%**（有 1 个场景没有任何告警可供诊断，**已剔除而非计入命中**；报告自身口径更宽，为 20/20；两者不可混用） | e2e，[`reports/rca_diagnosis_report.json`](reports/rca_diagnosis_report.json) |
+| 严格根因 top-1 | 在**可测量**场景上按根因术语计 **20/20** —— 前提是修掉一处**输入撞车**（集群级故障与单副本故障曾被喂进逐字节相同的告警文本；修复前为 19/20 = 95.0%。修复**只改变了那一个 case**，其余 0 回退）。有 1 个场景声明的告警一条都没触发，**已剔除而非计入命中**（报告自身口径更宽，也是 20/20；两者不可混用） | 全量端到端重跑，[`reports/rca_diagnosis_report_postfix.json`](reports/rca_diagnosis_report_postfix.json)；两轮成对 A/B，[`reports/e2e_postfix_ab.json`](reports/e2e_postfix_ab.json)；改前基线，[`reports/rca_diagnosis_report.json`](reports/rca_diagnosis_report.json) |
 | 恢复核对 | **18/18** | 端到端（改用"配置态"作为延迟恢复判据之后） |
 | 组件级→根因级升级（A/B） | 严格 **17→18/21**，top-5 **20→21/21**，**0 回退** | [`reports/promotion_ab.json`](reports/promotion_ab.json) |
 | 跨集群归属（该找谁） | **16/18 = 89%** | `crosscluster_verify` |
