@@ -33,6 +33,7 @@ def _to_model(raw: dict) -> RCAResult:
         confidence=float(raw.get("confidence", 0.0) or 0.0),
         rca_chain=raw.get("rca_chain") or [],
         elapsed_ms=float(raw.get("elapsed_ms", 0.0) or 0.0),
+        metric_discriminator=raw.get("metric_discriminator") or {},
     )
 
 

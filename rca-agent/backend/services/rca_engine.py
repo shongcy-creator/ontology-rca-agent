@@ -9,6 +9,7 @@ from pathlib import Path
 from .prometheus import PrometheusClient
 from .evo_ontology import EvoOntologyClient
 from .ontology_scoring import ROLE_WEIGHT, OntologyScoring
+from .metric_discriminator import apply as apply_metric_discriminator
 
 
 # ── 告警关键词模式 ─────────────────────────────────────────────────────────────
@@ -685,6 +686,12 @@ class RCAEngine:
 
         # 4. 候选根因打分
         candidates = self.score_candidates(topology, parsed_alert)
+
+        # 4a. **指标平面判别**：文本分不开"内存压力"与"真的被 OOM Kill"时，用
+        #     increase(cc_container_oom_kill_total[5m]) 裁决（本体 v6 已建模该指标）。
+        #     未介入时也返回原因，便于审计为什么没改判。
+        candidates, metric_discriminator = apply_metric_discriminator(
+            message, candidates, self.prom.query)
         root = candidates[0] if candidates else None
 
         # 4b. 计算根因到告警的拓扑路径
@@ -694,6 +701,15 @@ class RCAEngine:
         rca_chain = self.build_rca_chain(
             parsed_alert, topology, candidates, evidence, thresholds, root_path
         )
+        if metric_discriminator.get("applicable") and metric_discriminator.get("winner"):
+            rca_chain.append({
+                "step": len(rca_chain) + 1,
+                "type": "metric_discriminator",
+                "category": (root or {}).get("category", ""),
+                "entity": metric_discriminator["winner"],
+                "confidence": (root or {}).get("confidence", 0.0),
+                "reason": metric_discriminator["why"],
+            })
 
         elapsed_ms = round((time.time() - t0) * 1000, 1)
 
@@ -707,6 +723,8 @@ class RCAEngine:
             "root_cause": root,
             "root_cause_path": root_path,
             "candidates": candidates,
+            # 指标平面判别（规则/胜者/依据/指标明细）—— 未介入时也在这里说明原因
+            "metric_discriminator": metric_discriminator,
             "confidence": round(root["confidence"], 2) if root else 0.0,
             "rca_chain": rca_chain,
             "elapsed_ms": elapsed_ms,

@@ -26,6 +26,7 @@
 | [`host_path_regression.json`](host_path_regression.json) | 宿主绝对路径清理后的**脚本回归**：哪些实跑了、哪些按原因未跑、以及撞出的 4 个既有缺陷 | 由一次性回归脚本产出（按 `tools/_*.py` 约定已删除）；每条的**原始命令与退出码**都在文件内 `results` 字段 | 18 个退出码 0 / 1 个超时 / 8 个注明原因未跑；撞出「一次 `/api/rca/infer` 静默换掉激活本体」等缺陷（已修） |
 | [`llm_scripts_regression.json`](llm_scripts_regression.json) | 6 个会真实调 LLM 的脚本实跑（用户授权；真实消耗） | `python tools/...`（6 个脚本逐个跑，见文件内 `results`） | 4/6 退出码 0；自报总量 127,650 tokens；两个非 0 都是既有问题（坏 key 用例不封闭、过期容器名） |
 | [`round7_candidate_rejected.json`](round7_candidate_rejected.json) | 第 7 轮候选 patch 的**开轮次前筛**（父 v6 vs 候选，三套固定输入） | `python tools/round_candidate_probe.py` | **REJECT**：21 场景 20/21→19/21、归档严格 19/20→**17/20**；因此**没有开这一轮、没有发布版本** |
+| [`rca_retest_metric_discriminator.json`](rca_retest_metric_discriminator.json) | 指标平面 OOM 判别器上线后的真机两场景复测 | `python tools/cluster_rca_verify.py app_oom_kill app_memory_stress --no-settle --json-out .chaos/rca_retest_metric_discriminator.json` | `app_oom_kill → rc:oom-kill`（严格命中）；`app_memory_stress → rc:mem-pressure`（**期望标签里没有它 ⇒ 严格 19/20，标签待定**） |
 
 ## 发布与核对（工具）
 
@@ -35,6 +36,7 @@
 | `tools/strict_score_check.py` | 从报告**复算严格命中**（仅可测量场景），并核对"改动只影响了该影响的场景"：转正/回退集合、某条告警的触发范围；断言不成立即 exit 1 | `python tools/strict_score_check.py --baseline reports/rca_diagnosis_report.json --candidate reports/rca_diagnosis_report_postfix.json --expect-improved res_cluster_memory --expect-alert AppClusterMemoryCapacity=res_cluster_memory` |
 | `tools/incident_heldout_eval.py` | 把证据收件箱（`.evoontology/rca_evidence_inbox.jsonl`）里的**线上真实事故记录**复算成留存评估集：与"记录时的结论"对比（知识漂移）、能对上已知场景时算**严格命中**、并挑出低置信/无约束支撑的「知识缺口候选」。**只报不改**；基准歧义（同一文本对应互斥期望）会被报出来而不是硬算 | `python tools/incident_heldout_eval.py` |
 | `tools/round_candidate_probe.py` | **开轮次前的三道固定输入筛**：候选 patch（内置变体或 `--candidate-records`）对比父版本在 ① 21 场景 ② held-out 考卷 ③ 归档真实告警上的表现；**任一输入集回退即 exit 1** —— 第 7 轮候选就是这样被否掉的 | `python tools/round_candidate_probe.py` |
+| `tools/oom_discriminator_verify.py` | OOM vs 内存压力**指标判别器**的规则自测：用 stub Prometheus 逐条核对 5 条规则分支（不歧义 / 文本硬证据 / 指标说有杀 / 指标说没杀 / 指标不可用），**24 条断言**，不需要集群即可失败；`--live` 另打印真实计数值 | `python tools/oom_discriminator_verify.py [--live]` |
 
 ## 口径说明（重要）
 

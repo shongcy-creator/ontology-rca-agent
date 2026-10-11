@@ -21,6 +21,13 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   any two e2e reports and asserts a change's blast radius: the exactly-improved / exactly-regressed
   sets and an alert's firing scope. Exits 1 when an assertion fails, so "19/20 → 20/20, one case
   changed, 0 regressions, alert fired only there" is one command instead of four claims.
+- `rca-agent/backend/services/metric_discriminator.py` — the metric-plane rules for
+  "memory pressure vs OOM-killed" (see **Changed** below); its decision is returned as
+  `metric_discriminator` on `/api/rca/infer` and appended to the reasoning chain.
+- `tools/oom_discriminator_verify.py` — offline regression test for those rules: 24 assertions over
+  a stub Prometheus (not ambiguous / text hard evidence / kill observed / no kill / metric
+  unavailable), so the OOM-vs-pressure judgement has a check that **can fail** without needing a
+  cluster. `--live` prints the real counter.
 - `tools/round_candidate_probe.py` — a **pre-publication screen** for candidate rounds: it compares
   a candidate (a built-in variant or `--candidate-records`) against the parent on three fixed input
   sets — the 21 scenarios in their offline form, the held-out exam (observed, never tuned on), and
@@ -134,6 +141,43 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   now corrected. Every touched script was re-run; 18 executed clean, 1 exceeded its cap, 8 are
   deliberately not executed with the reason recorded
   ([`reports/host_path_regression.json`](reports/host_path_regression.json)).
+
+### Changed
+
+- **The OOM-vs-pressure call moved to the metric plane.** The deterministic fast path decided
+  "memory pressure" vs "was OOM-killed" purely from the alert text, which cannot separate *at risk*
+  from *already happened* (round 7 proved that no dictionary tuning fixes it — the same sentence
+  contains both "cgroup oom_kill 计数增加" and "内存超限被内核杀死"). `RCAEngine.infer()` now runs
+  `backend/services/metric_discriminator.py` after text scoring, with rules that are recorded in the
+  result as `metric_discriminator` (and in the reasoning chain):
+  1. not ambiguous (both terms absent, or top-1 is neither) → **do not intervene**;
+  2. the text states a kill already happened (`OOMKilled` / `oom_kill 计数增加` / `已被内核杀死`) →
+     `rc:oom-kill`, **without querying Prometheus**;
+  3. otherwise, if the metric is available → `increase(cc_container_oom_kill_total[5m]) > 0` means
+     `rc:oom-kill`, `== 0` means `rc:mem-pressure` (the term `ontology_v6` added for exactly this);
+  4. metric unavailable → **do not intervene** (keep the text order) rather than guess.
+
+  Rule 2 outranks the metric on purpose: the counter is monotonic and sticky across scenarios
+  (a documented hazard), so a text that states a kill is the more reliable signal, while
+  hypothetical wording ("存在 OOM Kill 风险，可能被内核杀死") falls through to rule 3.
+  Verified: 24/24 rule assertions offline (`tools/oom_discriminator_verify.py`, stub Prometheus);
+  live `/api/rca/infer` → kill text = `rc:oom-kill` / rule 2 (no metric query), risk text =
+  `rc:mem-pressure` / rule 3 with `increase(...[5m]) = 0.0`; real faults
+  ([`reports/rca_retest_metric_discriminator.json`](reports/rca_retest_metric_discriminator.json)):
+  `app_oom_kill` → `rc:oom-kill` (strict hit), `app_memory_stress` → `rc:mem-pressure`;
+  engine smoke tests unchanged (`test_rca_engine.py`, `agent_tools_verify.py` 42/42).
+
+### Findings — a benchmark label now disagrees with the engine, and the engine has the evidence
+
+- With rule 3 in place, `app_memory_stress` (single replica, 200 MB, "逼近 cgroup 上限, OOM 前兆")
+  is answered as `rc:mem-pressure`, which is **what `ontology_v6` defined that term for**. The
+  benchmark's expected terms for that scenario (`{metric:mem-pressure, rc:oom-kill}`) do not include
+  it, so the strict score for a full re-run becomes **19/20** instead of 20/20.
+  The container evidence says the *label* is the stale part: across the archived full run and this
+  re-test, every replica reports `oom_killed = false` during that scenario — the single
+  `restart_count = 1` is the documented sticky residue from an earlier kill (the counter never
+  resets). **No ground truth was edited**: correcting `app_memory_stress` to accept
+  `rc:mem-pressure` is a benchmark decision, reported here and left pending.
 
 ### Findings — the round-7 candidate, rejected before publication
 

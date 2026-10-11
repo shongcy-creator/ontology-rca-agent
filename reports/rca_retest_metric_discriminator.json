@@ -1,0 +1,407 @@
+{
+  "mode": "deterministic",
+  "hold": 240.0,
+  "stress": "--duration 150 --concurrency 24",
+  "complete": true,
+  "requested": [
+    "app_oom_kill",
+    "app_memory_stress"
+  ],
+  "summary": {
+    "total_scenarios": 2,
+    "not_measurable": 0,
+    "not_measurable_scenarios": [],
+    "measurable_scenarios": 2,
+    "injected_ok": 2,
+    "diagnosed_ok": 2,
+    "diagnosed_ok_all": 2,
+    "diagnosis_accuracy": 1.0,
+    "alert_coverage": 1.0,
+    "recovered_ok": 2,
+    "recovery_rate": 1.0,
+    "by_layer": {
+      "运行环境层": {
+        "total": 2,
+        "diagnosed": 2,
+        "injected": 2,
+        "recovered": 2,
+        "alert_covered": 2
+      }
+    },
+    "diagnosis_modes": {
+      "deterministic": 2
+    },
+    "mean_diagnosis_latency_ms": 8539.7,
+    "mean_tokens": 0.0
+  },
+  "results": [
+    {
+      "scenario": "app_oom_kill",
+      "title": "构造真实容器 OOMKill（内存上限低于实际用量 + 内存申请）",
+      "layer": "runtime",
+      "layer_label": "运行环境层",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器被内核 OOM Kill 后重启（内存超限）",
+      "expected_terms": [
+        "rc:oom-kill",
+        "rc:replica-loss"
+      ],
+      "alert_names_expected": [
+        "AppContainerOOMKilled",
+        "AppContainerMemoryPressure",
+        "AppReplicaCountLow"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "shrunk_to_mb": 32,
+          "vm_bytes_mb": 512,
+          "docker_update": {
+            "rca-agent-payment-app-1": {
+              "rc": 0,
+              "error": "",
+              "limit_after_mb": 32.0,
+              "applied": true
+            }
+          },
+          "observation": {
+            "rca-agent-payment-app-1": {
+              "status": "running",
+              "oom_killed": true,
+              "restart_count_before": 0,
+              "restart_count_now": 0,
+              "restarted_after_oom": false,
+              "exit_code": "0"
+            }
+          },
+          "oom_observed": true,
+          "limit_applied": true
+        },
+        "targets": [
+          "rca-agent-payment-app-1"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-11T03:17:58Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.024222726505224924,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.66943359375,
+        "mysql_threads_connected": 26.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.0,
+        "mysql_row_lock_waits": 9.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 32.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppContainerOOMKilled",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "application",
+          "onto_constraint": "con:container-oom",
+          "hint": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高",
+          "summary": "payment-app 容器发生 OOM Kill",
+          "value": "1.0380165695256878e+00"
+        }
+      ],
+      "alerts_new": [
+        "AppContainerOOMKilled"
+      ],
+      "alerts_residual": [],
+      "alert_coverage": true,
+      "alert_text": "payment-app 容器发生 OOM Kill（cgroup oom_kill 计数增加），内存超限被内核杀死并重启，进程重启期间请求会失败或延迟升高",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:oom-kill",
+          "root_cause_name": "根因：容器内存超限被 OOM Kill",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:oom-kill"
+          ],
+          "hit_keywords": [
+            "OOM",
+            "OOMKill",
+            "内存超限",
+            "被内核杀死",
+            "mem_limit"
+          ],
+          "expected_terms": [
+            "rc:oom-kill",
+            "rc:replica-loss"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:oom-kill 且被约束 con:oom-detection,con:app-mem-limit 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 27.2,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:oom-kill 且被约束 con:oom-detection,con:app-mem-limit 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "deterministic",
+          "http_status": 200,
+          "wall_s": 3.2
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<python> <repo>\\tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 302.2,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-1": {
+                "name": "rca-agent-payment-app-1",
+                "exists": true,
+                "status": "running",
+                "oom_killed": false,
+                "restart_count": 1,
+                "exit_code": "0",
+                "memory_limit_mb": 256.0,
+                "nano_cpus": "500000000",
+                "started_at": "2026-10-11T03:13:49.520317979Z"
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(up{job=\"payment-app\"} == 1) < 3",
+          "waited_s": 2.0,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 316.2
+    },
+    {
+      "scenario": "app_memory_stress",
+      "title": "单副本容器内存耗尽（逼近 cgroup 上限，OOM 前兆）",
+      "layer": "runtime",
+      "layer_label": "运行环境层",
+      "category": "资源",
+      "expected_root_cause": "应用副本容器内存不足（内存泄漏/大对象），逼近 cgroup 内存上限",
+      "expected_terms": [
+        "metric:mem-pressure",
+        "rc:oom-kill"
+      ],
+      "alert_names_expected": [
+        "AppContainerMemoryPressure"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppContainerOOMKilled"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "vm_bytes_mb": 200,
+          "seconds": 900
+        },
+        "targets": [
+          "rca-agent-payment-app-1"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-11T03:23:31Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.023220454802258667,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.928192138671875,
+        "mysql_threads_connected": 28.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.0,
+        "mysql_row_lock_waits": 9.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppContainerMemoryPressure",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "runtime",
+          "onto_constraint": "con:app-mem-limit",
+          "hint": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+          "summary": "应用副本 {{ $labels.app_instance }} 容器内存 > 85% 上限",
+          "value": "9.252471923828125e-01"
+        }
+      ],
+      "alerts_new": [
+        "AppContainerMemoryPressure"
+      ],
+      "alerts_residual": [],
+      "alert_coverage": true,
+      "alert_text": "payment-app 容器内存使用逼近 cgroup 上限，存在 OOM Kill 风险，容器可能被内核杀死并重启",
+      "severity": "P1",
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "期望术语出现在候选/证据/推理中(metric:mem-pressure,rc:oom-kill)",
+          "partial": true,
+          "root_cause_id": "rc:mem-pressure",
+          "root_cause_name": "根因：容器内存压力逼近上限（未被 OOM Kill）",
+          "root_cause_category": "依赖",
+          "root_cause_confidence": 0.94,
+          "hit_root_cause_exact": false,
+          "hit_terms_in_text": [
+            "metric:mem-pressure",
+            "rc:oom-kill"
+          ],
+          "hit_keywords": [
+            "内存压力",
+            "memory",
+            "OOM"
+          ],
+          "expected_terms": [
+            "metric:mem-pressure",
+            "rc:oom-kill"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:mem-pressure 且被约束 con:app-mem-limit,con:oom-detection 支撑，置信度 0.94 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 17052.2,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:mem-pressure 且被约束 con:app-mem-limit,con:oom-detection 支撑，置信度 0.94 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "requested_mode": "deterministic",
+          "http_status": 200,
+          "wall_s": 20.2
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<python> <repo>\\tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 319.3,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1"
+            ],
+            "ok": true,
+            "detail": {
+              "rca-agent-payment-app-1": {
+                "ok": true,
+                "killed": 3,
+                "rc": 0,
+                "stderr": ""
+              }
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8",
+          "waited_s": 9.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 346.9
+    }
+  ]
+}

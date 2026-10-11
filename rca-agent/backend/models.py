@@ -129,6 +129,9 @@ class RCAResult(BaseModel):
     confidence: float = 0.0
     rca_chain: List[RCAChainStep] = Field(default_factory=list)
     elapsed_ms: float = 0.0
+    #: 指标平面判别器（"内存压力" vs "真的被 OOM Kill"）的决策记录：
+    #: 规则、胜者、依据、指标明细。**未介入时也带原因**（为什么没改判）。
+    metric_discriminator: dict = Field(default_factory=dict)
 
 
 class RCARequest(BaseModel):
