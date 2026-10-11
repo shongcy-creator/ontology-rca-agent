@@ -1,0 +1,218 @@
+{
+  "what": "会真实调用 LLM 的 6 个脚本的实跑回归（用户明确要求执行；真实消耗额度）",
+  "generated_at": "2026-10-11T01:32:19Z",
+  "cost": {
+    "tokens_total_reported_by_scripts": 127650,
+    "scripts_reporting_a_total": {
+      "tools/dual_engine_verify.py": 24366,
+      "tools/agent_loop_verify.py": 103284
+    },
+    "per_script_token_numbers": {
+      "tools/anthropic_path_verify.py": [
+        123
+      ],
+      "tools/llm_client_verify.py": [
+        80,
+        118,
+        382
+      ],
+      "tools/agent_tools_verify.py": [],
+      "tools/dual_engine_verify.py": [
+        24366,
+        3,
+        25,
+        0,
+        24366
+      ],
+      "tools/agent_loop_verify.py": [
+        54393,
+        48891,
+        103284
+      ],
+      "tools/llm_large_context_test.py": [
+        1263,
+        5308,
+        6067,
+        14814,
+        29342
+      ]
+    },
+    "note": "只把**脚本自己打印了总量**的计入合计：dual_engine 24366 + agent_loop 103284 = 127650。其余脚本只打印每次调用的计数，按原文列出、**不并入合计**：anthropic_path_verify 123（1 次）；llm_client_verify 80/118/382（3 次，最大 382）；llm_large_context 1263/5308/6067/14814/29342（5 次递增，最大 29342）；agent_tools_verify 未打印。若把这些也相加，可见量级约 18.5 万 token。实际计费以供应商账单为准。"
+  },
+  "summary": {
+    "scripts": 6,
+    "rc0": 4,
+    "rc_nonzero": 2,
+    "failed_scripts": [
+      "tools/llm_client_verify.py",
+      "tools/agent_tools_verify.py"
+    ]
+  },
+  "results": [
+    {
+      "name": "tools/anthropic_path_verify.py",
+      "note": "Anthropic Messages 路径的 Function Calling（1 次调用）",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 20.0,
+      "tokens_mentioned": [],
+      "tokens_sum": 0,
+      "tail": "done",
+      "stdout_tail": "========================================================================\nANTHROPIC PATH VERIFICATION\n========================================================================\nmodel=claude-sonnet-4-6  key=sk-3YDFM***\n\n[1] Plain chat\n     content  : 连接池耗尽的常见原因是数据库连接未及时释放（如代码中忘记关闭连接或异常处理不当）或连接最大数量设置过小导致高并发下所有连接被长期占用。\n     reasoning: [已降级到 agnes/agnes-3.0-flash] \n     tokens=123 latency=2580.8ms finish=stop\n     error=无\n\n[2] Function calling\n     finish=tool_calls  tool_calls=1\n       - db_processlist({})\n     error=无\n\n[3] Tool result round-trip\n     answer: ```json {\"type\":\"processlist\",\"data\":{\"count\":4,\"active\":2,\"long_running_queries\":[{\"sql\":\"SELECT ... FOR UPDATE\",\"duration_s\":5}],\"total_ru\n\n========================================================================\ndone\n",
+      "stderr_tail": "",
+      "cost_lines": [
+        "tokens=123 latency=2580.8ms finish=stop",
+        "answer: ```json {\"type\":\"processlist\",\"data\":{\"count\":4,\"active\":2,\"long_running_queries\":[{\"sql\":\"SELECT ... FOR UPDATE\",\"duration_s\":5}],\"total_ru"
+      ],
+      "token_numbers": [
+        123
+      ],
+      "tokens_total_reported": null
+    },
+    {
+      "name": "tools/llm_client_verify.py",
+      "note": "LLM 客户端：连通性/FC/reasoning/降级",
+      "rc": 1,
+      "status": "nonzero",
+      "elapsed_s": 23.6,
+      "tokens_mentioned": [],
+      "tokens_sum": 0,
+      "tail": "========================================================================",
+      "stdout_tail": "========================================================================\nLLM CLIENT VERIFICATION\n========================================================================\n\n[0] Config\n     provider=agnes model=agnes-3.0-flash fallback=agnes-3.0-flash\n  [PASS] api key present\n\n[1] Health check\n     ok=True model=agnes-3.0-flash latency=1076.3ms tokens=80\n  [PASS] health ok\n  [PASS] latency recorded\n\n[2] Plain chat (expect reasoning_content)\n     content   : MySQL 连接池耗尽会导致应用无法获取数据库连接，从而引发请求阻塞、线程积压，最终造成服务响应缓慢、超时甚至宕机。\n     reasoning : \n     tokens=118 latency=1734.7ms finish=stop\n  [PASS] no error\n  [PASS] content non-empty\n  [PASS] usage recorded\n  [PASS] latency recorded\n\n[3] Function calling\n     finish_reason : tool_calls\n     tool_calls    : 1\n       - metrics_query({'query': 'histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{se)\n     tokens=382\n  [PASS] no error\n  [PASS] returned tool calls\n  [PASS] tool name correct\n  [PASS] arguments parsed to dict\n  [PASS] arguments contain query\n\n[4] Tool result round-trip → final answer\n  [PASS] final answer produced\n     answer: **根因：长事务持有的排他锁导致连接池耗尽，进而引发请求排队，最终表现为 P99 延迟飙升。**  详细推导如下：  1.  **直接原因（表象）：** P99 800ms 说明存在严重的长尾延迟，通常意味着大量请求在等待资源。 2.  *\n\n[5] Error handling (bad key)\n     error: None\n  [FAIL] error captured not raised -- \n\n========================================================================\nRESULT: 13 passed, 1 failed\n========================================================================\n",
+      "stderr_tail": "",
+      "cost_lines": [
+        "ok=True model=agnes-3.0-flash latency=1076.3ms tokens=80",
+        "tokens=118 latency=1734.7ms finish=stop",
+        "tokens=382"
+      ],
+      "token_numbers": [
+        80,
+        118,
+        382
+      ],
+      "tokens_total_reported": null
+    },
+    {
+      "name": "tools/agent_tools_verify.py",
+      "note": "工具层逐工具取证",
+      "rc": 1,
+      "status": "nonzero",
+      "elapsed_s": 61.9,
+      "tokens_mentioned": [],
+      "tokens_sum": 0,
+      "tail": "============================================================================",
+      "stdout_tail": "resent\n     表 t_txn：约 4519683 行，索引 4 个（PRIMARY, idx_txn_created, idx_txn_customer, idx_txn_status_amount）\n  [PASS] db_table_info ok\n     执行计划 1 行，未发现全表扫描/排序问题\n  [PASS] db_explain ok\n\n[4] Env tools (docker)\n     容器 16 个，异常 0 个\n  [PASS] env_containers ok\n  [PASS] found containers\n     \n  [FAIL] env_container_inspect ok -- inspect 失败: error: no such object: cc-credit-card-app\n     日志 1 行（匹配 1 行），其中疑似错误 1 行，类型分布 {'error': 1}\n  [PASS] env_container_logs ok\n     资源占用已获取（16 个容器）\n  [PASS] env_container_stats ok\n     宿主机信息已采集\n  [PASS] env_host_info ok\n\n[5] Knowledge tools\n     历史事件命中 5 条；类别分布 {'资源': 2, '依赖': 1, '?': 1, '数据': 1}\n  [PASS] history_search ok\n     历史反馈 10 条（{'CONFIRMED': 10}）；其中被人工否定/部分否定的 0 条\n  [PASS] history_feedback ok\n     本体证据共 22 条\n  [PASS] ontology_evidence ok\n\n[6] Security guards\n  [PASS] unknown tool returns error not raise\n  [PASS] injection blocked\n  [PASS] write SQL blocked\n  [PASS] write SQL block reason mentions SELECT\n  [PASS] stacked SQL blocked\n  [PASS] unknown arg rejected\n  [PASS] missing required arg rejected\n  [PASS] type coercion + graceful failure on bad PromQL\n\n[7] Tool invocation summary\n     invoked=24 (negative=1) ok=23 fail=1\n     registry layers: {\"env\": 12, \"knowledge\": 3, \"metrics\": 5, \"ontology\": 5}\n  [FAIL] all live tools succeeded -- ['env_container_inspect']\n\n============================================================================\nRESULT: 39 passed, 2 failed\n============================================================================\n",
+      "stderr_tail": "",
+      "cost_lines": [],
+      "token_numbers": [],
+      "tokens_total_reported": null
+    },
+    {
+      "name": "tools/dual_engine_verify.py",
+      "note": "双引擎端到端：路由 + 两条路径 + 落库回放",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 137.4,
+      "tokens_mentioned": [
+        3,
+        0,
+        24366
+      ],
+      "tokens_sum": 24369,
+      "tail": "[成本] deterministic=0 tokens  agentic=24366 tokens",
+      "stdout_tail": "   root=[数据] rc:slow-sql\n  [PASS] 确定性路径完成\n  [PASS] 确定性路径有根因\n  [PASS] 确定性路径零 token\n  [PASS] 确定性路径有建议动作\n  [PASS] 快路径耗时 < 20s（含冷启动拓扑遍历）\n  [PASS] 含路由依据\n  [PASS] 含本体 seed 快照\n\n[3] Agentic path (real LLM)\n     mode=agentic status=completed steps=3 tokens=24366 confidence=0.9 latency=80916ms\n     tools_used=db_innodb_status, db_processlist, db_slow_queries, db_status, metrics_query, metrics_range\n     root=[数据] rc:slow-sql\n     seed_agreement=True\n  [PASS] agentic 路径完成\n  [PASS] agentic 状态正常\n  [PASS] 有推理步骤\n  [PASS] 有工具调用\n  [PASS] 有根因\n  [PASS] 有证据链\n  [PASS] token 被记录\n  [PASS] 与本体结论做了交叉验证\n  [PASS] 有 run_id\n\n[4] Persistence & replay\n  [PASS] run 已落库\n  [PASS] thoughts 已落库\n     thoughts=12  phases=['act', 'observe', 'reason']\n  [PASS] 含 observe 阶段\n  [PASS] 含 reason 阶段\n  [PASS] 含 act 阶段\n  [PASS] 推理内容已保存\n  [PASS] 工具观察已保存\n  [PASS] run 列表可查询\n     store stats: {\"backend\": \"mysql\", \"total_runs\": 95, \"total_tokens\": 4000851, \"avg_latency_ms\": 68828.6, \"avg_confidence\": 0.689, \"by_mode\": {\"agentic\": 71, \"deterministic\": 24}, \"by_status\": {\"budget_exceeded\": 11\n  [PASS] 统计后端为 mysql\n  [PASS] 统计含 runs 数\n\n[5] Tool catalog\n     layers={\"env\": 12, \"knowledge\": 3, \"metrics\": 5, \"ontology\": 5}  total=25\n  [PASS] 四层工具齐备\n  [PASS] 工具数 >= 20\n  [PASS] Schema 可生成\n  [PASS] 全部只读\n\n==============================================================================\nRESULT: 34 passed, 0 failed\n==============================================================================\n\n[成本] deterministic=0 tokens  agentic=24366 tokens\n",
+      "stderr_tail": "",
+      "cost_lines": [
+        "mode=agentic status=completed steps=3 tokens=24366 confidence=0.9 latency=80916ms",
+        "store stats: {\"backend\": \"mysql\", \"total_runs\": 95, \"total_tokens\": 4000851, \"avg_latency_ms\": 68828.6, \"avg_confidence\": 0.689, \"by_mode\": {\"agentic\": 71, \"deterministic\": 24}, \"by_status\": {\"budget_exceeded\": 11",
+        "layers={\"env\": 12, \"knowledge\": 3, \"metrics\": 5, \"ontology\": 5}  total=25",
+        "[成本] deterministic=0 tokens  agentic=24366 tokens"
+      ],
+      "token_numbers": [
+        24366,
+        3,
+        25,
+        0,
+        24366
+      ],
+      "tokens_total_reported": 24366
+    },
+    {
+      "name": "tools/agent_loop_verify.py",
+      "note": "Agent 循环：观察→推理→行动 全链路",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 230.7,
+      "tokens_mentioned": [
+        5,
+        5,
+        1,
+        2
+      ],
+      "tokens_sum": 13,
+      "tail": "[成本] case1 tokens=54393  case2 tokens=48891  合计=103284",
+      "stdout_tail": "TABLE_ROWS\": 20,    \"data_mb\": \"0.02\",    \"index_mb\": \"0.00\",    \"ENGIN\n   [Step 4 行动] history_search           OK   历史事件命中 0 条（关键字 'slow sql lock wait t_txn'）；类别分布 无 {  \"incidents\": [],  \"category_distribution\": {},  \"total_in_store\": 200 }\n   [Step 5 推理] **观察（最终确认）** - `t_seq` 只有约 20 行（序列表 n=1..20）。那条慢查询 `JOIN t_seq b ON b.n <= ?` 本应是 t_txn × 20 的受控扇出，不会放大到 38 亿行。**38亿次扫描** 的真相是：谓词 `b.n <= ?` 里的 `?` 被传成了极大值（或无有效过滤），使 t_seq 侧全部匹配，优化器回退到对 t_txn 450万行的全表扫描 × 20 = 9000万起，再叠加\n\n  证据链（5 条）：\n   - [db_status] MySQL 连接曾打满并出现行锁等待与大量全表扫描\n   - [db_slow_queries] t_txn 聚合 JOIN 查询扫描量爆炸\n   - [metrics_range] 交易接口延迟随时间上升，连接池曾瞬时耗尽\n   - [metrics_summary] 当前已间歇平息，自证周期性而非持续故障\n   - [db_table_info] t_txn 有 idx_txn_status_amount 但报表查询未有效裁剪\n\n  建议动作（4 条）：\n   - [P1] 为 t_txn 报表查询增加 created_at 范围谓词并确认走 idx_txn_created 下推, 避免全表扫描; 修正 JOIN t_seq 的 b.n<=? 参数,   (需人工确认)\n   - [P1] 将长聚合/对账报表任务迁移到 MySQL 副本(cc-mysql-replica-1/2), 与主库写事务隔离, 消除锁竞争  (需人工确认)\n   - [P2] 排查触发该报表查询的定时任务, 确认其是否在晚上8点高峰运行; 错峰或加并发限制  (需人工确认)\n   - [P2] 对 t_txn 的 status/amount 报表维度补充复合索引或预聚合, 降低 GROUP BY+MD5 开销  (需人工确认)\n\n  事件流: {\"run_start\": 1, \"step_start\": 6, \"step_end\": 6, \"reasoning\": 5, \"tool_call\": 11, \"observation\": 11}\n\n[断言]\n  [PASS] 模糊告警也能产出结论\n  [PASS] 调用了探索型工具\n  [PASS] 有推理链\n  [PASS] 置信度合理（不虚高）\n\n==============================================================================\nRESULT: 21 passed, 0 failed\n==============================================================================\n\n[成本] case1 tokens=54393  case2 tokens=48891  合计=103284\n",
+      "stderr_tail": "",
+      "cost_lines": [
+        "[Step 4 行动] history_search           OK   历史事件命中 0 条（关键字 'slow sql lock wait t_txn'）；类别分布 无 {  \"incidents\": [],  \"category_distribution\": {},  \"total_in_store\": 200 }",
+        "[成本] case1 tokens=54393  case2 tokens=48891  合计=103284"
+      ],
+      "token_numbers": [
+        54393,
+        48891,
+        103284
+      ],
+      "tokens_total_reported": 103284
+    },
+    {
+      "name": "tools/llm_large_context_test.py",
+      "note": "大上下文 + tools 复现（**最贵**，故意塞大 prompt）",
+      "rc": 0,
+      "status": "ok",
+      "elapsed_s": 53.3,
+      "tokens_mentioned": [],
+      "tokens_sum": 0,
+      "tail": "  OK  chars=140660  tools=True     3704ms  tokens=29342 tool=True finish=tool_calls",
+      "stdout_tail": "key: sk-2g2nW***\n==============================================================================\nLARGE CONTEXT / TOOLS REPRODUCTION\n==============================================================================\n\n### agnes-2.5-pro\n  ERR chars=2190    tools=False    1435ms  HTTP 403: {\"error\":{\"message\":\"Failed to pre-consume quota, remaining: ＄0.002066, required: ＄0.002068 (request id: 20261\n  ERR chars=23235   tools=False    1317ms  HTTP 403: {\"error\":{\"message\":\"Failed to pre-consume quota, remaining: ＄0.002066, required: ＄0.003102 (request id: 20261\n  ERR chars=23235   tools=True     1778ms  HTTP 403: {\"error\":{\"message\":\"Failed to pre-consume quota, remaining: ＄0.002066, required: ＄0.003114 (request id: 20261\n  ERR chars=70205   tools=True     1614ms  HTTP 403: {\"error\":{\"message\":\"Failed to pre-consume quota, remaining: ＄0.002066, required: ＄0.005624 (request id: 20261\n  ERR chars=140660  tools=True     1309ms  HTTP 403: {\"error\":{\"message\":\"Failed to pre-consume quota, remaining: ＄0.002066, required: ＄0.009390 (request id: 20261\n\n### agnes-3.0-flash\n  OK  chars=2190    tools=False   11266ms  tokens=1263 tool=False finish=stop\n  OK  chars=23235   tools=False    6505ms  tokens=5308 tool=False finish=stop\n  OK  chars=23235   tools=True    18139ms  tokens=6067 tool=False finish=stop\n  OK  chars=70205   tools=True     5996ms  tokens=14814 tool=True finish=tool_calls\n  OK  chars=140660  tools=True     3704ms  tokens=29342 tool=True finish=tool_calls\n",
+      "stderr_tail": "",
+      "cost_lines": [
+        "OK  chars=23235   tools=False    6505ms  tokens=5308 tool=False finish=stop",
+        "OK  chars=23235   tools=True    18139ms  tokens=6067 tool=False finish=stop",
+        "OK  chars=70205   tools=True     5996ms  tokens=14814 tool=True finish=tool_calls",
+        "OK  chars=140660  tools=True     3704ms  tokens=29342 tool=True finish=tool_calls"
+      ],
+      "token_numbers": [
+        1263,
+        5308,
+        6067,
+        14814,
+        29342
+      ],
+      "tokens_total_reported": null
+    }
+  ],
+  "findings": [
+    {
+      "id": "bad-key-test-not-hermetic",
+      "severity": "low",
+      "script": "tools/llm_client_verify.py",
+      "detail": "[5] Error handling (bad key) → `[FAIL] error captured not raised`，error=None。该用例假定「给一个坏 key 必然报错」，但 llm_config 配了多 provider 回退（agnes / rsxermu666 / deepseek），坏 key 被回退 provider 兜住了，于是用例必然失败。属**用例不封闭**，不是客户端缺陷。",
+      "pre_existing": true
+    },
+    {
+      "id": "stale-pre-cluster-container-name",
+      "severity": "medium",
+      "script": "tools/agent_tools_verify.py",
+      "detail": "`env_container_inspect` 失败：`no such object: cc-credit-card-app`（2 条 FAIL 都由它引起）。`cc-credit-card-app` 是**集群化之前**的单容器名，现在应用是 rca-agent-payment-app-1/2/3 + 网关。该旧名字仍写在`rca-agent/backend/services/tools/env_tools.py:315`（工具 schema 的示例值）、`backend/services/agent.py:143`、`backend/routers/chat.py:189-190`，以及 `demo/`（旧单容器栈）里 —— 即**默认/示例容器名已过期**，Agent 照它去 inspect 必然取不到。",
+      "pre_existing": true,
+      "impact": "环境层取证工具在被 LLM 以默认参数调用时会拿到空结果（本次即 24 次调用里失败 1 次）"
+    }
+  ],
+  "ontology_safety_check": {
+    "why": "修复 _inject_evidence 后，跑完全部 LLM 脚本（其中 agent_loop 会真实驱动 Agent 调后端工具）再核对：",
+    "active_json": "ontology_v6（未被切换）",
+    "legacy_version_untouched": "versions/ontology_v0-rca-agent/evidence.json mtime 仍为 1791643566（未重写）",
+    "evidence_inbox_lines": 1,
+    "conclusion": "默认路径下证据只进收件箱，不再改写激活本体 —— 在真实 LLM 负载下成立"
+  }
+}

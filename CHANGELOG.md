@@ -48,6 +48,24 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- **RCA evidence injection no longer switches the active ontology.**
+  `RCAEngine._inject_evidence()` used to load `ontology_v0`, append the evidence record, save it as
+  `ontology_v0-rca-agent` and call `SemanticStore.set_active(...)` — so a single
+  `POST /api/rca/infer` (whose `inject_evidence` defaults to **True**) silently downgraded the live
+  knowledge base to "v0 + one evidence record". It now:
+  - appends the record to `<workspace>/rca_evidence_inbox.jsonl` (with the ontology version it was
+    produced under), and **does not touch `active.json` or any version directory** — which ontology
+    the engine answers from may only change through a versioned round + publication gate, never as a
+    side effect of one inference;
+  - keeps the old behaviour available behind an explicit `RCA_EVIDENCE_ACTIVATE=1`, and in that case
+    bases the write on the **current** active version (not `ontology_v0`), with the target overridable
+    via `RCA_EVIDENCE_VERSION`.
+
+  Verified against the running backend: `POST /api/rca/infer` → HTTP 200, `active.json` still
+  `ontology_v6`, `versions/ontology_v0-rca-agent/*` mtimes unchanged, one record in the inbox, and
+  the log line `Evidence recorded: ev:rca-inc_… -> rca_evidence_inbox.jsonl（active 仍为
+  ontology_v6；不切换本体）`. The same holds after running the six LLM scripts (including the agent
+  loop that drives backend tools).
 - **The input collision behind the last strict miss.** `res_cluster_memory` (cluster-wide: all 3
   replicas × 220 MB) declared `AppContainerMemoryPressure`, whose `rca_hint` is worded as a
   *per-container* risk ("存在 OOM Kill 风险") — so it was fed a **byte-identical** input to
@@ -87,19 +105,16 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Findings — discovered while running that regression (all pre-existing)
 
-- **One call to `/api/rca/infer` silently switches the active ontology back to
-  `ontology_v0-rca-agent`.** `RCAEngine.infer(..., inject_evidence=True)` is the **default**, and
-  `_inject_evidence()` hardcodes `new_version = "ontology_v0-rca-agent"` before calling
-  `SemanticStore.save_version(...)` **and `SemanticStore.set_active(...)`**
-  (`rca-agent/backend/services/rca_engine.py:656,766-768`). So the live backend and every tool that
-  reads `active.json` then serve the 18-term legacy ontology — the exact state six rounds of
-  evolution removed. The regression hit it through
+- **One call to `/api/rca/infer` silently switched the active ontology back to
+  `ontology_v0-rca-agent`** — *now fixed, see the entry under "Fixed" below.*
+  `RCAEngine.infer(..., inject_evidence=True)` is the **default**, and `_inject_evidence()` loaded
+  `ontology_v0`, hardcoded `new_version = "ontology_v0-rca-agent"`, then called
+  `SemanticStore.save_version(...)` **and `SemanticStore.set_active(...)`**. So the live backend and
+  every tool that reads `active.json` then served the 18-term legacy ontology — the exact state six
+  rounds of evolution removed. The regression hit it through
   `tools/verify_all.py` → `tools/fault_drill.py` → `POST /api/rca/infer` (backend log:
   `[RCA] Evidence injected: ev:rca-inc_*`). Restored: `active.json`,
-  `versions/ontology_v0-rca-agent/` and `ontology_turtle/` were reverted to HEAD, and a live
-  re-check confirms the engine answers from `ontology_v6` again (`rc:cluster-capacity`, 0.99).
-  Suggested fix: write injected evidence into the **current** active version (or a version that is
-  never activated), instead of calling `set_active`.
+  `versions/ontology_v0-rca-agent/` and `ontology_turtle/` were reverted to HEAD.
 - **`tools/fault_drill.py` injects faults on `import`** — its drill body is top-level code with no
   `__main__` guard (an import probe really started the drill). Not rewritten: indenting ~140 lines of
   an untested fault-injecting script is riskier than the documented hazard; a warning now sits at the
@@ -109,6 +124,19 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **`generate_ontology_ttl.py` no longer reproduces its committed output** — regenerating produced
   370 lines *fewer* across `ontology_turtle/*.ttl`. The generator has drifted from the committed
   artifacts (unrelated to this change); the files were reverted.
+- **The six LLM-calling scripts were then run** (user-approved; real spend, ~127.6k tokens reported as
+  totals plus per-call counts ≈ 1.9e5 visible — see
+  [`reports/llm_scripts_regression.json`](reports/llm_scripts_regression.json)). 4/6 exited 0; both
+  non-zero results are pre-existing and unrelated to the path change:
+  - `tools/llm_client_verify.py` (13 passed / 1 failed): the "bad key" case expects an error, but
+    `llm_config` has provider fallbacks, so a bad key is masked by another provider — the test is not
+    hermetic.
+  - `tools/agent_tools_verify.py` (39 passed / 2 failed): `env_container_inspect` targets
+    `cc-credit-card-app`, the **pre-cluster** container name (the app is now
+    `rca-agent-payment-app-1/2/3`). The stale name is still in
+    `backend/services/tools/env_tools.py:315`, `backend/services/agent.py:143`,
+    `backend/routers/chat.py:189-190` and `demo/`, so the tool returns nothing when called with its
+    own default/example argument.
 
 ## [0.1.0] — 2026-10-09
 
