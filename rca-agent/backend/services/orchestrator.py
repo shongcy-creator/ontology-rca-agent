@@ -320,6 +320,10 @@ async def diagnose(
 
     payload = result.to_dict()
     payload["route"] = route.to_dict()
+    # 指标平面判别器的判定（OOM 被杀 vs 内存压力）：它是**确定性快路径**的决策依据之一，
+    # 但此前只存在于 seed 里，响应体不暴露 —— 于是端到端报告只看到"判成了 rc:mem-pressure"，
+    # 看不到"为什么"（哪条规则、指标读数多少）。审计需要这条链，故一并透出。
+    payload["metric_discriminator"] = (seed or {}).get("metric_discriminator") or {}
     payload["seed"] = {
         "incident_id": (seed or {}).get("incident_id"),
         "root_cause": (seed or {}).get("root_cause"),
@@ -327,6 +331,7 @@ async def diagnose(
         "candidates": (seed or {}).get("candidates", [])[:5],
         "topology_nodes": len((seed or {}).get("topology") or []),
         "thresholds_triggered": (seed or {}).get("thresholds_triggered") or [],
+        "metric_discriminator": (seed or {}).get("metric_discriminator") or {},
     } if seed else None
     payload["total_latency_ms"] = round((time.perf_counter() - t0) * 1000, 1)
     payload["ok"] = result.status in ("completed", "timeout", "budget_exceeded")

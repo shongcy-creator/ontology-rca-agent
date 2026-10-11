@@ -333,6 +333,38 @@ def score_diagnosis(body: Any, expected_terms: List[str],
         "total_tokens": body.get("total_tokens"),
         "latency_ms": body.get("total_latency_ms"),
         "reasoning_summary": (body.get("reasoning_summary") or "")[:600],
+        # 指标平面判别器的审计链（哪条规则、谁赢、指标读数）。只留摘要，
+        # 避免把 Prometheus 的原始 series 塞进报告；字段缺失时为空 dict。
+        "metric_discriminator": _discriminator_digest(body),
+    }
+
+
+def _discriminator_digest(body: Any) -> Dict[str, Any]:
+    """从诊断响应里摘出指标判别器的判定摘要（缺字段则返回 {}）。"""
+    if not isinstance(body, dict):
+        return {}
+    md = body.get("metric_discriminator")
+    if not isinstance(md, dict) or not md:
+        seed = body.get("seed")
+        md = (seed or {}).get("metric_discriminator") if isinstance(seed, dict) else None
+    if not isinstance(md, dict) or not md:
+        return {}
+    met = md.get("metric") if isinstance(md.get("metric"), dict) else {}
+    return {
+        "applicable": md.get("applicable"),
+        "rule": md.get("rule"),
+        "winner": md.get("winner"),
+        "why": md.get("why"),
+        "text_hard_evidence": md.get("text_hard_evidence") or [],
+        "hypothetical_hints": md.get("hypothetical_hints") or [],
+        "metric_available": met.get("available"),
+        "metric_expr": met.get("expr"),
+        "metric_window": met.get("window"),
+        # 读数：increase 与最大值，足够复核判定，且不把原始 series 塞进报告
+        "metric_increase": met.get("increase"),
+        "metric_max_increase": met.get("max_increase"),
+        "metric_kill_observed": met.get("kill_observed"),
+        "metric_samples": met.get("samples") if isinstance(met.get("samples"), (int, float)) else None,
     }
 
 
@@ -474,6 +506,21 @@ def verify_one(fid: str, eng: Injector, args: argparse.Namespace,
     _chosen = [a for a in (alerts.get("alerts") or []) if a.get("name") in _declared] \
         if _declared else []
     res["severity"] = _chosen[0]["severity"] if _chosen else "P1"
+
+    # ── 4b. 干扰守卫：确认"我注入的这个故障"此刻仍是唯一激活故障 ──────────
+    # 为什么必须查：控制台（或任何第二个驱动者）可以在保持期里 recover 掉这个故障、或再注入一个。
+    # 此时 Prometheus 的告警还会继续 firing 一段时间，诊断照样返回一个**看起来正常**的结论 ——
+    # 但这一轮的输入其实已经被换掉了。实测踩过两次：后端日志里
+    # `172.18.0.11 POST /api/chaos/recover` 恰好落在保持期内，两次跑批因此作废
+    # （CHANGELOG「two measurement attempts were invalidated」）。
+    observed = sorted({a.get("fault_id") for a in (active_faults() or []) if a.get("fault_id")})
+    expected_active = [fid]
+    interfered = observed != expected_active
+    res["interference"] = {"detected": interfered, "expected_active": expected_active,
+                           "observed_active": observed}
+    if interfered:
+        eng.log("[verify] ⚠⚠ 检测到外部干扰：期望激活故障=%s，实际=%s —— 本场景输入不可信"
+                % (expected_active, observed))
 
     # ── 5. 智能体诊断（可跑 deterministic / agentic / both）────────
     modes = ["deterministic", "agentic"] if args.mode == "both" else [args.mode]
@@ -743,12 +790,16 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     def flush(complete: bool) -> None:
         """增量落盘：任何时刻中断都能拿到已完成场景的结果。"""
+        bad = [r.get("scenario") for r in results
+               if (r.get("interference") or {}).get("detected")]
         rep = {"mode": args.mode, "hold": args.hold, "stress": args.stress,
                "complete": complete, "requested": ids,
+               "interference": {"detected": bool(bad), "scenarios": bad},
                "summary": summarize(results, args.mode), "results": results}
         out_path.write_text(json.dumps(rep, ensure_ascii=False, indent=2, default=str),
                             encoding="utf-8")
 
+    stopped_by_interference = False
     for i, fid in enumerate(ids, 1):
         print("\n" + "#" * 96)
         print("# [%d/%d] %s  %s" % (i, len(ids), fid, FAULTS[fid].title))
@@ -771,13 +822,27 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("[verify] 结论: 诊断命中=%s  告警覆盖=%s  已回滚=%s  用时=%.0fs"
               % (r.get("ok"), r.get("alert_coverage"), r.get("recovered"),
                  r.get("elapsed_s") or 0))
+        if (r.get("interference") or {}).get("detected"):
+            # 不停在这里继续跑：被污染的场景不该混进"看起来完整"的汇总里。
+            # 本场景已在上面的 verify_one 里回滚完毕，下面 eng.recover_all() 再兜一次底。
+            print("[verify] ⚠ 外部干扰：停止跑批（其余场景不予测量）。"
+                  "期望激活=%s，实际=%s"
+                  % ((r["interference"] or {}).get("expected_active"),
+                     (r["interference"] or {}).get("observed_active")))
+            stopped_by_interference = True
+            break
         if i < len(ids):
             time.sleep(max(0.0, args.cooldown))
 
     eng.recover_all()
     summary = summarize(results, args.mode)
+    interfered_scenarios = [r.get("scenario") for r in results
+                            if (r.get("interference") or {}).get("detected")]
     report = {"mode": args.mode, "hold": args.hold, "stress": args.stress,
-              "complete": len(results) == len(ids), "requested": ids,
+              "complete": len(results) == len(ids) and not stopped_by_interference,
+              "requested": ids, "stopped_by_interference": stopped_by_interference,
+              "interference": {"detected": bool(interfered_scenarios),
+                               "scenarios": interfered_scenarios},
               "summary": summary, "results": results}
 
     out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str),
@@ -805,6 +870,13 @@ def main(argv: Optional[List[str]] = None) -> int:
               % (layer, d["diagnosed"], d["total"], d["recovered"], d["total"],
                  d["alert_covered"], d["total"]))
     print("-" * 96)
+    if interfered_scenarios:
+        print("  ⚠ 检测到**外部干扰**的场景（输入不可信，不应计入任何口径）: %s"
+              % interfered_scenarios)
+        print("    依据：这些场景在诊断时刻，集群里激活的故障不是它自己注入的那一个。")
+        print("    处理：已停止跑批并回滚；请在没有人/没有其他程序操作注入控制台时重跑。")
+    else:
+        print("  外部干扰            无（每个场景诊断时刻，激活故障都等于它自己注入的那个）")
     print("  未命中场景:")
     for r in results:
         if not r.get("ok"):
@@ -814,7 +886,8 @@ def main(argv: Optional[List[str]] = None) -> int:
                      runs[0].get("how"), r.get("alert_coverage")))
     print("=" * 96)
     print("报告: %s" % out_path)
-    return 0
+    # 被外部干扰污染的跑批**不算成功**：退出码非零，免得被流水线当成一次干净测量。
+    return 3 if (interfered_scenarios or stopped_by_interference) else 0
 
 
 if __name__ == "__main__":

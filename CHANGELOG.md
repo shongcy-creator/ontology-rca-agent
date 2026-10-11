@@ -69,6 +69,28 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- **A sweep now refuses to be counted when something else moved the cluster.** The end-to-end
+  harness checks, right before it calls the agent, that the *only* active fault is the one it
+  injected itself (`interference.expected_active` vs `observed_active`). On a mismatch it warns,
+  records `interference` per scenario plus `stopped_by_interference` / `complete: false` and an
+  `interference.scenarios` list at the top level, **stops the sweep**, rolls back, and exits
+  non-zero instead of blending the scenario into a "complete-looking" summary. Verified in both
+  directions: a clean scenario reports `外部干扰 无` and exits 0, while an externally recovered fault
+  (`recover` issued 35 s into the hold) is caught and exits 3. The second test is the reason this
+  guard exists: **that polluted run still answered correctly** (`rc:cpu-throttle`), so "the number
+  looked fine" was never evidence that the input was still the one we injected.
+- **The metric-plane judgement is now visible where the measurement happens.** `POST
+  /api/agent/diagnose` returned only the conclusion, so a report could say "answered
+  `rc:mem-pressure`" without showing which rule decided it or what the counter read. The response
+  (top level and under `seed`) and each `diagnosis_runs[]` entry in the e2e report now carry a
+  compact `metric_discriminator` digest — `applicable`, `rule`, `winner`, `why`, the text hard
+  evidence / hypothetical hints, and the metric reading (`available`, `increase`, `max_increase`,
+  `kill_observed`) with the raw series stripped out. This is what makes the OOM-vs-pressure call
+  auditable in the live criterion, not just reproducible in the unit test. (The already-published
+  [`reports/rca_diagnosis_report_discriminator.json`](reports/rca_diagnosis_report_discriminator.json)
+  predates this field — its `app_memory_stress → rc:mem-pressure` line can be cross-checked against
+  [`reports/rca_retest_metric_discriminator.json`](reports/rca_retest_metric_discriminator.json) and
+  the 24/24 rule test; a re-run is what records the digest inline.)
 - **`docker compose` was silently running the image's baked code instead of the host mounts.**
   On this host with Compose **v5.5.1**, the short-syntax volume `./backend:/app/backend,z` is parsed
   as `target: /app/backend,z` (verified with `docker compose config --format json`): the bare `,z`
