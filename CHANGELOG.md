@@ -210,6 +210,15 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Findings — a benchmark label was corrected by evidence (and the offline criteria's boundary is now explicit)
 
+- **Measured after the correction** — full 21-scenario live re-run, with the console disabled so no
+  second driver could touch the cluster: **strict 20/20** over the 20 measurable scenarios
+  (21/21 injected, 21/21 recovered, alert coverage 20/21, 0 tokens). Against the previous full run
+  **exactly one case changed**: `app_memory_stress` `rc:oom-kill` → `rc:mem-pressure` — and the true
+  kill (`app_oom_kill`) still answers `rc:oom-kill`, i.e. the metric-plane rule separates the two
+  rather than trading one for the other
+  ([`reports/rca_diagnosis_report_discriminator.json`](reports/rca_diagnosis_report_discriminator.json)).
+  The same run is the counter-example to the round-7 candidate, which could only fix one of the pair.
+
 - `app_memory_stress` ("single replica, 200 MB, approaching the limit, OOM *precursor*") had its
   expected terms set to `{metric:mem-pressure, rc:oom-kill}`. The container evidence says the label
   was the stale part: during that scenario **every replica reports `oom_killed = false`** (archived

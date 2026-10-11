@@ -26,7 +26,8 @@
 | [`host_path_regression.json`](host_path_regression.json) | 宿主绝对路径清理后的**脚本回归**：哪些实跑了、哪些按原因未跑、以及撞出的 4 个既有缺陷 | 由一次性回归脚本产出（按 `tools/_*.py` 约定已删除）；每条的**原始命令与退出码**都在文件内 `results` 字段 | 18 个退出码 0 / 1 个超时 / 8 个注明原因未跑；撞出「一次 `/api/rca/infer` 静默换掉激活本体」等缺陷（已修） |
 | [`llm_scripts_regression.json`](llm_scripts_regression.json) | 6 个会真实调 LLM 的脚本实跑（用户授权；真实消耗） | `python tools/...`（6 个脚本逐个跑，见文件内 `results`） | 4/6 退出码 0；自报总量 127,650 tokens；两个非 0 都是既有问题（坏 key 用例不封闭、过期容器名） |
 | [`round7_candidate_rejected.json`](round7_candidate_rejected.json) | 第 7 轮候选 patch 的**开轮次前筛**（父 v6 vs 候选，三套固定输入） | `python tools/round_candidate_probe.py` | **REJECT**：21 场景 20/21→19/21、归档严格 19/20→**17/20**；因此**没有开这一轮、没有发布版本** |
-| [`rca_retest_metric_discriminator.json`](rca_retest_metric_discriminator.json) | 指标平面 OOM 判别器上线后的真机两场景复测 | `python tools/cluster_rca_verify.py app_oom_kill app_memory_stress --no-settle --json-out .chaos/rca_retest_metric_discriminator.json` | `app_oom_kill → rc:oom-kill`（严格命中）；`app_memory_stress → rc:mem-pressure`（**期望标签里没有它 ⇒ 严格 19/20，标签待定**） |
+| [`rca_retest_metric_discriminator.json`](rca_retest_metric_discriminator.json) | 指标平面 OOM 判别器上线后的真机两场景复测 | `python tools/cluster_rca_verify.py app_oom_kill app_memory_stress --no-settle --json-out .chaos/rca_retest_metric_discriminator.json` | `app_oom_kill → rc:oom-kill`（严格命中）；`app_memory_stress → rc:mem-pressure` |
+| [`rca_diagnosis_report_discriminator.json`](rca_diagnosis_report_discriminator.json) | **全量 21 场景真机重跑**（指标判别器 + 标签修正之后；期间控制台停用，无外部注入） | `python tools/cluster_rca_verify.py --json-out .chaos/rca_diagnosis_report_discriminator.json` | 注入 21/21、恢复 21/21、覆盖 20/21、**严格 20/20**、0 token；相对上一轮**只变 1 例**：`app_memory_stress` `rc:oom-kill` → `rc:mem-pressure`（`app_oom_kill` 仍 `rc:oom-kill`） |
 
 ## 发布与核对（工具）
 
@@ -64,7 +65,9 @@
   唯一的 `restart_count = 1` 是粘性残留）。该 case **必须走指标平面**才能判对
   （`increase(cc_container_oom_kill_total[5m])`），因此**纯文本回放口径必然把它算作未命中**：
   改前归档 **18/20**、改后归档 **19/20**、离线目录形态 **19/21**。
-  **真机（指标感知）端到端**才是它的正确度量。
+  **真机（指标感知）端到端**才是它的正确度量：全量重跑实测 **严格 20/20**
+  （[`rca_diagnosis_report_discriminator.json`](rca_diagnosis_report_discriminator.json)，
+  相对上一轮只变 1 例）。
   `tools/ontology_ab_replay.py --current-labels` 可用今天的标签重算历史运行；
   默认仍用报告里记录的标签，以保证历史 A/B 前后自洽。
 - 阈值/窗口等判据的变更都必须走 `tools/evolve_ontology_cluster.py` 的版本化轮次 + 闸门，
