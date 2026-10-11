@@ -50,6 +50,8 @@ dsh-spill-*/
 .evoontology/evolution/
 .evoontology/plots/
 .evoontology/*.db
+# RCA 推理沉淀的证据收件箱（运行期追加；由 _inject_evidence 写，不参与版本图）
+.evoontology/rca_evidence_inbox.jsonl
 
 # ── 上游自带的演示视频（8.9MB，占仓库体积约 37%；不影响运行）──────────────
 vendor/EvoOntology/assets/*.mp4

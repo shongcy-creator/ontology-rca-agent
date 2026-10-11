@@ -728,13 +728,44 @@ class RCAEngine:
     # ── Evidence 注入 ───────────────────────────────────────────────────────
 
     def _inject_evidence(self, result: Dict[str, Any], incident_id: str) -> None:
-        """将 RCA 结果写入 EvoOntology（后台执行）。"""
+        """
+        把 RCA 结论沉淀为**证据记录** —— 默认**不改变激活本体**。
+
+        ## 曾经的坑（实测，见 reports/host_path_regression.json 与 CHANGELOG）
+
+        原实现是：
+
+            version_name, records = SemanticStore.load_records(workspace, version="ontology_v0")
+            records["evidence"].append(ev_record)
+            SemanticStore.save_version(workspace, "ontology_v0-rca-agent", records)
+            SemanticStore.set_active(workspace, "ontology_v0-rca-agent")
+
+        两个问题叠在一起：
+
+          ① 基线取的是 **ontology_v0**（最初版），不是当前知识；
+          ② 随后 `set_active` —— 于是一次 `POST /api/rca/infer`
+             （`infer()` 的 `inject_evidence` **默认 True**）就会把激活本体从
+             `ontology_v6` 静默换成「v0 + 一条证据」，六轮迭代的知识当场消失。
+             触发途径很日常：`tools/fault_drill.py`、任何走 `/api/rca/infer` 的调用。
+
+        ## 现在的行为
+
+          · 记录**追加**到 `<workspace>/rca_evidence_inbox.jsonl`（一行一条，带当时的本体版本）；
+          · **不动 `active.json`、不写版本目录** —— "诊断用哪一版本体"只能由
+            版本化轮次 + 发布闸门改变，不能由一次推理的副作用改变；
+          · 需要旧行为（把证据并进本体**并**切换激活版本）时，显式设
+            `RCA_EVIDENCE_ACTIVATE=1`；此时基线改为**当前激活版本**（而不是 v0），
+            目标版本可用 `RCA_EVIDENCE_VERSION` 覆盖（默认 `ontology_v0-rca-agent`）。
+        """
         try:
             from evoontology.ontology.store import SemanticStore
             import datetime
 
             workspace = Path(self.evo.workspace)
-            version_name, records = SemanticStore.load_records(workspace, version="ontology_v0")
+            try:
+                active_version = SemanticStore.active_version(workspace)
+            except Exception:  # noqa: BLE001
+                active_version = ""
 
             ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
             rc = result.get("root_cause", {})
@@ -761,12 +792,26 @@ class RCAEngine:
                 "timestamp": ts,
             }
 
+            # ── 默认路径：只记录证据，不碰激活本体 ──────────────────────────
+            if os.environ.get("RCA_EVIDENCE_ACTIVATE", "").strip().lower() not in ("1", "true", "yes"):
+                inbox = Path(self.evo.workspace) / "rca_evidence_inbox.jsonl"
+                inbox.parent.mkdir(parents=True, exist_ok=True)
+                with inbox.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps({"ontology_version": active_version, **ev_record},
+                                        ensure_ascii=False) + "\n")
+                print(f"[RCA] Evidence recorded: {ev_id} -> {inbox.name}"
+                      f"（active 仍为 {active_version}；不切换本体）", flush=True)
+                return
+
+            # ── 显式选择旧行为（RCA_EVIDENCE_ACTIVATE=1）：基线用当前激活版本 ──
+            _, records = SemanticStore.load_records(workspace,
+                                                    version=active_version or "ontology_v0")
             records.setdefault("evidence", []).append(ev_record)
-
-            new_version = "ontology_v0-rca-agent"
-            SemanticStore.save_version(workspace, new_version, records)
-            SemanticStore.set_active(workspace, new_version)
-
-            print(f"[RCA] Evidence injected: {ev_id}")
+            target = os.environ.get("RCA_EVIDENCE_VERSION", "ontology_v0-rca-agent")
+            SemanticStore.save_version(workspace, target, records)
+            SemanticStore.set_active(workspace, target)
+            print(f"[RCA] Evidence injected: {ev_id} -> {target}"
+                  f"（ACTIVATED，因 RCA_EVIDENCE_ACTIVATE=1；原 active={active_version}）",
+                  flush=True)
         except Exception as e:
             print(f"[RCA] Evidence injection failed: {e}")
