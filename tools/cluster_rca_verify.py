@@ -160,6 +160,46 @@ def collect_alerts() -> Dict[str, Any]:
     return {"alerts": out, "hints": hints}
 
 
+#: 观测链路**自身**健康与否的判据。为什么需要单独查这一项：
+#: 故障可能把"用来观测它自己"的那条链路打掉。实测（`db_conn_saturation`）：注入把 200 个连接槽位
+#: 占到 197，`mysqld_exporter` 的抓取连接**被拒** → `mysql_up=0` → 误报 `MySQLDown`(P0)，
+#: 且 `mysql_global_*` 指标变陈旧 → **声明的告警根本无法评估**。
+#: 此时 `alert_coverage=False` 的含义是"监控瞎了"，**不是**"告警设计有缺口"——两者必须分开记，
+#: 否则会像当初那样把它误判成后者、去改阈值（改了也没用）。
+MONITORING_HEALTH_EXPRS = [
+    # mysqld_exporter 连不上 MySQL（连接被拒 / 账号失效 / 实例不可达）
+    "mysql_up == 0",
+    # 抓取目标整体不可达（exporter 进程挂了、目标端口不通）
+    "up == 0",
+]
+
+
+def monitoring_health(exprs: Optional[List[str]] = None,
+                      query_fn: Optional[Any] = None) -> Dict[str, Any]:
+    """
+    检查观测链路自身是否健康。返回 {"healthy": bool, "issues": [{expr, targets|error}]}。
+
+    `query_fn(expr) -> List[dict]` 可注入，便于**离线自测**（不需要真集群就能验证它会不会响）。
+    """
+    exprs = list(exprs if exprs is not None else MONITORING_HEALTH_EXPRS)
+    q = query_fn or (lambda e: prom_query(e, timeout=15.0))
+    issues: List[Dict[str, Any]] = []
+    for e in exprs:
+        try:
+            rows = q(e) or []
+        except Exception as ex:  # noqa: BLE001
+            # 查询本身失败也算不健康：观测量取不到 ≠ 观测正常
+            issues.append({"expr": e, "targets": [],
+                           "error": "%s: %s" % (type(ex).__name__, ex)})
+            continue
+        if rows:
+            targets = sorted({str((r.get("metric") or {}).get("instance")
+                                  or (r.get("metric") or {}).get("job") or "?")
+                              for r in rows})
+            issues.append({"expr": e, "targets": targets})
+    return {"healthy": not issues, "issues": issues}
+
+
 def build_alert_text(alerts: Dict[str, Any], fault: Any,
                      pre_names: Optional[set] = None) -> str:
     """
@@ -527,6 +567,21 @@ def verify_one(fid: str, eng: Injector, args: argparse.Namespace,
         eng.log("[verify] ⚠⚠ 检测到外部干扰：期望激活故障=%s，实际=%s —— 本场景输入不可信"
                 % (expected_active, observed))
 
+    # ── 4c. 观测链路守卫：告警"没响"到底是没设计好，还是监控自己被搞瞎了 ──
+    # 只有在**声明告警一条都没 firing** 时才值得判定原因（都响了就无需解释）。
+    mh = monitoring_health()
+    res["monitoring"] = mh
+    if not res.get("alert_coverage") and not mh.get("healthy"):
+        det = "; ".join("%s → %s" % (i.get("expr"), i.get("targets") or i.get("error"))
+                        for i in mh.get("issues") or [])
+        res["monitoring"]["verdict"] = (
+            "声明告警未触发，且观测链路不健康（%s）→ 本场景的告警是**无法评估**，"
+            "不能算作『告警设计缺口』" % det)
+        eng.log("[verify] ⚠ 观测链路不健康：%s" % det)
+    elif not res.get("alert_coverage") and mh.get("healthy"):
+        res["monitoring"]["verdict"] = (
+            "声明告警未触发，而观测链路健康 → 这才是『告警设计缺口』（判据/阈值不覆盖该故障）")
+
     # ── 5. 智能体诊断（可跑 deterministic / agentic / both）────────
     modes = ["deterministic", "agentic"] if args.mode == "both" else [args.mode]
     runs: List[Dict[str, Any]] = []
@@ -793,6 +848,26 @@ def main(argv: Optional[List[str]] = None) -> int:
     out_path = Path(args.json_out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
+    def obs_rollup() -> Dict[str, Any]:
+        """
+        把"告警没响"的两类原因分开汇总（在此之前它们混在同一个 alert_coverage=False 里）：
+          · monitoring_blinded —— 观测链路本身不健康 → 告警**无法评估**；
+          · alert_design_gap   —— 观测链路健康却仍没响 → 这才是**告警设计缺口**。
+        另外汇总"注入期未观测到信号"的场景（此前只出现在日志里，报告看不出）。
+        """
+        blinded, gaps = [], []
+        for r in results:
+            if r.get("alert_coverage"):
+                continue
+            (gaps if (r.get("monitoring") or {}).get("healthy", True) else blinded).append(
+                r.get("scenario"))
+        return {
+            "monitoring_blinded": blinded,
+            "alert_design_gap": gaps,
+            "signal_warnings": [r.get("scenario") for r in results
+                                if (r.get("inject") or {}).get("warning")],
+        }
+
     def flush(complete: bool) -> None:
         """增量落盘：任何时刻中断都能拿到已完成场景的结果。"""
         bad = [r.get("scenario") for r in results
@@ -800,6 +875,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         rep = {"mode": args.mode, "hold": args.hold, "stress": args.stress,
                "complete": complete, "requested": ids,
                "interference": {"detected": bool(bad), "scenarios": bad},
+               "observability": obs_rollup(),
                "summary": summarize(results, args.mode), "results": results}
         out_path.write_text(json.dumps(rep, ensure_ascii=False, indent=2, default=str),
                             encoding="utf-8")
@@ -848,6 +924,7 @@ def main(argv: Optional[List[str]] = None) -> int:
               "requested": ids, "stopped_by_interference": stopped_by_interference,
               "interference": {"detected": bool(interfered_scenarios),
                                "scenarios": interfered_scenarios},
+              "observability": obs_rollup(),
               "summary": summary, "results": results}
 
     out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str),
@@ -882,6 +959,19 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("    处理：已停止跑批并回滚；请在没有人/没有其他程序操作注入控制台时重跑。")
     else:
         print("  外部干扰            无（每个场景诊断时刻，激活故障都等于它自己注入的那个）")
+    obs = obs_rollup()
+    if obs["monitoring_blinded"]:
+        print("  ⚠ 观测链路被故障掩盖（告警**无法评估**，不是告警设计缺口）: %s"
+              % obs["monitoring_blinded"])
+        print("    依据：这些场景声明告警没响，而 `mysql_up`/`up` 处于 0 —— 监控链路自己先坏了。")
+    else:
+        print("  观测链路            健康（没有出现 mysql_up=0 / up=0 的目标）")
+    if obs["alert_design_gap"]:
+        print("  告警设计缺口        %s（监控健康但声明告警未触发 → 判据/阈值确实没覆盖该故障）"
+              % obs["alert_design_gap"])
+    if obs["signal_warnings"]:
+        print("  注入期未观测到信号  %s（已在压测期复核；若最终 signal_observed=False 说明"
+              "该故障的信号不可观测）" % obs["signal_warnings"])
     print("  未命中场景:")
     for r in results:
         if not r.get("ok"):

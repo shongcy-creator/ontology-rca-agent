@@ -69,6 +69,26 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- **"No alert fired" no longer conflates two different failures.** `alert_coverage: False` used to
+  say only that the declared alerts did not fire, so a fault that **blinded its own monitoring** was
+  indistinguishable from an **alert-design gap** — and the earlier investigation was misled by exactly
+  that, changing a threshold that was never the problem. The harness now samples the *observability
+  path itself* at diagnosis time (`mysql_up == 0`, `up == 0`) and records `monitoring` per scenario
+  plus an `observability` rollup in the report: `monitoring_blinded` (link was down → the alert
+  **could not be evaluated**) vs `alert_design_gap` (link healthy, alert still silent → a real
+  detection gap). A missing observation counts as unhealthy rather than as "no signal". Verified with
+  injected stubs (fires on `mysql_up=0`, quiet when clean, unhealthy when the query itself fails) and
+  live (default criteria healthy; a deliberately-true criterion returns real targets through the same
+  code path).
+- **`app_network_loss` waited for a signal that cannot exist before the load starts.** Its signals are
+  blackbox probe metrics (`probe_duration_seconds`, `probe_success`) that only become true while
+  traffic flows, but the fault is `needs_stress=True` and the stress starts *after* injection — so
+  with the default `signal_needs_stress=False` the harness waited 60 s for them, printed
+  "⚠ 注入成功，但 60s 内未观测到任何声明信号", and only then re-checked under load and passed. The
+  warning never reached the report (the under-load re-check overwrote `signal_observed`), which is why
+  it went unnoticed; the flag is now `True` so the check happens in the load window where it belongs.
+  The report also rolls such cases up as `observability.signal_warnings` so a log-only warning can no
+  longer hide.
 - **`db_conn_saturation` was unmeasurable because the fault blinded its own monitoring.** Two
   independent defects, both found by measuring instead of assuming:
   1. *Sizing.* Injecting 170 long-lived connections peaked at **197/200**, so the mysqld exporter's own

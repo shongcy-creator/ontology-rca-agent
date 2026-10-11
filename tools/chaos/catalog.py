@@ -1058,6 +1058,13 @@ _register(Fault(
     # （丢包引起重传 → 该副本 P99 相对其余副本偏斜）。
     alert_names=["AppReplicaLatencySkew"],
     needs_stress=True,
+    # ⚠ 本场景的信号是**有流量才成立**的 blackbox 探针指标（`probe_duration_seconds` /
+    # `probe_success`），而 `needs_stress=True` 的压测是在**注入之后**才启动的。
+    # 原先 `signal_needs_stress=False`（默认）→ harness 会在压测开始前就去等这 60s 信号，
+    # 必然等不到并打印"⚠ 注入成功，但 60s 内未观测到任何声明信号"，
+    # 白等一分钟、还留下一条会误导人的告警（实测就这样）。
+    # 置 True 后：注入阶段不等待，改在**压测窗口内**复核信号 —— 语义正确，且省掉那次空等。
+    signal_needs_stress=True,
     blast_radius="该副本成功率骤降，LB 视情况摘除",
 ))
 
