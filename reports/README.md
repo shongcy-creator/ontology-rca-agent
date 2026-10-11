@@ -23,6 +23,9 @@
 | [`rca_diagnosis_report_postfix.json`](rca_diagnosis_report_postfix.json) | **全量 21 场景端到端重跑**（输入修复之后；真注入 + 真告警 + 真引擎） | `python tools/cluster_rca_verify.py --json-out .chaos/rca_diagnosis_report_postfix.json` | 注入 21/21、恢复 21/21、告警覆盖 **20/21**；严格 **20/20**（`res_cluster_memory` 判出 `rc:cluster-capacity`） |
 | [`e2e_postfix_ab.json`](e2e_postfix_ab.json) | **两轮全量端到端**的成对 A/B（改前基线 vs 改后全量；同一本体、同一 ground truth） | `python tools/ontology_ab_replay.py --parent ontology_v6 --report .chaos/rca_diagnosis_report.json --report-b .chaos/rca_diagnosis_report_postfix.json` | 严格 **19/20 → 20/20**，逐 case 变化 **= 1**（只有 `res_cluster_memory`），**回退 0** |
 | [`remediation_exec.json`](remediation_exec.json) | 处置动作执行闭环（含失败自动回滚） | `python tools/remediation_exec.py self-test` | 回滚路径验证 |
+| [`host_path_regression.json`](host_path_regression.json) | 宿主绝对路径清理后的**脚本回归**：哪些实跑了、哪些按原因未跑、以及撞出的 4 个既有缺陷 | 由一次性回归脚本产出（按 `tools/_*.py` 约定已删除）；每条的**原始命令与退出码**都在文件内 `results` 字段 | 18 个退出码 0 / 1 个超时 / 8 个注明原因未跑；撞出「一次 `/api/rca/infer` 静默换掉激活本体」等缺陷（已修） |
+| [`llm_scripts_regression.json`](llm_scripts_regression.json) | 6 个会真实调 LLM 的脚本实跑（用户授权；真实消耗） | `python tools/...`（6 个脚本逐个跑，见文件内 `results`） | 4/6 退出码 0；自报总量 127,650 tokens；两个非 0 都是既有问题（坏 key 用例不封闭、过期容器名） |
+| [`round7_candidate_rejected.json`](round7_candidate_rejected.json) | 第 7 轮候选 patch 的**开轮次前筛**（父 v6 vs 候选，三套固定输入） | `python tools/round_candidate_probe.py` | **REJECT**：21 场景 20/21→19/21、归档严格 19/20→**17/20**；因此**没有开这一轮、没有发布版本** |
 
 ## 发布与核对（工具）
 
@@ -31,6 +34,7 @@
 | `tools/publish_reports.py` | 把 `.chaos/` 产物洗净宿主路径后**发布**到 `reports/`；`--check` 是**卫生闸门**（发现 `X:\Users\<name>` 即 exit 1）；`--scrub FILE` 就地清洗指定报告 | `python tools/publish_reports.py` / `--check` / `--scrub reports/x.json` |
 | `tools/strict_score_check.py` | 从报告**复算严格命中**（仅可测量场景），并核对"改动只影响了该影响的场景"：转正/回退集合、某条告警的触发范围；断言不成立即 exit 1 | `python tools/strict_score_check.py --baseline reports/rca_diagnosis_report.json --candidate reports/rca_diagnosis_report_postfix.json --expect-improved res_cluster_memory --expect-alert AppClusterMemoryCapacity=res_cluster_memory` |
 | `tools/incident_heldout_eval.py` | 把证据收件箱（`.evoontology/rca_evidence_inbox.jsonl`）里的**线上真实事故记录**复算成留存评估集：与"记录时的结论"对比（知识漂移）、能对上已知场景时算**严格命中**、并挑出低置信/无约束支撑的「知识缺口候选」。**只报不改**；基准歧义（同一文本对应互斥期望）会被报出来而不是硬算 | `python tools/incident_heldout_eval.py` |
+| `tools/round_candidate_probe.py` | **开轮次前的三道固定输入筛**：候选 patch（内置变体或 `--candidate-records`）对比父版本在 ① 21 场景 ② held-out 考卷 ③ 归档真实告警上的表现；**任一输入集回退即 exit 1** —— 第 7 轮候选就是这样被否掉的 | `python tools/round_candidate_probe.py` |
 
 ## 口径说明（重要）
 

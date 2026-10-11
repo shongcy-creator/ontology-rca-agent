@@ -21,6 +21,11 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   any two e2e reports and asserts a change's blast radius: the exactly-improved / exactly-regressed
   sets and an alert's firing scope. Exits 1 when an assertion fails, so "19/20 → 20/20, one case
   changed, 0 regressions, alert fired only there" is one command instead of four claims.
+- `tools/round_candidate_probe.py` — a **pre-publication screen** for candidate rounds: it compares
+  a candidate (a built-in variant or `--candidate-records`) against the parent on three fixed input
+  sets — the 21 scenarios in their offline form, the held-out exam (observed, never tuned on), and
+  the archived real alert texts (strict hits). **Any regression exits 1**, so a candidate that would
+  make things worse is stopped before a round is opened rather than after it is published.
 - `tools/incident_heldout_eval.py` — turns the RCA evidence inbox
   (`<workspace>/rca_evidence_inbox.jsonl`, written since evidence injection stopped touching the
   active ontology) into a **retained evaluation set**: recorded vs recomputed conclusion (knowledge
@@ -129,6 +134,29 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   now corrected. Every touched script was re-run; 18 executed clean, 1 exceeded its cap, 8 are
   deliberately not executed with the reason recorded
   ([`reports/host_path_regression.json`](reports/host_path_regression.json)).
+
+### Findings — the round-7 candidate, rejected before publication
+
+- **The seventh ontology round was opened and then refused by measurement.** The evolution trigger
+  was due (343 trajectories vs a threshold of 30), and the candidate came from the §11.42 diagnosis:
+  `rc:oom-kill`'s *definition* demands evidence that a kill already happened, while its **term
+  dictionary** still claimed symptom words (`内存压力` / `内存不足` / `内存超限` / `被内核杀死`).
+  Moving those words to `rc:mem-pressure` and adding hypothetical-phrasing negatives measured
+  **worse on two of three fixed input sets**:
+  - 21 scenarios (offline form), engine top-1: 20/21 → **19/21**
+  - held-out exam: 4/10 → 4/10 (unchanged)
+  - archived real alert texts, strict: 19/20 → **17/20**
+
+  The two regressions are both on faults where a kill *did* happen: `app_oom_kill` and
+  `app_memory_stress` were re-judged as `rc:mem-pressure`, because a real kill alert says both
+  "cgroup **oom_kill 计数增加**" and "**内存超限**被内核杀死" — the symptom word is not noise there, so
+  moving it hands the culprit's own evidence to the pressure term.
+  **No version was published** ([`reports/round7_candidate_rejected.json`](reports/round7_candidate_rejected.json)).
+- **This also corrects §11.42**: "the words were tightened in the wrong layer" must not be read as
+  "so go clean the term dictionary". The text plane cannot separate *at risk* from *already
+  happened* no matter how the dictionaries are tuned — the discriminator has to live in the **metric
+  plane** (`increase(cc_container_oom_kill_total[5m])`, which `ontology_v6` already models but the
+  deterministic fast path never reads). That is an engine change, not an ontology round.
 
 ### Findings — discovered while running that regression (all pre-existing)
 

@@ -61,6 +61,7 @@ PAIRS: list[tuple[str, str]] = [
     (".chaos/e2e_postfix_ab.json", "reports/e2e_postfix_ab.json"),
     (".chaos/host_path_regression_final.json", "reports/host_path_regression.json"),
     (".chaos/llm_scripts_regression_final.json", "reports/llm_scripts_regression.json"),
+    (".chaos/round_candidate_probe.json", "reports/round7_candidate_rejected.json"),
 ]
 
 INTERPRETER = re.compile(r"[A-Za-z]:\\+Users\\+[^\"'\\]*?(?:\\[^\"'\\]*?)*?python\.exe")

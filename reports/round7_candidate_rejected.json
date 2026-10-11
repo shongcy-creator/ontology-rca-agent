@@ -1,0 +1,52 @@
+{
+  "parent_version": "ontology_v6",
+  "candidate": "term-layer-move",
+  "report": "<repo>\\reports\\rca_diagnosis_report.json",
+  "verdicts": [
+    {
+      "set": "catalog21",
+      "parent": 20,
+      "candidate": 19,
+      "delta": -1
+    },
+    {
+      "set": "heldout",
+      "parent": 4,
+      "candidate": 4,
+      "delta": 0
+    },
+    {
+      "set": "report_strict",
+      "parent": 19,
+      "candidate": 17,
+      "delta": -2
+    }
+  ],
+  "catalog_misses": {
+    "parent": [
+      "res_cluster_memory"
+    ],
+    "candidate": [
+      "app_memory_stress",
+      "res_cluster_memory"
+    ]
+  },
+  "changed_on_real_inputs": [
+    [
+      "app_memory_stress",
+      "rc:oom-kill",
+      "rc:mem-pressure"
+    ],
+    [
+      "app_oom_kill",
+      "rc:oom-kill",
+      "rc:mem-pressure"
+    ],
+    [
+      "res_cluster_memory",
+      "rc:oom-kill",
+      "rc:mem-pressure"
+    ]
+  ],
+  "reject": true
+}
