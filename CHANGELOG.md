@@ -69,6 +69,30 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- **`db_conn_saturation` was unmeasurable because the fault blinded its own monitoring.** Two
+  independent defects, both found by measuring instead of assuming:
+  1. *Sizing.* Injecting 170 long-lived connections peaked at **197/200**, so the mysqld exporter's own
+     scrape connection was refused: `mysql_up` → 0, a **false `MySQLDown` (P0)** fired, and
+     `mysql_global_*` went stale — leaving `MySQLTooManyConnections` **impossible to evaluate**
+     (`alert_coverage: False`, text fell back to "监控无对应告警"). The default is now **150**
+     (measured **179/200 = 0.895**, above the 0.85 threshold, leaving **21 slots** for the exporter and
+     for recovery). Re-measured in isolation: only the declared alerts fire, **no `MySQLDown`**, and the
+     engine answers `rc:conn-exhaust` (strict hit).
+  2. *Alert text.* `collect_alerts()` read `/api/v1/rules`, whose annotations are **unrendered rule
+     templates**, so the engine was handed `MySQL 实例 {{ $labels.instance }} 不可用` — no node identity
+     plus template noise. It now reads `/api/v1/alerts` (instantiated alerts: real labels, substituted
+     annotations), and the report records `instance`/`db_role` alongside a rendered summary.
+  The **0.85 threshold was not the problem and is unchanged** — the earlier "阈值贴边" explanation for
+  this scenario was incomplete, and the rule comments now carry the measured reality (including that a
+  simultaneous occupancy alert means the *exporter* was refused, not the database).
+  **Measured after the fix** (full 21-scenario run, console disabled, guard reporting no
+  interference): 21/21 injected, **alert coverage 21/21** (the database layer went 8/9 → 9/9),
+  21/21 diagnosed, 21/21 recovered, 0 tokens — and **strict 21/21 with nothing excluded from the
+  denominator**, the scenario itself answering `rc:conn-exhaust`
+  ([`reports/rca_diagnosis_report_connfix.json`](reports/rca_diagnosis_report_connfix.json)).
+  Only two cases differ from the previous full run: `db_conn_saturation` (unmeasurable →
+  `rc:conn-exhaust`) and `db_replica_kill` (now the more specific `rc:db-replica-loss`, also in its
+  expected set — a direct consequence of the alert text finally carrying the real node identity).
 - **A sweep now refuses to be counted when something else moved the cluster.** The end-to-end
   harness checks, right before it calls the agent, that the *only* active fault is the one it
   injected itself (`interference.expected_active` vs `observed_active`). On a mismatch it warns,

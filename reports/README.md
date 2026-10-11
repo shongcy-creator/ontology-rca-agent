@@ -27,7 +27,8 @@
 | [`llm_scripts_regression.json`](llm_scripts_regression.json) | 6 个会真实调 LLM 的脚本实跑（用户授权；真实消耗） | `python tools/...`（6 个脚本逐个跑，见文件内 `results`） | 4/6 退出码 0；自报总量 127,650 tokens；两个非 0 都是既有问题（坏 key 用例不封闭、过期容器名） |
 | [`round7_candidate_rejected.json`](round7_candidate_rejected.json) | 第 7 轮候选 patch 的**开轮次前筛**（父 v6 vs 候选，三套固定输入） | `python tools/round_candidate_probe.py` | **REJECT**：21 场景 20/21→19/21、归档严格 19/20→**17/20**；因此**没有开这一轮、没有发布版本** |
 | [`rca_retest_metric_discriminator.json`](rca_retest_metric_discriminator.json) | 指标平面 OOM 判别器上线后的真机两场景复测 | `python tools/cluster_rca_verify.py app_oom_kill app_memory_stress --no-settle --json-out .chaos/rca_retest_metric_discriminator.json` | `app_oom_kill → rc:oom-kill`（严格命中）；`app_memory_stress → rc:mem-pressure` |
-| [`rca_diagnosis_report_discriminator.json`](rca_diagnosis_report_discriminator.json) | **全量 21 场景真机重跑**（指标判别器 + 标签修正之后；期间控制台停用，无外部注入） | `python tools/cluster_rca_verify.py --json-out .chaos/rca_diagnosis_report_discriminator.json` | 注入 21/21、恢复 21/21、覆盖 20/21、**严格 20/20**、0 token；相对上一轮**只变 1 例**：`app_memory_stress` `rc:oom-kill` → `rc:mem-pressure`（`app_oom_kill` 仍 `rc:oom-kill`） |
+| [`rca_diagnosis_report_discriminator.json`](rca_diagnosis_report_discriminator.json) | 全量 21 场景真机重跑（指标判别器 + 标签修正之后；期间控制台停用，无外部注入） | `python tools/cluster_rca_verify.py --json-out .chaos/rca_diagnosis_report_discriminator.json` | 注入 21/21、恢复 21/21、覆盖 20/21、**严格 20/20**、0 token；相对上一轮**只变 1 例**：`app_memory_stress` `rc:oom-kill` → `rc:mem-pressure`（`app_oom_kill` 仍 `rc:oom-kill`） |
+| [`rca_diagnosis_report_connfix.json`](rca_diagnosis_report_connfix.json) | **最新全量 21 场景真机跑批**（`db_conn_saturation` 变得可测之后；期间控制台停用、无外部注入） | `python tools/cluster_rca_verify.py --json-out .chaos/rca_diagnosis_report_connfix.json` | 注入 21/21、**告警覆盖 21/21（100%）**、诊断 21/21、恢复 21/21、0 token、**外部干扰：无**；**严格 21/21（分母 21，不再剔除任何场景）** |
 
 ## 发布与核对（工具）
 
@@ -70,5 +71,10 @@
   相对上一轮只变 1 例）。
   `tools/ontology_ab_replay.py --current-labels` 可用今天的标签重算历史运行；
   默认仍用报告里记录的标签，以保证历史 A/B 前后自洽。
+- **不再有"不可测量"场景**：`db_conn_saturation` 此前被剔除出分母，真因是**故障把自己的监控搞瞎**
+  （注入 170 条连接把 200 个槽位占到 197 → exporter 抓取连接被拒 → 误报 `MySQLDown`、
+  占用率指标变陈旧 → 声明的告警无法评估），叠加**告警文本取的是未渲染规则模板**。
+  两处修好后最新全量跑批 **告警覆盖 21/21、严格 21/21（分母 21）**
+  （[`rca_diagnosis_report_connfix.json`](rca_diagnosis_report_connfix.json)）。
 - 阈值/窗口等判据的变更都必须走 `tools/evolve_ontology_cluster.py` 的版本化轮次 + 闸门，
   不接受「为了让检查变绿」而直接改数字。
