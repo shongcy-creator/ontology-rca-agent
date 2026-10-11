@@ -186,8 +186,8 @@ def build_rca_markdown(result):
         lines.append("2. **5min**: 临时扩容连接池 poolLimit=20")
         lines.append("3. **1h**: 为 t_txn.customer_id 添加索引 idx_txn_customer_id")
     elif rc and rc.get("category") == "资源":
-        lines.append("1. **立即**: docker stats cc-credit-card-app")
-        lines.append("2. **立即**: docker logs cc-credit-card-app --tail 50")
+        lines.append("1. **立即**: docker stats <应用副本容器名>（payment-app 为多副本，先 `docker ps` 取名字）")
+        lines.append("2. **立即**: docker inspect --format 'OOMKilled/RestartCount' <应用副本容器名>")
         lines.append("3. **5min**: 若 OOM，增加容器内存限制")
     else:
         lines.append("1. 查看 Prometheus 仪表板")

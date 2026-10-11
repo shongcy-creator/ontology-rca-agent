@@ -8,6 +8,7 @@
 from __future__ import annotations
 import asyncio
 import json
+import os
 import shutil
 from typing import Any, Dict, List, Optional
 
@@ -15,6 +16,21 @@ from .base import ToolResult, ToolSpec, ToolSecurityError
 
 # 允许的只读子命令
 ALLOWED_SUBCOMMANDS = {"ps", "inspect", "logs", "stats", "version", "info"}
+
+#: 应用是多副本部署 —— 容器名从部署环境派生，不在工具里写死。
+#: 踩过的坑：schema 的示例值写着**集群化之前**的 `cc-credit-card-app`，
+#: 而实际容器是 `<项目>-<service>-<序号>`；LLM 照示例调用只能拿到
+#: "no such object"，然后返回空结果（实测见 reports/llm_scripts_regression.json）。
+_APP_SERVICE = os.environ.get("RCA_APP_SERVICE", "payment-app")
+_APP_REPLICAS = os.environ.get("RCA_APP_REPLICAS", "3")
+_APP_GATEWAY = os.environ.get("RCA_APP_GATEWAY", "cc-app-gateway")
+
+_CONTAINER_DESC = (
+    "容器名（需与 docker ps 的输出**完全一致**）。应用为多副本部署：%s 共 %s 个副本，"
+    "名字形如 `<compose项目>-<service>-<序号>`；网关容器为 %s。"
+    "不确定名字时先调 env_containers 列出全部容器。"
+    % (_APP_SERVICE, _APP_REPLICAS, _APP_GATEWAY)
+)
 
 # 容器名白名单字符（防止参数注入）
 _SAFE_NAME = __import__("re").compile(r"^[A-Za-z0-9][A-Za-z0-9_.\-]{0,80}$")
@@ -88,11 +104,28 @@ async def _env_containers(args: Dict[str, Any]) -> ToolResult:
     )
 
 
+async def _available_names() -> List[str]:
+    """当前全部容器名（用于"名字不存在"时给出可选项，而不是让调用方空手而归）。"""
+    try:
+        code, out, _err = await _run_docker(["ps", "-a", "--format", "{{.Names}}"], timeout=10)
+    except Exception:  # noqa: BLE001
+        return []
+    if code != 0:
+        return []
+    return [n.strip() for n in out.splitlines() if n.strip()]
+
+
 async def _env_container_inspect(args: Dict[str, Any]) -> ToolResult:
     name = _check_name(args.get("container") or "")
     code, out, err = await _run_docker(["inspect", name], timeout=15)
     if code != 0:
-        return ToolResult.fail("inspect 失败: %s" % err.strip()[:200])
+        # 失败时把**可用容器名**一并返回：只回一句 "no such object" 的话，
+        # LLM 无从自我纠正（实测就是拿着过期示例名调用 → 空结果）。
+        avail = await _available_names()
+        hint = ("可用容器：%s" % ", ".join(avail[:15])) if avail \
+            else "（env_containers 也取不到列表）"
+        return ToolResult.fail("inspect 失败: %s；容器名需完全匹配。%s"
+                               % (err.strip()[:160], hint))
 
     try:
         data = json.loads(out)
@@ -312,7 +345,7 @@ ENV_TOOLS = [
         ),
         parameters={
             "type": "object",
-            "properties": {"container": {"type": "string", "description": "容器名，如 cc-credit-card-app"}},
+            "properties": {"container": {"type": "string", "description": _CONTAINER_DESC}},
             "required": ["container"],
         },
         handler=_env_container_inspect,

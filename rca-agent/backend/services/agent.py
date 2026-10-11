@@ -140,7 +140,7 @@ SYSTEM_PROMPT = """你是信用卡支付系统的资深 SRE，负责生产故障
 
 拓扑分层：
   应用层    : app:payment-app（支付交易应用 v1.8.2）, fn:auth, api:auth
-  运行环境层: env:container（容器 cc-credit-card-app）→ env:host-wsl（Docker Desktop WSL2）→
+  运行环境层: env:container（应用容器：payment-app 多副本 + 网关 cc-app-gateway）→ env:host-wsl（Docker Desktop WSL2）→
              env:host-phys（物理机「遥遥领先」）
   数据库层  : db:mysql-core（MySQL 8.0, max_connections=200）
              ds:pay（连接池, poolLimit=10）

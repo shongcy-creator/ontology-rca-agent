@@ -48,6 +48,24 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- **The environment tools no longer point at the pre-cluster container.**
+  `env_container_inspect`'s schema advertised `cc-credit-card-app` (the single-container name from
+  before the cluster rounds), and a failed lookup answered with a bare `no such object: …` — so an
+  agent calling the tool with its own example argument got nothing and could not self-correct. That
+  was one of the two failures in the LLM regression. Now:
+  - the `container` description is derived from the deployment env (`RCA_APP_SERVICE` /
+    `RCA_APP_REPLICAS` / `RCA_APP_GATEWAY`) and points the caller at `env_containers` when unsure;
+  - a miss returns the **available container names** instead of just `no such object`;
+  - the agent's domain-knowledge prompt and the "资源" remediation suggestions no longer name the old
+    container;
+  - `tools/agent_tools_verify.py` resolves its target from `env_containers` rather than hardcoding a
+    name.
+
+  Verified: `tools/agent_tools_verify.py` → **42 passed / 0 failed** (was 39/2), invocation summary
+  `invoked=24 ok=24 fail=0`, auto-selected `rca-agent-payment-app-1`; the schema served by the running
+  backend matches too. `tools/init_evo_ontology.py` still names `cc-credit-card-app` **on purpose** —
+  it seeds `ontology_v0` from the legacy `demo/topology-snapshot.json`, so those strings are
+  provenance, not stale runtime references.
 - **RCA evidence injection no longer switches the active ontology.**
   `RCAEngine._inject_evidence()` used to load `ontology_v0`, append the evidence record, save it as
   `ontology_v0-rca-agent` and call `SemanticStore.set_active(...)` — so a single

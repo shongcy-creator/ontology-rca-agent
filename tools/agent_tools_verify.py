@@ -144,21 +144,32 @@ async def main():
     r = await run_tool(reg, "env_containers")
     print("     %s" % r.summary[:160])
     check("env_containers ok", r.ok, r.error)
+    names = []
     if r.ok:
-        check("found containers", len(r.data.get("containers", [])) >= 5,
-              len(r.data.get("containers", [])))
+        names = [c.get("name", "") for c in (r.data or {}).get("containers", [])]
+        check("found containers", len(names) >= 5, len(names))
 
-    r = await run_tool(reg, "env_container_inspect", {"container": "cc-credit-card-app"})
-    print("     %s" % r.summary[:150])
-    check("env_container_inspect ok", r.ok, r.error)
-    if r.ok:
-        check("inspect env redacted",
-              all("***" in e for e in r.data.get("env", []) if "PASSWORD" in e.upper()),
-              r.data.get("env"))
+    # 目标容器名**从实际列表里取**，不写死：应用是多副本部署，名字随
+    # compose 项目 / service / 序号变化。这里曾经写死 `cc-credit-card-app`
+    # —— 那是**集群化之前**的单容器名，于是 inspect 必然 no such object，
+    # 而当时工具只回一句 "no such object"，两个断言就这么红了
+    # （见 reports/llm_scripts_regression.json）。
+    target = next((n for n in names if "payment-app" in n), None) or (names[0] if names else "")
+    if not target:
+        check("env_container_inspect ok", False, "env_containers 未返回容器名，无法选定目标")
+    else:
+        r = await run_tool(reg, "env_container_inspect", {"container": target})
+        print("     target=%s" % target)
+        print("     %s" % r.summary[:150])
+        check("env_container_inspect ok", r.ok, r.error)
+        if r.ok:
+            check("inspect env redacted",
+                  all("***" in e for e in r.data.get("env", []) if "PASSWORD" in e.upper()),
+                  r.data.get("env"))
 
-    r = await run_tool(reg, "env_container_logs", {"container": "cc-credit-card-app", "tail": 30})
-    print("     %s" % r.summary[:140])
-    check("env_container_logs ok", r.ok, r.error)
+        r = await run_tool(reg, "env_container_logs", {"container": target, "tail": 30})
+        print("     %s" % r.summary[:140])
+        check("env_container_logs ok", r.ok, r.error)
 
     r = await run_tool(reg, "env_container_stats")
     print("     %s" % r.summary[:140])
