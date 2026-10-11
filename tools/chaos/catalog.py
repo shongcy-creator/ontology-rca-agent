@@ -1149,12 +1149,16 @@ _register(Fault(
 _register(Fault(
     id="db_conn_saturation", layer="database", category="配置",
     title="耗尽 MySQL max_connections（连接数打满）",
-    description="持续建立并持有大量空闲连接，直到 threads_connected 逼近 "
-                "max_connections=200；后续新连接被直接拒绝（Too many connections）。",
+    description="持续建立并持有大量连接，把 threads_connected 推到 max_connections 的 "
+                "≈90%（越过 85% 告警阈值，new connection 排队/被拒）。"
+                "⚠ 刻意**保留 ≥15 个空闲槽位**：若把 200 个槽位占满，"
+                "mysqld_exporter 自己的抓取连接也会被拒 → `mysql_up=0` → 误报 `MySQLDown`(P0)，"
+                "同时 `mysql_global_*` 指标变陈旧，**真正该响的占用率告警反而无法评估**"
+                "（实测：注入 170 → 峰值 197/200，全量跑批里正是这样变成 `alert_coverage=False`）。",
     inject=_db_conn_saturation_inject, recover=_db_conn_saturation_recover,
     selector="mysql-primary",
-    default_params={"connections": 170},
-    params_help={"connections": "持有的连接数"},
+    default_params={"connections": 150},
+    params_help={"connections": "持有的连接数（应用自身约 27，合计需 <185 以留出导出器余量）"},
     signals=[
         'mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85',
     ],

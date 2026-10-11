@@ -292,7 +292,7 @@ groups:
           description: "mysql_up=0（instance={{ $labels.instance }}, db_role={{ $labels.db_role }}）。主库不可用 → 写路径全部失败、复制中断；只读副本不可用 → 写路径正常，仅读容量下降"
           # ⚠ 用 db_role（值为 primary/replica）而不是 db_node（值为 primary/replica-1/replica-2）
           # —— db_node 带序号，写死 `db_node=replica` 匹配不到任何序列（实测 0 条）。
-          rca_hint: "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果是读容量下降与复制滞后"
+          rca_hint: "MySQL 实例 {{ $labels.instance }} 不可用（mysql_up=0，db_role={{ $labels.db_role }}）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；**但若同时伴随连接占用率极高（`MySQLTooManyConnections`），更可能是连接耗尽把导出器自己的抓取连接也拒了，此时库其实还活着**（实测：注入占满 197/200 时 `mysql_up=0` 而库正常）。若 db_role=replica：写路径正常，这是**只读副本 {{ $labels.instance }} 不可用/副本丢失**，后果是读容量下降与复制滞后"
 
   # ── 数据库层：容量与性能 ──────────────────────────────────────────────
   - name: cc-db-alerts
@@ -311,11 +311,17 @@ groups:
         annotations:
           summary: "MySQL {{ $labels.instance }} 连接数接近 max_connections"
           # 阈值 0.85 的依据（原来是 0.9，**恰好压在故障量级上**）：
-          # max_connections=200，本场景注入 170 个长连接，加应用自身连接 ≈180，
-          # 180/200 = 0.90 → `> 0.9` 不成立，告警**在故障期反而不响**
-          # （实测 alert_coverage=False；同类"阈值贴边"缺陷见验证手册 §11.21 第 2d 项）。
-          # 0.85 对应 >170 个连接：注入本身就已越过，且离空闲基线（~37/200=0.19）很远。
-          description: "占用率 {{ $value | humanizePercentage }}（阈值 85%；空闲基线约 19%）"
+          # 0.85 对应 >170/200；空闲基线约 27/200=0.135，离得很远。
+          #
+          # ⚠ 2026-10-11 实测更正：**这个阈值不是本场景不可测量的原因**。
+          # 单场景隔离跑（注入 170 个长连接）实测占用率 0.985、`mysql_up` 全程 =1，
+          # 本告警 pending → firing（约在 +150s，即 for: 2m 之后），覆盖正常。
+          # 全量跑批里它反而不响，真因在**注入量把 200 个槽位占满（峰值 197）**：
+          # mysqld_exporter 自己的抓取连接被拒 → `mysql_up=0` → 误报 `MySQLDown`(P0)，
+          # 且 `mysql_global_*` 变陈旧 → 本告警**无法评估**（= alert_coverage: False）。
+          # 修法见 tools/chaos/catalog.py：注入量降到 150（合计 ≈180/200，占用率 ≈0.90），
+          # 刻意留 ≥15 个空闲槽位给导出器与运维查询。
+          description: "占用率 {{ $value | humanizePercentage }}（阈值 85%；空闲基线约 13.5%）"
           rca_hint: "MySQL 连接数逼近/耗尽 max_connections（占用率 > 85%）—— 连接池排队、新连接被拒，写路径与查询延迟同时上升"
 
       # 连接被拒：连接数打满后的直接后果

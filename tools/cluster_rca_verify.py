@@ -118,37 +118,42 @@ def max_alert_for_seconds(default: float = 180.0) -> float:
 
 def collect_alerts() -> Dict[str, Any]:
     """
-    读取 Prometheus 规则状态，收集 firing/pending 告警及其 rca_hint。
+    收集 firing/pending 告警及其 rca_hint。
 
-    返回 {"hints": [...], "alerts": [{name,state,severity,hint,value,constraint}]}
+    返回 {"hints": [...], "alerts": [{name,state,severity,hint,value,constraint,instance,...}]}
+
+    ⚠ 用 `/api/v1/alerts` 而**不是** `/api/v1/rules`。
+    踩过的坑（实测于 `db_conn_saturation`）：`/api/v1/rules` 返回的是规则定义，
+    其中的 annotation 是**未渲染的 Go 模板**，于是喂给引擎的文本里是
+    `MySQL 实例 {{ $labels.instance }} 不可用` —— 既没有真实节点名（诊断时无法区分主库/副本），
+    又混进了模板噪声。`/api/v1/alerts` 返回的是**已实例化的告警**：
+    `labels`（instance/db_role/severity…）与 `annotations`（`{{ }}` 已替换）都是实际值。
+    两者都只列 firing/pending，所以信息量只增不减。
     """
-    st, body = http_json(PROM + "/api/v1/rules", timeout=20)
+    st, body = http_json(PROM + "/api/v1/alerts", timeout=20)
     out: List[Dict[str, Any]] = []
     if st == 200 and isinstance(body, dict):
-        for g in (body.get("data") or {}).get("groups") or []:
-            for r in g.get("rules") or []:
-                if r.get("type") != "alerting":
-                    continue
-                state = r.get("state") or "inactive"
-                if state not in ("firing", "pending"):
-                    continue
-                labels = r.get("labels") or {}
-                ann = r.get("annotations") or {}
-                val = ""
-                try:
-                    val = str((r.get("alerts") or [{}])[0].get("value", ""))
-                except Exception:  # noqa: BLE001
-                    pass
-                out.append({
-                    "name": r.get("name"),
-                    "state": state,
-                    "severity": labels.get("severity", ""),
-                    "layer": labels.get("layer", ""),
-                    "onto_constraint": labels.get("onto_constraint", ""),
-                    "hint": ann.get("rca_hint", ""),
-                    "summary": ann.get("summary", ""),
-                    "value": val[:40],
-                })
+        for a in (body.get("data") or {}).get("alerts") or []:
+            state = a.get("state") or "inactive"
+            if state not in ("firing", "pending"):
+                continue
+            labels = a.get("labels") or {}
+            ann = a.get("annotations") or {}
+            out.append({
+                "name": labels.get("alertname") or a.get("name"),
+                "state": state,
+                "severity": labels.get("severity", ""),
+                "layer": labels.get("layer", ""),
+                "onto_constraint": labels.get("onto_constraint", ""),
+                "hint": ann.get("rca_hint", ""),
+                "summary": ann.get("summary", ""),
+                # 实例身份：文本模板渲染后仍可能只写"实例不可用"，
+                # 这里把结构化标签一并留下，便于报告里核对"到底哪个节点"。
+                "instance": labels.get("instance", ""),
+                "db_role": labels.get("db_role", ""),
+                "active_at": str(a.get("activeAt") or "")[:32],
+                "value": str((a.get("value") or ""))[:40],
+            })
     order = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
     out.sort(key=lambda a: (order.get(a["severity"], 9), 0 if a["state"] == "firing" else 1))
     hints = [a["hint"] for a in out if a.get("hint")]
