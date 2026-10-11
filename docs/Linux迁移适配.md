@@ -58,6 +58,26 @@
 `:z` 在非 SELinux 宿主（Debian/Ubuntu）与 Windows Docker Desktop 上都是 **no-op**，
 因此这一改动是"加兼容"而非"换行为"。
 
+> ⚠ **2026-10-11 更正（实测踩到）**：上面这句"在 Windows 上是 no-op"**只对 `:ro,z` 成立**。
+> 在 Windows + **Docker Compose v5.5.1** 上，**裸 `,z`（不带 `ro`/`rw`）会被解析成目标路径的一部分**：
+> `./backend:/app/backend,z` → `target: /app/backend,z`（用
+> `docker compose config --format json` 可复现）。后果很隐蔽：真正的 `/app/backend` 仍是**镜像里的
+> 烘焙副本**，于是 `docker compose up` 重建后的容器**跑着旧代码却报 healthy** —— 实测表现为
+> 诊断接口返回 `root_cause: null`（新增的 `metric_discriminator` 不在镜像里）。
+> 因此 `./backend`、`../.evoontology`、`../.chaos` 三处已改为**长语法**：
+>
+> ```yaml
+> - type: bind
+>   source: ../.evoontology
+>   target: /app/.evoontology
+>   bind:
+>     selinux: z
+> ```
+>
+> 长语法无歧义，且 `bind.selinux: z` **仍然保留** Linux 需要的标签；`:ro,z` 形式解析正常，未改动。
+> **重建任何服务后，请核对目标路径不带 `,z` 后缀**（`docker compose config --format json`）。
+
+
 > 踩坑记录：第一版脚本的跳过清单里**误加了 `monitoring/prometheus/prometheus.yml`**，
 > 导致它漏加 `:z`。是靠"逐行打印改动后的挂载列表"发现的 —— 迁移类批量替换**必须回读结果**，
 > 不能只看"处理了 N 处"。

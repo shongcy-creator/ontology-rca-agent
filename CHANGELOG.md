@@ -69,6 +69,19 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- **`docker compose` was silently running the image's baked code instead of the host mounts.**
+  On this host with Compose **v5.5.1**, the short-syntax volume `./backend:/app/backend,z` is parsed
+  as `target: /app/backend,z` (verified with `docker compose config --format json`): the bare `,z`
+  label becomes part of the **path**, so the real `/app/backend` stays the copy baked into the image
+  and the container runs **stale code while reporting `healthy`**. It bit a re-run —
+  `POST /api/agent/diagnose` returned `root_cause: null` because the newly added
+  `metric_discriminator` was missing from the image. Evidence: the container's mount table showed
+  `D:\ on /app/backend,z`; `grep -c metric_discriminator /app/backend/services/rca_engine.py` read
+  **0 before** and **7 after** the fix; `/app/backend/services` went 13 → 18 files.
+  The three bare-`,z` mounts now use **long syntax** (`type: bind` + `bind.selinux: z`), which is
+  unambiguous and keeps the SELinux label the Linux migration needs (`:ro,z` parses correctly and is
+  unchanged). Every mount is verified by rendering the config and checking the targets. Anyone
+  recreating services with this CLI should check for a `,z` suffix on the target.
 - **The environment tools no longer point at the pre-cluster container.**
   `env_container_inspect`'s schema advertised `cc-credit-card-app` (the single-container name from
   before the cluster rounds), and a failed lookup answered with a bare `no such object: …` — so an
@@ -178,6 +191,22 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `restart_count = 1` is the documented sticky residue from an earlier kill (the counter never
   resets). **No ground truth was edited**: correcting `app_memory_stress` to accept
   `rc:mem-pressure` is a benchmark decision, reported here and left pending.
+
+### Findings — two measurement attempts were invalidated before one could be trusted
+
+- **The fault-injection console was driving the same cluster while a sweep was measuring it.**
+  The backend log shows write calls from the browser side (via the frontend container):
+  `172.18.0.11 POST /api/chaos/recover` at 11:32:42 and `POST /api/chaos/inject` at 11:33:31 — i.e.
+  it **rolled back a fault the sweep was holding** — plus another `app_gateway_stop` injection at
+  11:56 while the backend was being repaired. Two sweeps were **killed rather than reported**
+  (the harness injects docker-direct and never creates console jobs, so the two drivers were
+  independent). The console was then disabled for the duration with the documented kill switch
+  (`CHAOS_UI_ENABLED=0`, write endpoints return 503, `{"busy": false, "jobs": []}`), and the restart
+  of the sweep picks up and cleans any residual fault before it settles.
+- **A sweep can look healthy while measuring nothing.** The stale-code bug above produced a run whose
+  first scenario reported `ok=False, root=-` in 2.5 s; the honest response was to stop it (the third
+  start, after the mount fix, produced `rc:cpu-throttle` in 3.3 s and a normal 380 s scenario).
+  Both stops are recorded here rather than being counted as results.
 
 ### Findings — a benchmark label was corrected by evidence (and the offline criteria's boundary is now explicit)
 

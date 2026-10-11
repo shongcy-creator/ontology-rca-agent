@@ -427,10 +427,24 @@ services:
       # 可选访问令牌：非空时所有写操作必须带 X-Chaos-Token 头
       CHAOS_API_TOKEN: ${CHAOS_API_TOKEN:-}
     volumes:
-      # 后端代码（开发时热更新）
-      - ./backend:/app/backend,z
-      # 共享 EvoOntology 本体工作区（读写）
-      - ../.evoontology:/app/.evoontology,z
+      # 后端代码（开发时热更新）。
+      # ⚠ 这里刻意用**长语法**：短语法里的裸 `,z`（不带 ro/rw）会被 Compose 解析成
+      # **目标路径的一部分** —— 实测 Docker Compose v5.5.1 把 `./backend:/app/backend,z`
+      # 解析为 `target: /app/backend,z`，于是真正的 `/app/backend` 仍是**镜像里的烘焙副本**，
+      # 容器静默地跑着旧代码（而 health/日志一切正常）。长语法没有歧义，
+      # 同时用 `bind.selinux: z` 保留 Linux(RHEL 系) 需要的 SELinux 标签。
+      - type: bind
+        source: ./backend
+        target: /app/backend
+        read_only: true
+        bind:
+          selinux: z
+      # 共享 EvoOntology 本体工作区（**读写**：引擎会写证据/版本）
+      - type: bind
+        source: ../.evoontology
+        target: /app/.evoontology
+        bind:
+          selinux: z
       # 共享 EvoOntology Python 包（只读）
       - ../vendor/EvoOntology:/app/vendor/EvoOntology:ro,z
       # Docker socket（只读诊断用；环境层工具通过 docker CLI 访问）
@@ -439,7 +453,11 @@ services:
       # tools/ 只读：与宿主机 CLI 共用同一套场景目录，避免两份漂移
       - ../tools:/app/tools:ro,z
       # .chaos/ 读写：状态文件必须与宿主机 CLI 共享，否则 UI 与 CLI 看到不同的激活故障
-      - ../.chaos:/app/.chaos,z
+      - type: bind
+        source: ../.chaos
+        target: /app/.chaos
+        bind:
+          selinux: z
     mem_limit: 512m
     networks:
       - rca-net
