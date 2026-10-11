@@ -65,7 +65,16 @@ SCENARIO_EXPECTED_TERMS: Dict[str, List[str]] = {
     "app_pause_replica":      ["rc:replica-hang", "rc:replica-loss"],
     "app_oom_kill":           ["rc:oom-kill", "rc:replica-loss"],
     "app_cpu_stress":         ["rc:cpu-throttle", "metric:cpu-throttle"],
-    "app_memory_stress":      ["metric:mem-pressure", "rc:oom-kill"],
+    # 「单副本容器内存耗尽（逼近 cgroup 上限，OOM 前兆）」= **压力，没有被杀**：
+    #   · 该场景注入期所有副本 `oom_killed = false`（归档全量与 reports/rca_retest_metric_discriminator.json）；
+    #   · 唯一的 `restart_count = 1` 是上一场故障留下的**粘性残留**（计数器从不清零，手册 §11.21 2e）。
+    # 所以期望根因是 v6 为"压力但未被杀"新增的 `rc:mem-pressure`，**不是** `rc:oom-kill`。
+    # （原标签容错 `rc:oom-kill`，等于把"已发生"与"有风险"混为一谈；按证据修正于本行。）
+    # ⚠ 后果（如实记录）：本场景**需要指标平面**才能判对
+    #   （`increase(cc_container_oom_kill_total[5m])`，见 backend/services/metric_discriminator.py），
+    #   因此**纯文本回放**（ontology_ab_replay / ontology_scoring_verify 等离线口径）必然把它算作未命中 ——
+    #   那是口径的能力边界，不是引擎退化。真机端到端口径才是它的正确度量。
+    "app_memory_stress":      ["metric:mem-pressure", "rc:mem-pressure"],
     "app_network_delay":      ["rc:net-fault", "metric:net-delay"],
     "app_network_loss":       ["rc:net-fault", "metric:net-loss"],
     "app_gateway_stop":       ["rc:gateway-down"],

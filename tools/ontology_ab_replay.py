@@ -58,8 +58,15 @@ FAMILIES = ("terms", "mappings", "relations", "constraints", "evidence")
 
 # ── 输入：真实告警文本 ─────────────────────────────────────────────────────
 
-def load_inputs(report: Path) -> List[Dict[str, Any]]:
-    """从端到端报告里取"当时真正喂给引擎的告警文本"与期望术语。"""
+def load_inputs(report: Path, prefer_current_labels: bool = False) -> List[Dict[str, Any]]:
+    """
+    从端到端报告里取"当时真正喂给引擎的告警文本"与期望术语。
+
+    `prefer_current_labels=False`（默认）用**报告里记录的** `expected_terms`：
+    这样"同一份归档输入"的前后比较是自洽的（标签没被后来的改动悄悄换掉）。
+    传 True 则改用**当前**的 `SCENARIO_EXPECTED_TERMS` —— 回答的是另一个问题：
+    "这份旧运行，用今天的标签来算，是多少分？"
+    """
     from tools.ontology_cluster_patch import SCENARIO_EXPECTED_TERMS
 
     rep = json.loads(report.read_text(encoding="utf-8"))
@@ -69,12 +76,16 @@ def load_inputs(report: Path) -> List[Dict[str, Any]]:
         if not txt:
             continue
         scen = r.get("scenario")
-        expected = list(r.get("expected_terms") or SCENARIO_EXPECTED_TERMS.get(scen) or [])
+        if prefer_current_labels:
+            expected = list(SCENARIO_EXPECTED_TERMS.get(scen) or [])
+        else:
+            expected = list(r.get("expected_terms") or SCENARIO_EXPECTED_TERMS.get(scen) or [])
         out.append({
             "scenario": scen,
             "alert_text": txt,
             "severity": r.get("severity") or "P1",
             "expected": expected,
+            "expected_source": "current_labels" if prefer_current_labels else "report_snapshot",
             # 端到端当时"没有告警文本"的场景 = 不可测量（占位文本），单列不计分母
             "measurable": r.get("alert_coverage") is not False,
             "e2e_top1": ((r.get("diagnosis_runs") or [{}])[0]).get("root_cause_id"),
@@ -206,17 +217,20 @@ def main(argv: Optional[List[str]] = None) -> int:
                     help="第二份端到端报告：切到「同一本体、两套输入」的成对模式，"
                          "用于验证**改输入**（例如给场景换一条更贴切的告警）带来的变化")
     ap.add_argument("--top-k", type=int, default=5, dest="top_k")
+    ap.add_argument("--current-labels", action="store_true", dest="current_labels",
+                    help="用**当前**的 SCENARIO_EXPECTED_TERMS 给归档输入打分"
+                         "（默认用报告里记录的标签，保证同一份归档输入的前后比较自洽）")
     ap.add_argument("--json-out", default=str(ROOT / ".chaos" / "ontology_ab_replay.json"))
     args = ap.parse_args(argv)
 
-    inputs = load_inputs(Path(args.report))
+    inputs = load_inputs(Path(args.report), prefer_current_labels=args.current_labels)
     if not inputs:
         print("报告里没有可回放的 alert_text", file=sys.stderr)
         return 2
 
     # ── 模式 B：同一本体 + 两套输入（改的是输入，不是知识）────────────────
     if args.report_b:
-        inputs_b = load_inputs(Path(args.report_b))
+        inputs_b = load_inputs(Path(args.report_b), prefer_current_labels=args.current_labels)
         if not inputs_b:
             print("第二份报告里没有可回放的 alert_text", file=sys.stderr)
             return 2

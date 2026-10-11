@@ -5,29 +5,41 @@
   "verdicts": [
     {
       "set": "catalog21",
-      "parent": 20,
-      "candidate": 19,
-      "delta": -1
+      "parent": 19,
+      "candidate": 20,
+      "delta": 1,
+      "regressed_cases": [],
+      "improved_cases": [
+        "app_memory_stress"
+      ]
     },
     {
       "set": "heldout",
       "parent": 4,
       "candidate": 4,
-      "delta": 0
+      "delta": 0,
+      "regressed_cases": [],
+      "improved_cases": []
     },
     {
       "set": "report_strict",
-      "parent": 19,
-      "candidate": 17,
-      "delta": -2
+      "parent": 18,
+      "candidate": 18,
+      "delta": 0,
+      "regressed_cases": [
+        "app_oom_kill"
+      ],
+      "improved_cases": [
+        "app_memory_stress"
+      ]
     }
   ],
   "catalog_misses": {
     "parent": [
+      "app_memory_stress",
       "res_cluster_memory"
     ],
     "candidate": [
-      "app_memory_stress",
       "res_cluster_memory"
     ]
   },
@@ -46,6 +58,12 @@
       "res_cluster_memory",
       "rc:oom-kill",
       "rc:mem-pressure"
+    ]
+  ],
+  "regressed_cases": [
+    [
+      "report_strict",
+      "app_oom_kill"
     ]
   ],
   "reject": true

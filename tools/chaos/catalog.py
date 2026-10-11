@@ -969,7 +969,9 @@ _register(Fault(
         'max(cc_container_memory_working_set_bytes / (cc_container_memory_limit_bytes > 0)) > 0.8',
     ],
     expected_root_cause="应用副本容器内存不足（内存泄漏/大对象），逼近 cgroup 内存上限",
-    ontology_terms=["app:payment-app", "env:container", "metric:mem-pressure", "rc:oom-kill"],
+    # `rc:mem-pressure`（v6 新增：压力但未被杀）而非 `rc:oom-kill` —— 依据同
+    # ontology_cluster_patch.SCENARIO_EXPECTED_TERMS 的注释：注入期 oom_killed 全 false。
+    ontology_terms=["app:payment-app", "env:container", "metric:mem-pressure", "rc:mem-pressure"],
     alert_names=["AppContainerMemoryPressure"],
     blast_radius="该副本随时被 OOM Kill，进而退化为副本丢失",
 ))

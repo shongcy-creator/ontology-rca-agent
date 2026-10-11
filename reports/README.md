@@ -59,5 +59,13 @@
   **全量重跑已证实**：严格 19/20 → 20/20，逐 case 变化 = 1，回退 0，
   且该告警只在 `res_cluster_memory` 触发（成对分数见 `e2e_postfix_ab.json`，
   真机全量见 `rca_diagnosis_report_postfix.json`）。
+- **一处标签按证据修正过，它带来一个能力边界**：`app_memory_stress` 的期望根因由
+  `rc:oom-kill` 改为 `rc:mem-pressure`（依据：该场景注入期所有副本 `oom_killed = false`，
+  唯一的 `restart_count = 1` 是粘性残留）。该 case **必须走指标平面**才能判对
+  （`increase(cc_container_oom_kill_total[5m])`），因此**纯文本回放口径必然把它算作未命中**：
+  改前归档 **18/20**、改后归档 **19/20**、离线目录形态 **19/21**。
+  **真机（指标感知）端到端**才是它的正确度量。
+  `tools/ontology_ab_replay.py --current-labels` 可用今天的标签重算历史运行；
+  默认仍用报告里记录的标签，以保证历史 A/B 前后自洽。
 - 阈值/窗口等判据的变更都必须走 `tools/evolve_ontology_cluster.py` 的版本化轮次 + 闸门，
   不接受「为了让检查变绿」而直接改数字。

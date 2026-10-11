@@ -179,6 +179,34 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   resets). **No ground truth was edited**: correcting `app_memory_stress` to accept
   `rc:mem-pressure` is a benchmark decision, reported here and left pending.
 
+### Findings — a benchmark label was corrected by evidence (and the offline criteria's boundary is now explicit)
+
+- `app_memory_stress` ("single replica, 200 MB, approaching the limit, OOM *precursor*") had its
+  expected terms set to `{metric:mem-pressure, rc:oom-kill}`. The container evidence says the label
+  was the stale part: during that scenario **every replica reports `oom_killed = false`** (archived
+  full run and this re-test), and the lone `restart_count = 1` is the documented sticky residue from
+  an earlier kill. The label is now `["metric:mem-pressure", "rc:mem-pressure"]`
+  (`tools/ontology_cluster_patch.py`, mirrored in the catalog's `ontology_terms`), with the reasoning
+  written next to it. `rc:oom-kill` was **replaced**, not merely appended — appending it would keep
+  accepting "already happened" as an answer to "was only at risk", which is what the label got wrong.
+- **This exposes a capability boundary worth stating plainly**: the case is *metric-gated*
+  (`increase(cc_container_oom_kill_total[5m])`), so **text-only replays cannot score it by
+  construction**. Under today's labels the replay criteria read:
+  pre-fix archived run **18/20**, post-fix archived run **19/20**, offline catalog form **19/21** —
+  each missing exactly this case (plus, for the pre-fix run, the input-collision case). The
+  metric-aware live e2e is the criterion that can measure it; `tools/ontology_ab_replay.py` gained
+  `--current-labels` so a historical run can be re-scored against today's truth (the default keeps
+  the report's own snapshot labels so historical A/B stays self-consistent).
+- **The round-7 screen was strengthened after this label change found a hole in it.** The screen
+  compared only aggregate deltas, so a candidate that trades one case for another looked neutral.
+  Re-judged under the corrected label, the round-7 candidate indeed *improves* the catalog form
+  (19/21 → 20/21: `app_memory_stress` now matches) while **still breaking `app_oom_kill`** — a
+  genuine kill answered as pressure. Net across the real-input set: 18 → 18, i.e. exactly the
+  zero-sum trade the old judge would have waved through. The screen now compares **per case** and
+  rejects on any hit→miss, which keeps the same verdict (REJECT) for the right reason
+  ([`reports/round7_candidate_rejected.json`](reports/round7_candidate_rejected.json) is the
+  re-measured artifact).
+
 ### Findings — the round-7 candidate, rejected before publication
 
 - **The seventh ontology round was opened and then refused by measurement.** The evolution trigger
