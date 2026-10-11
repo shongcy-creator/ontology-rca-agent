@@ -1,0 +1,479 @@
+{
+  "mode": "deterministic",
+  "hold": 240.0,
+  "stress": "--duration 150 --concurrency 24",
+  "complete": true,
+  "requested": [
+    "app_network_loss",
+    "db_conn_saturation"
+  ],
+  "stopped_by_interference": false,
+  "interference": {
+    "detected": false,
+    "scenarios": []
+  },
+  "observability": {
+    "monitoring_blinded": [],
+    "alert_design_gap": [],
+    "signal_warnings": []
+  },
+  "summary": {
+    "total_scenarios": 2,
+    "not_measurable": 0,
+    "not_measurable_scenarios": [],
+    "measurable_scenarios": 2,
+    "injected_ok": 2,
+    "diagnosed_ok": 2,
+    "diagnosed_ok_all": 2,
+    "diagnosis_accuracy": 1.0,
+    "alert_coverage": 1.0,
+    "recovered_ok": 2,
+    "recovery_rate": 1.0,
+    "by_layer": {
+      "应用层": {
+        "total": 1,
+        "diagnosed": 1,
+        "injected": 1,
+        "recovered": 1,
+        "alert_covered": 1
+      },
+      "数据库层": {
+        "total": 1,
+        "diagnosed": 1,
+        "injected": 1,
+        "recovered": 1,
+        "alert_covered": 1
+      }
+    },
+    "diagnosis_modes": {
+      "deterministic": 2
+    },
+    "mean_diagnosis_latency_ms": 9378.2,
+    "mean_tokens": 0.0
+  },
+  "results": [
+    {
+      "scenario": "app_network_loss",
+      "title": "单副本网络丢包注入（tc netem loss 40%）",
+      "layer": "application",
+      "layer_label": "应用层",
+      "category": "依赖",
+      "expected_root_cause": "应用副本网络丢包严重，链路质量故障",
+      "expected_terms": [
+        "rc:net-fault",
+        "metric:net-loss"
+      ],
+      "alert_names_expected": [
+        "AppReplicaLatencySkew"
+      ],
+      "needs_stress": true,
+      "ok": true,
+      "alerts_pre": [],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "loss_pct": 40
+        },
+        "targets": [
+          "rca-agent-payment-app-1"
+        ],
+        "warning": null,
+        "signal_checks_under_load": [
+          {
+            "ok": true,
+            "expr": "max(probe_duration_seconds{job=\"blackbox-app-replica\"}) > 0.3",
+            "waited_s": 9.1,
+            "result": [
+              {
+                "metric": {},
+                "value": [
+                  1791728254.085,
+                  "1.230849571"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "observability": {
+        "captured_at": "2026-10-11T14:21:34Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.014725151434340372,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.1126556396484375,
+        "mysql_threads_connected": 28.0,
+        "mysql_threads_running": 4.0,
+        "mysql_slow_queries_rate": 0.0,
+        "mysql_row_lock_waits": 15.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 4,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "AppReplicaLatencySkew",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "application",
+          "onto_constraint": "con:app-cpu-throttle",
+          "hint": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+          "summary": "payment-app 存在单副本延迟偏斜（最慢副本 P99 超过最快副本 2 倍）",
+          "instance": "",
+          "db_role": "",
+          "active_at": "2026-10-11T14:17:48.471697636Z",
+          "value": "1.0193679918450556e+02"
+        }
+      ],
+      "alerts_new": [
+        "AppReplicaLatencySkew"
+      ],
+      "alerts_residual": [],
+      "alert_coverage": true,
+      "alert_text": "payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+      "severity": "P2",
+      "interference": {
+        "detected": false,
+        "expected_active": [
+          "app_network_loss"
+        ],
+        "observed_active": [
+          "app_network_loss"
+        ]
+      },
+      "monitoring": {
+        "healthy": true,
+        "issues": []
+      },
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:net-fault",
+          "root_cause_name": "根因：网络延迟/丢包",
+          "root_cause_category": "依赖",
+          "root_cause_confidence": 0.91,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:net-fault"
+          ],
+          "hit_keywords": [
+            "丢包",
+            "网络",
+            "链路"
+          ],
+          "expected_terms": [
+            "rc:net-fault",
+            "metric:net-loss"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:net-fault 且被约束 con:app-cpu-throttle,con:net-quality 支撑，置信度 0.91 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 18727.9,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:net-fault 且被约束 con:app-cpu-throttle,con:net-quality 支撑，置信度 0.91 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "metric_discriminator": {
+            "applicable": false,
+            "rule": "0-not-ambiguous",
+            "winner": null,
+            "why": "候选里没有同时出现 rc:oom-kill / rc:mem-pressure，或 top1 不在两者之中 → 文本打分说了算",
+            "text_hard_evidence": [],
+            "hypothetical_hints": [],
+            "metric_available": null,
+            "metric_expr": null,
+            "metric_window": null,
+            "metric_increase": null,
+            "metric_max_increase": null,
+            "metric_kill_observed": null,
+            "metric_samples": null
+          },
+          "requested_mode": "deterministic",
+          "http_status": 200,
+          "wall_s": 22.0
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<python> <repo>\\tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 334.2,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "rca-agent-payment-app-1"
+            ],
+            "ok": true
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "count(probe_success{job=\"blackbox-app-replica\"} == 0) > 0",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 338.7
+    },
+    {
+      "scenario": "db_conn_saturation",
+      "title": "耗尽 MySQL max_connections（连接数打满）",
+      "layer": "database",
+      "layer_label": "数据库层",
+      "category": "配置",
+      "expected_root_cause": "MySQL 连接资源耗尽（max_connections 打满），新连接被拒绝",
+      "expected_terms": [
+        "rc:conn-exhaust"
+      ],
+      "alert_names_expected": [
+        "MySQLTooManyConnections",
+        "MySQLConnectionRefused",
+        "MySQLThreadsRunningHigh"
+      ],
+      "needs_stress": false,
+      "ok": true,
+      "alerts_pre": [
+        "AppReplicaLatencySkew"
+      ],
+      "inject": {
+        "ok": true,
+        "signal_observed": true,
+        "detail": {
+          "requested": 150,
+          "total_connections": "179",
+          "max_connections": "200"
+        },
+        "targets": [
+          "cc-mysql-core"
+        ],
+        "warning": null
+      },
+      "observability": {
+        "captured_at": "2026-10-11T14:27:33Z",
+        "healthy_app_replicas": 3.0,
+        "app_replicas_total": 3.0,
+        "gateway_probe": 1.0,
+        "replica_probe_failures": null,
+        "p99_seconds": 0.03775002666842452,
+        "http_5xx_rate": 0.0,
+        "pool_active_max": 0.0,
+        "pool_waiting_max": 0.0,
+        "cpu_throttled_rate": 0.0,
+        "container_mem_ratio": 0.11187744140625,
+        "mysql_threads_connected": 178.0,
+        "mysql_threads_running": 154.0,
+        "mysql_slow_queries_rate": 0.0,
+        "mysql_row_lock_waits": 15.0,
+        "replica_lag_max": 0.0,
+        "replica_io_down": null,
+        "tmp_disk_rate": 0.0,
+        "mysql_nodes_up": 3.0,
+        "containers": [
+          {
+            "name": "rca-agent-payment-app-1",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 1,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-2",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 4,
+            "memory_limit_mb": 256.0
+          },
+          {
+            "name": "rca-agent-payment-app-3",
+            "status": "running",
+            "oom_killed": false,
+            "restart_count": 0,
+            "memory_limit_mb": 256.0
+          }
+        ]
+      },
+      "alerts_fired": [
+        {
+          "name": "MySQLTooManyConnections",
+          "state": "firing",
+          "severity": "P1",
+          "layer": "database",
+          "onto_constraint": "con:db-maxconn",
+          "hint": "MySQL 连接数逼近/耗尽 max_connections（占用率 > 85%）—— 连接池排队、新连接被拒，写路径与查询延迟同时上升",
+          "summary": "MySQL primary 连接数接近 max_connections",
+          "instance": "primary",
+          "db_role": "primary",
+          "active_at": "2026-10-11T14:23:33.644409855Z",
+          "value": "8.9e-01"
+        },
+        {
+          "name": "MySQLThreadsRunningHigh",
+          "state": "firing",
+          "severity": "P2",
+          "layer": "database",
+          "onto_constraint": "con:db-maxconn",
+          "hint": "MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+          "summary": "MySQL primary 并发执行线程过高",
+          "instance": "primary",
+          "db_role": "primary",
+          "active_at": "2026-10-11T14:23:33.644409855Z",
+          "value": "1.54e+02"
+        }
+      ],
+      "alerts_new": [
+        "MySQLThreadsRunningHigh",
+        "MySQLTooManyConnections"
+      ],
+      "alerts_residual": [],
+      "alert_coverage": true,
+      "alert_text": "MySQL 连接数逼近/耗尽 max_connections（占用率 > 85%）—— 连接池排队、新连接被拒，写路径与查询延迟同时上升；MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+      "severity": "P1",
+      "interference": {
+        "detected": false,
+        "expected_active": [
+          "db_conn_saturation"
+        ],
+        "observed_active": [
+          "db_conn_saturation"
+        ]
+      },
+      "monitoring": {
+        "healthy": true,
+        "issues": []
+      },
+      "diagnosis_runs": [
+        {
+          "ok": true,
+          "how": "root_cause 精确命中",
+          "partial": true,
+          "root_cause_id": "rc:conn-exhaust",
+          "root_cause_name": "根因：数据库连接资源耗尽",
+          "root_cause_category": "资源",
+          "root_cause_confidence": 0.99,
+          "hit_root_cause_exact": true,
+          "hit_terms_in_text": [
+            "rc:conn-exhaust"
+          ],
+          "hit_keywords": [
+            "连接耗尽",
+            "连接数",
+            "max_connections",
+            "连接资源",
+            "Too many connections"
+          ],
+          "expected_terms": [
+            "rc:conn-exhaust"
+          ],
+          "route_mode": "deterministic",
+          "route_reason": "命中本体已建模根因 rc:conn-exhaust 且被约束 con:conn-exhaust,con:db-cpu-capacity 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论",
+          "mode": "deterministic",
+          "status": "completed",
+          "model": "",
+          "steps_used": 9,
+          "tools_used": [],
+          "total_tokens": 0,
+          "latency_ms": 28.5,
+          "reasoning_summary": "命中已知本体模式（命中本体已建模根因 rc:conn-exhaust 且被约束 con:conn-exhaust,con:db-cpu-capacity 支撑，置信度 0.99 ≥ 放宽门槛 0.75，直接采信确定性结论），确定性引擎直接定论",
+          "metric_discriminator": {
+            "applicable": false,
+            "rule": "0-not-ambiguous",
+            "winner": null,
+            "why": "候选里没有同时出现 rc:oom-kill / rc:mem-pressure，或 top1 不在两者之中 → 文本打分说了算",
+            "text_hard_evidence": [],
+            "hypothetical_hints": [
+              "逼近"
+            ],
+            "metric_available": null,
+            "metric_expr": null,
+            "metric_window": null,
+            "metric_increase": null,
+            "metric_max_increase": null,
+            "metric_kill_observed": null,
+            "metric_samples": null
+          },
+          "requested_mode": "deterministic",
+          "http_status": 200,
+          "wall_s": 3.2
+        }
+      ],
+      "stress": {
+        "ok": true,
+        "rc": 1,
+        "killed": true,
+        "cmd": "<python> <repo>\\tools\\stress_harness.py --quiet --duration 150 --concurrency 24",
+        "elapsed_s": 306.4,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      "recover": {
+        "ok": true,
+        "results": [
+          {
+            "targets": [
+              "cc-mysql-core"
+            ],
+            "ok": true,
+            "detail": {
+              "killed_processes": 151,
+              "killed_sessions": 150,
+              "connections_left": "29"
+            }
+          }
+        ]
+      },
+      "recovery_checks": [
+        {
+          "ok": true,
+          "expr": "mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85",
+          "waited_s": 2.1,
+          "result": []
+        }
+      ],
+      "recovered": true,
+      "elapsed_s": 347.2
+    }
+  ]
+}

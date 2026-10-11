@@ -29,6 +29,7 @@
 | [`rca_retest_metric_discriminator.json`](rca_retest_metric_discriminator.json) | 指标平面 OOM 判别器上线后的真机两场景复测 | `python tools/cluster_rca_verify.py app_oom_kill app_memory_stress --no-settle --json-out .chaos/rca_retest_metric_discriminator.json` | `app_oom_kill → rc:oom-kill`（严格命中）；`app_memory_stress → rc:mem-pressure` |
 | [`rca_diagnosis_report_discriminator.json`](rca_diagnosis_report_discriminator.json) | 全量 21 场景真机重跑（指标判别器 + 标签修正之后；期间控制台停用，无外部注入） | `python tools/cluster_rca_verify.py --json-out .chaos/rca_diagnosis_report_discriminator.json` | 注入 21/21、恢复 21/21、覆盖 20/21、**严格 20/20**、0 token；相对上一轮**只变 1 例**：`app_memory_stress` `rc:oom-kill` → `rc:mem-pressure`（`app_oom_kill` 仍 `rc:oom-kill`） |
 | [`rca_diagnosis_report_connfix.json`](rca_diagnosis_report_connfix.json) | **最新全量 21 场景真机跑批**（`db_conn_saturation` 变得可测之后；期间控制台停用、无外部注入） | `python tools/cluster_rca_verify.py --json-out .chaos/rca_diagnosis_report_connfix.json` | 注入 21/21、**告警覆盖 21/21（100%）**、诊断 21/21、恢复 21/21、0 token、**外部干扰：无**；**严格 21/21（分母 21，不再剔除任何场景）** |
+| [`observability_guard_verify.json`](observability_guard_verify.json) | 观测链路守卫 + 信号标志修复的**真机验证**（两个场景：警告来源 `app_network_loss`、曾被掩盖的 `db_conn_saturation`） | `python tools/cluster_rca_verify.py app_network_loss db_conn_saturation --json-out .chaos/observability_guard_verify.json` | `observability.monitoring_blinded=[]`、`alert_design_gap=[]`、`signal_warnings=[]`；`app_network_loss` **不再打印"60s 内未观测到声明信号"**（`inject.warning` 为空、`signal_observed=True`）；两场景覆盖 2/2、诊断 2/2 |
 
 ## 发布与核对（工具）
 
