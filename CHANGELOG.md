@@ -21,6 +21,15 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   any two e2e reports and asserts a change's blast radius: the exactly-improved / exactly-regressed
   sets and an alert's firing scope. Exits 1 when an assertion fails, so "19/20 → 20/20, one case
   changed, 0 regressions, alert fired only there" is one command instead of four claims.
+- `tools/incident_heldout_eval.py` — turns the RCA evidence inbox
+  (`<workspace>/rca_evidence_inbox.jsonl`, written since evidence injection stopped touching the
+  active ontology) into a **retained evaluation set**: recorded vs recomputed conclusion (knowledge
+  drift, with the ontology version the record was written under), strict hits where the alert text
+  matches a known scenario verbatim, and a "knowledge gap" queue (confidence below the fast-path
+  threshold / no candidate / no constraint support). Report-only — this material is never tuned on,
+  and it **refuses to score ambiguous ground truth**: the same alert text mapping to scenarios with
+  conflicting expectations (the collision fixed in this release) is reported, not silently counted
+  as right or wrong.
 
 ### Findings — published as a negative result
 

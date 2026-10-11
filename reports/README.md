@@ -30,6 +30,7 @@
 |---|---|---|
 | `tools/publish_reports.py` | 把 `.chaos/` 产物洗净宿主路径后**发布**到 `reports/`；`--check` 是**卫生闸门**（发现 `X:\Users\<name>` 即 exit 1）；`--scrub FILE` 就地清洗指定报告 | `python tools/publish_reports.py` / `--check` / `--scrub reports/x.json` |
 | `tools/strict_score_check.py` | 从报告**复算严格命中**（仅可测量场景），并核对"改动只影响了该影响的场景"：转正/回退集合、某条告警的触发范围；断言不成立即 exit 1 | `python tools/strict_score_check.py --baseline reports/rca_diagnosis_report.json --candidate reports/rca_diagnosis_report_postfix.json --expect-improved res_cluster_memory --expect-alert AppClusterMemoryCapacity=res_cluster_memory` |
+| `tools/incident_heldout_eval.py` | 把证据收件箱（`.evoontology/rca_evidence_inbox.jsonl`）里的**线上真实事故记录**复算成留存评估集：与"记录时的结论"对比（知识漂移）、能对上已知场景时算**严格命中**、并挑出低置信/无约束支撑的「知识缺口候选」。**只报不改**；基准歧义（同一文本对应互斥期望）会被报出来而不是硬算 | `python tools/incident_heldout_eval.py` |
 
 ## 口径说明（重要）
 
@@ -37,6 +38,9 @@
   `promotion_ab` 是回放真实告警文本的成对 A/B，`fault_verify` 是注入层的能力验证。
 - `heldout_report.json` 是本项目**主动公开的负面结果**（措辞换一种说法后严格命中 4/10）。
   修它时**不得**在同一份 held-out 集上调参。
+- `tools/incident_heldout_eval.py` 的输入是**线上真实事故记录**，是继 held-out 之后第二份
+  「不能拿来调参」的材料：一旦用它去改打分词典/关键词，它就退化成第二份训练集。
+  因此该工具**只有报告**这一个动作（不改本体、不改阈值）。
 - **严格 ≠ 松口径**：`strict` 只认「最终根因术语 ∈ 期望术语」（`hit_root_cause_exact`），
   而端到端报告自带的 `ok` 还认「期望术语出现在候选/证据/推理里」。`res_cluster_memory`
   曾是这两者的分界（松 20/20、严格 19/20）；**现在已严格命中**——但两个口径仍然不可互换。
