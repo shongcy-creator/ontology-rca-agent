@@ -4,7 +4,7 @@
   "topologyBaseline": {
     "app": "cc-credit-card-app",
     "appImage": "demo-app (from node:20-alpine + mysql2)",
-    "appContainerHostname": "3177c9796e5c",
+    "appContainerHostname": "<container>",
     "containerIP": "172.18.0.3",
     "networkCIDR": "172.18.0.0/16 (bridge ccdemo-net)",
     "deployedOn": "docker-desktop (WSL2 virtual host on 遥遥领先)",
@@ -28,7 +28,7 @@
     ]
   },
   "hostMachine": {
-    "name": "遥遥领先",
+    "name": "<host>",
     "os": "Microsoft Windows 11 专业版 (build 26200)",
     "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
     "cpuCores": 4,
@@ -47,7 +47,7 @@
     "app": {
       "name": "payment-app",
       "version": "1.8.2",
-      "containerName": "3177c9796e5c",
+      "containerName": "<container>",
       "pid": 1
     },
     "network": {
@@ -64,7 +64,7 @@
         "reachable": true,
         "latencyMs": 5,
         "ping": {
-          "dbHost": "a3240dd35197",
+          "dbHost": "<container>",
           "version": "8.0.46",
           "maxConn": 200,
           "waitTimeout": 28800,

@@ -98,7 +98,7 @@ def code_fingerprint() -> Dict[str, Any]:
 #: 步骤定义。required=True 的步骤失败 → 整条流水线判 FAIL。
 STEPS: List[Dict[str, Any]] = [
     {
-        "name": "doctor", "title": "环境体检（18 项）", "required": True,
+        "name": "doctor", "title": "环境体检（19 项）", "required": True,
         "cmd": [PY, "tools/fault_injector.py", "doctor"],
         "artifacts": [], "fast": True, "timeout": 600,
     },

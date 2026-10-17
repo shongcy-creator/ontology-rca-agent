@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """复现：agnes-2.5-pro 在大上下文 + tools 下的表现。"""
 import json
-import os
 import sys
 import time
 import urllib.error

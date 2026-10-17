@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
-from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -54,7 +53,7 @@ async def rca_infer(req: RCARequest) -> RCAResponse:
         )
         incident_store.save(raw.get("incident_id", ""), raw)
         return RCAResponse(result=_to_model(raw), session_id=req.session_id)
-    except Exception as exc:
+    except Exception:
         import traceback
         err = traceback.format_exc()
         print("[RCA ERROR]", err, flush=True)

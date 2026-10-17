@@ -1,0 +1,12 @@
+{
+  "summary": "SHACL 一致性版本：rel:gateway-evidenced-by-probe 与 rel:deploy-window-metric 改为 observedBy，rel:derive-primary-to-replica 改为 memberOf（端点均不变）。同时新增 SHACL 门禁：运行时 5 族记录投影为 RDF，domain/range 形状由 ontology.ttl 生成，结构形状见 ontology_turtle/shapes.ttl。",
+  "limitations": [
+    "SHACL 不检查 owl:sameAs：rel:instance-equiv-container 声称副本与容器是同一个体，仍需人工评审。",
+    "TTL 的 5 处放宽是评审判断（理由逐条写在 ontology.ttl 注释里），不是由数据推出的结论；放宽后的 domain/range 用 owl:unionOf 表达，SHACL 侧对应 sh:or。",
+    "3 条告警未处理：con:db-maxconn 缺 confidence，rel:alert-triggers-incident 与 rel:app-has-fn 没有证据。"
+  ],
+  "links": [],
+  "questions": [],
+  "recorded_at": "2026-10-17T01:52:07.658663+00:00",
+  "version": "ontology_v9-shapes"
+}

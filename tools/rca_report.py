@@ -9,7 +9,7 @@ def query_prom(q):
         r = urllib.request.urlopen(url, timeout=5)
         d = json.loads(r.read())
         return d.get('data', {}).get('result', [])
-    except Exception as e:
+    except Exception:
         return []
 
 # Load RCA engine result

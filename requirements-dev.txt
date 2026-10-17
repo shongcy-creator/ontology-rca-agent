@@ -1,0 +1,13 @@
+# 本体门禁与 lint 的依赖（CI 的 lint-and-offline-checks job 与本地开发共用这一份）。
+# 后端运行时依赖在 rca-agent/backend/requirements.txt，这里刻意不混进去：
+# 门禁工具不需要进后端镜像。
+#
+# 全部锁版本，理由与 CI 里锁 ruff 相同：门必须结构上可以通过。
+# pyshacl / ruff 的行为随版本变化，不锁的话一次无关的上游发版就能把绿门变红。
+#
+# pyshacl 缺失时 SHACL 门禁失败即关闭（tools/ontology_shacl.py），不会静默跳过 ——
+# 所以本地跑 `python tools/ontology_hygiene.py` 之前也需要先装这一份。
+rdflib==7.6.0
+pyshacl==0.40.0
+pyyaml==6.0.3
+ruff==0.15.10

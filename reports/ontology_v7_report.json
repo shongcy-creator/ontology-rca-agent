@@ -1,0 +1,2911 @@
+{
+  "ok": true,
+  "parent_version": "ontology_v6",
+  "candidate_version": "ontology_v7-freshness",
+  "published_version": "ontology_v7",
+  "run_id": "run_9",
+  "run_status": "accepted",
+  "gate": {
+    "accept": true,
+    "parent_score": 0.9534883720930233,
+    "candidate_score": 1.0,
+    "delta": 0.046511627906976716,
+    "protocol": "ground_truth"
+  },
+  "delta": {
+    "deltas": {
+      "terms": {
+        "added": 0,
+        "updated": 3
+      },
+      "mappings": {
+        "added": 0,
+        "updated": 2
+      },
+      "relations": {
+        "added": 0,
+        "updated": 4
+      },
+      "constraints": {
+        "added": 0,
+        "updated": 0
+      },
+      "evidence": {
+        "added": 0,
+        "updated": 4
+      }
+    },
+    "counts": {
+      "terms": 56,
+      "mappings": 20,
+      "relations": 87,
+      "constraints": 30,
+      "evidence": 22
+    }
+  },
+  "parent_eval": {
+    "metric": "evidence_freshness",
+    "version": "ontology_v6",
+    "case_ids": [
+      "constraints:con:app-cpu-throttle",
+      "constraints:con:app-error-budget",
+      "constraints:con:app-mem-limit",
+      "constraints:con:app-replica-quorum",
+      "constraints:con:change-correlation",
+      "constraints:con:cluster-capacity",
+      "constraints:con:cluster-cpu-capacity",
+      "constraints:con:conn-exhaust",
+      "constraints:con:db-availability",
+      "constraints:con:db-cpu-capacity",
+      "constraints:con:db-maxconn",
+      "constraints:con:db-replica-down",
+      "constraints:con:db-role",
+      "constraints:con:db-tmp-table",
+      "constraints:con:fastpath-trust",
+      "constraints:con:gateway-availability",
+      "constraints:con:gateway-down",
+      "constraints:con:index-usage",
+      "constraints:con:mem-pressure",
+      "constraints:con:net-quality",
+      "constraints:con:oom-detection",
+      "constraints:con:p99-threshold",
+      "constraints:con:pool-exhaust",
+      "constraints:con:pool-waiting",
+      "constraints:con:replica-down",
+      "constraints:con:replica-hang-detection",
+      "constraints:con:replica-lag",
+      "constraints:con:replica-loss-detection",
+      "constraints:con:row-lock",
+      "constraints:con:tmp-disk",
+      "evidence:ev-app-topology",
+      "evidence:ev-cgroup-memory-events",
+      "evidence:ev-cluster-blackbox",
+      "evidence:ev-cluster-fault-catalog",
+      "evidence:ev-cluster-prometheus-targets",
+      "evidence:ev-cluster-quota",
+      "evidence:ev-cluster-replication",
+      "evidence:ev-cluster-stress",
+      "evidence:ev-cluster-topology",
+      "evidence:ev-db-probe",
+      "evidence:ev-deploy-source",
+      "evidence:ev-docker-ps",
+      "evidence:ev-docker-runtime",
+      "evidence:ev-host-facts",
+      "evidence:ev-hygiene-audit",
+      "evidence:ev-mysql-indexes",
+      "evidence:ev-mysql-tables",
+      "evidence:ev-mysql-vars",
+      "evidence:ev-scoring-ab-round1",
+      "evidence:ev-scoring-gate-metric",
+      "evidence:ev-scoring-keywords-source",
+      "evidence:ev:rca-inc_1790868998",
+      "mappings:map:app-container",
+      "mappings:map:app-ip",
+      "mappings:map:cluster-app-instance",
+      "mappings:map:cluster-replica-count",
+      "mappings:map:conn-processlist",
+      "mappings:map:cpu-throttle",
+      "mappings:map:db-maxconn",
+      "mappings:map:db-tmp-disk",
+      "mappings:map:db-version",
+      "mappings:map:deploy-event",
+      "mappings:map:gateway-probe",
+      "mappings:map:host-cpu",
+      "mappings:map:idx-txn-created",
+      "mappings:map:idx-txn-customer",
+      "mappings:map:latency-p99",
+      "mappings:map:mem-pressure",
+      "mappings:map:replica-io-running",
+      "mappings:map:replica-lag",
+      "mappings:map:table-rows",
+      "mappings:map:uptime-since-deploy",
+      "relations:rel:alert-triggers-incident",
+      "relations:rel:app-accesses-db",
+      "relations:rel:app-cluster-managed-by-runtime",
+      "relations:rel:app-datasource",
+      "relations:rel:app-derives-host",
+      "relations:rel:app-exposes-api",
+      "relations:rel:app-generates-deploy",
+      "relations:rel:app-has-fn",
+      "relations:rel:app-member-of-cluster",
+      "relations:rel:app-produces-metric",
+      "relations:rel:app-reads-replica",
+      "relations:rel:app-runs-on-container",
+      "relations:rel:cluster-has-instance-1",
+      "relations:rel:cluster-has-instance-2",
+      "relations:rel:cluster-has-instance-3",
+      "relations:rel:cluster-has-primary",
+      "relations:rel:cluster-has-replica",
+      "relations:rel:cluster-lb-by-gateway",
+      "relations:rel:cluster-produces-error-rate",
+      "relations:rel:cluster-produces-replica-count",
+      "relations:rel:container-deployed-on-host",
+      "relations:rel:container-managed-by-runtime",
+      "relations:rel:db-contains-audit",
+      "relations:rel:db-contains-customer",
+      "relations:rel:db-contains-txn",
+      "relations:rel:db-derives-tables",
+      "relations:rel:db-member-of-cluster",
+      "relations:rel:deploy-candidate-incident",
+      "relations:rel:deploy-window-metric",
+      "relations:rel:derive-client-to-cluster",
+      "relations:rel:derive-cluster-instance",
+      "relations:rel:derive-primary-to-replica",
+      "relations:rel:ds-points-db",
+      "relations:rel:gateway-evidenced-by-probe",
+      "relations:rel:gateway-routes-to-cluster",
+      "relations:rel:host-wsl-equiv-phys",
+      "relations:rel:host-wsl-hosts-container",
+      "relations:rel:incident-rc",
+      "relations:rel:instance-1-runs-on-container",
+      "relations:rel:instance-equiv-container",
+      "relations:rel:instance-produces-mem",
+      "relations:rel:instance-produces-throttle",
+      "relations:rel:primary-produces-dbcpu",
+      "relations:rel:primary-produces-tmpdisk",
+      "relations:rel:primary-replicates-to-replica",
+      "relations:rel:rc-attr-table",
+      "relations:rel:rc-cluster-capacity-attr",
+      "relations:rel:rc-cluster-capacity-evidenced-cpu",
+      "relations:rel:rc-cluster-capacity-evidenced-mem",
+      "relations:rel:rc-conn-exhaust-attr",
+      "relations:rel:rc-conn-exhaust-evidenced",
+      "relations:rel:rc-cpu-throttle-attr-cluster",
+      "relations:rel:rc-cpu-throttle-evidenced",
+      "relations:rel:rc-db-cpu-starve-attr",
+      "relations:rel:rc-db-cpu-starve-evidenced",
+      "relations:rel:rc-db-replica-loss-attr",
+      "relations:rel:rc-db-replica-loss-evidenced",
+      "relations:rel:rc-evidence-conn",
+      "relations:rel:rc-evidence-p99",
+      "relations:rel:rc-gateway-down-attr",
+      "relations:rel:rc-gateway-down-evidenced",
+      "relations:rel:rc-mem-pressure-attr",
+      "relations:rel:rc-mem-pressure-evidenced",
+      "relations:rel:rc-net-fault-attr-cluster",
+      "relations:rel:rc-net-fault-evidenced",
+      "relations:rel:rc-net-fault-evidenced-loss",
+      "relations:rel:rc-oom-kill-attr-instance",
+      "relations:rel:rc-oom-kill-evidenced",
+      "relations:rel:rc-oom-kill-evidenced-counter",
+      "relations:rel:rc-primary-readonly-attr",
+      "relations:rel:rc-primary-readonly-evidenced",
+      "relations:rel:rc-replica-hang-attr-cluster",
+      "relations:rel:rc-replica-hang-evidenced",
+      "relations:rel:rc-replica-lag-attr",
+      "relations:rel:rc-replica-lag-evidenced",
+      "relations:rel:rc-replica-loss-attr-cluster",
+      "relations:rel:rc-replica-loss-evidenced",
+      "relations:rel:rc-row-lock-attr",
+      "relations:rel:rc-row-lock-attr-table",
+      "relations:rel:rc-row-lock-evidenced",
+      "relations:rel:rc-slow-sql-idx",
+      "relations:rel:rc-tmp-disk-attributed",
+      "relations:rel:rc-tmp-disk-evidenced",
+      "relations:rel:replica-produces-io",
+      "relations:rel:replica-produces-lag",
+      "relations:rel:txn-has-idx-created",
+      "relations:rel:txn-has-idx-customer",
+      "terms:alert:p99",
+      "terms:api:auth",
+      "terms:app:instance-1",
+      "terms:app:instance-2",
+      "terms:app:instance-3",
+      "terms:app:payment-app",
+      "terms:app:payment-app-cluster",
+      "terms:db:mysql-cluster",
+      "terms:db:mysql-core",
+      "terms:db:mysql-replica",
+      "terms:db:primary",
+      "terms:ds:pay",
+      "terms:env:cluster",
+      "terms:env:container",
+      "terms:env:gateway",
+      "terms:env:host-phys",
+      "terms:env:host-wsl",
+      "terms:evt:deploy",
+      "terms:fn:auth",
+      "terms:idx:txn-created",
+      "terms:idx:txn-customer",
+      "terms:incident:payment-timeout",
+      "terms:metric:conn-exhaust",
+      "terms:metric:cpu-throttle",
+      "terms:metric:db-cpu",
+      "terms:metric:db-tmp-disk",
+      "terms:metric:gateway-probe",
+      "terms:metric:http-error-rate",
+      "terms:metric:mem-pressure",
+      "terms:metric:mysql-p99",
+      "terms:metric:net-delay",
+      "terms:metric:net-loss",
+      "terms:metric:oom-kill-count",
+      "terms:metric:replica-healthy-count",
+      "terms:metric:replica-io-running",
+      "terms:metric:replica-lag",
+      "terms:metric:uptime-since-deploy",
+      "terms:rc:cluster-capacity",
+      "terms:rc:conn-exhaust",
+      "terms:rc:cpu-throttle",
+      "terms:rc:db-cpu-starve",
+      "terms:rc:db-replica-loss",
+      "terms:rc:gateway-down",
+      "terms:rc:mem-pressure",
+      "terms:rc:net-fault",
+      "terms:rc:oom-kill",
+      "terms:rc:primary-readonly",
+      "terms:rc:replica-hang",
+      "terms:rc:replica-lag",
+      "terms:rc:replica-loss",
+      "terms:rc:row-lock",
+      "terms:rc:slow-sql",
+      "terms:rc:tmp-disk",
+      "terms:table:t_audit",
+      "terms:table:t_customer",
+      "terms:table:t_txn"
+    ],
+    "scores": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "mean": 0.9535,
+    "full_credit": 205,
+    "zero_credit": 10,
+    "per_case": [
+      {
+        "case_id": "constraints:con:app-cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:app-error-budget",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:app-mem-limit",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:app-replica-quorum",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:change-correlation",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:cluster-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:cluster-cpu-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:conn-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-availability",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-cpu-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-maxconn",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-replica-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-role",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-tmp-table",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:fastpath-trust",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:gateway-availability",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:gateway-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:index-usage",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:net-quality",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:oom-detection",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:p99-threshold",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:pool-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:pool-waiting",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-hang-detection",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-loss-detection",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:row-lock",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-app-topology",
+        "score": 0.0
+      },
+      {
+        "case_id": "evidence:ev-cgroup-memory-events",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-blackbox",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-fault-catalog",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-prometheus-targets",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-quota",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-replication",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-stress",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-topology",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-db-probe",
+        "score": 0.0
+      },
+      {
+        "case_id": "evidence:ev-deploy-source",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-docker-ps",
+        "score": 0.0
+      },
+      {
+        "case_id": "evidence:ev-docker-runtime",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-host-facts",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-hygiene-audit",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-mysql-indexes",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-mysql-tables",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-mysql-vars",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-scoring-ab-round1",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-scoring-gate-metric",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-scoring-keywords-source",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev:rca-inc_1790868998",
+        "score": 0.0
+      },
+      {
+        "case_id": "mappings:map:app-container",
+        "score": 0.0
+      },
+      {
+        "case_id": "mappings:map:app-ip",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:cluster-app-instance",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:cluster-replica-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:conn-processlist",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:db-maxconn",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:db-tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:db-version",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:deploy-event",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:gateway-probe",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:host-cpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:idx-txn-created",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:idx-txn-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:latency-p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:replica-io-running",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:table-rows",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:uptime-since-deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:alert-triggers-incident",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-accesses-db",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-cluster-managed-by-runtime",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-datasource",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-derives-host",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-exposes-api",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-generates-deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-has-fn",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-member-of-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-produces-metric",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-reads-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-runs-on-container",
+        "score": 0.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-instance-1",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-instance-2",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-instance-3",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-primary",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-lb-by-gateway",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-produces-error-rate",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-produces-replica-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:container-deployed-on-host",
+        "score": 0.0
+      },
+      {
+        "case_id": "relations:rel:container-managed-by-runtime",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-contains-audit",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-contains-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-contains-txn",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-derives-tables",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-member-of-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:deploy-candidate-incident",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:deploy-window-metric",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:derive-client-to-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:derive-cluster-instance",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:derive-primary-to-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:ds-points-db",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:gateway-evidenced-by-probe",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:gateway-routes-to-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:host-wsl-equiv-phys",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:host-wsl-hosts-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:incident-rc",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-1-runs-on-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-equiv-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-produces-mem",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-produces-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:primary-produces-dbcpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:primary-produces-tmpdisk",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:primary-replicates-to-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-attr-table",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cluster-capacity-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cluster-capacity-evidenced-cpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cluster-capacity-evidenced-mem",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-conn-exhaust-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-conn-exhaust-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cpu-throttle-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cpu-throttle-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-cpu-starve-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-cpu-starve-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-replica-loss-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-replica-loss-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-evidence-conn",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-evidence-p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-gateway-down-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-gateway-down-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-mem-pressure-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-mem-pressure-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-net-fault-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-net-fault-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-net-fault-evidenced-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-oom-kill-attr-instance",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-oom-kill-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-oom-kill-evidenced-counter",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-primary-readonly-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-primary-readonly-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-hang-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-hang-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-lag-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-lag-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-loss-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-loss-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-row-lock-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-row-lock-attr-table",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-row-lock-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-slow-sql-idx",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-tmp-disk-attributed",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-tmp-disk-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:replica-produces-io",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:replica-produces-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:txn-has-idx-created",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:txn-has-idx-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:alert:p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:api:auth",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:instance-1",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:instance-2",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:instance-3",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:payment-app",
+        "score": 0.0
+      },
+      {
+        "case_id": "terms:app:payment-app-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:db:mysql-cluster",
+        "score": 0.0
+      },
+      {
+        "case_id": "terms:db:mysql-core",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:db:mysql-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:db:primary",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:ds:pay",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:container",
+        "score": 0.0
+      },
+      {
+        "case_id": "terms:env:gateway",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:host-phys",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:host-wsl",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:evt:deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:fn:auth",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:idx:txn-created",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:idx:txn-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:incident:payment-timeout",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:conn-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:db-cpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:db-tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:gateway-probe",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:http-error-rate",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:mysql-p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:net-delay",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:net-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:oom-kill-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:replica-healthy-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:replica-io-running",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:uptime-since-deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:cluster-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:conn-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:db-cpu-starve",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:db-replica-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:gateway-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:net-fault",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:oom-kill",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:primary-readonly",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:replica-hang",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:replica-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:row-lock",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:slow-sql",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:table:t_audit",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:table:t_customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:table:t_txn",
+        "score": 1.0
+      }
+    ],
+    "check": {
+      "passed": false,
+      "violations": [
+        {
+          "rule": "F1",
+          "family": "terms",
+          "id": "app:payment-app",
+          "field": "aliases[1]",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F1",
+          "family": "terms",
+          "id": "env:container",
+          "field": "name",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F1",
+          "family": "terms",
+          "id": "db:mysql-cluster",
+          "field": "aliases[1]",
+          "token": "cc-mysql-cluster"
+        },
+        {
+          "rule": "F1",
+          "family": "mappings",
+          "id": "map:app-container",
+          "field": "database_source",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F1",
+          "family": "mappings",
+          "id": "map:app-container",
+          "field": "semantic_filter",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F1",
+          "family": "relations",
+          "id": "rel:app-runs-on-container",
+          "field": "description",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F1",
+          "family": "relations",
+          "id": "rel:container-deployed-on-host",
+          "field": "description",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F2",
+          "family": "evidence",
+          "id": "ev-docker-ps",
+          "field": "result",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F2",
+          "family": "evidence",
+          "id": "ev-app-topology",
+          "field": "source",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F2",
+          "family": "evidence",
+          "id": "ev-db-probe",
+          "field": "source",
+          "token": "cc-credit-card-app"
+        },
+        {
+          "rule": "F2",
+          "family": "evidence",
+          "id": "ev:rca-inc_1790868998",
+          "field": "result",
+          "token": "cc-credit-card-app"
+        }
+      ],
+      "affected_records": [
+        "evidence:ev-app-topology",
+        "evidence:ev-db-probe",
+        "evidence:ev-docker-ps",
+        "evidence:ev:rca-inc_1790868998",
+        "mappings:map:app-container",
+        "relations:rel:app-runs-on-container",
+        "relations:rel:container-deployed-on-host",
+        "terms:app:payment-app",
+        "terms:db:mysql-cluster",
+        "terms:env:container"
+      ],
+      "historical_evidence": [],
+      "needs_reobservation": [],
+      "declared_env_size": 24
+    }
+  },
+  "candidate_eval": {
+    "metric": "evidence_freshness",
+    "version": "ontology_v7-freshness",
+    "case_ids": [
+      "constraints:con:app-cpu-throttle",
+      "constraints:con:app-error-budget",
+      "constraints:con:app-mem-limit",
+      "constraints:con:app-replica-quorum",
+      "constraints:con:change-correlation",
+      "constraints:con:cluster-capacity",
+      "constraints:con:cluster-cpu-capacity",
+      "constraints:con:conn-exhaust",
+      "constraints:con:db-availability",
+      "constraints:con:db-cpu-capacity",
+      "constraints:con:db-maxconn",
+      "constraints:con:db-replica-down",
+      "constraints:con:db-role",
+      "constraints:con:db-tmp-table",
+      "constraints:con:fastpath-trust",
+      "constraints:con:gateway-availability",
+      "constraints:con:gateway-down",
+      "constraints:con:index-usage",
+      "constraints:con:mem-pressure",
+      "constraints:con:net-quality",
+      "constraints:con:oom-detection",
+      "constraints:con:p99-threshold",
+      "constraints:con:pool-exhaust",
+      "constraints:con:pool-waiting",
+      "constraints:con:replica-down",
+      "constraints:con:replica-hang-detection",
+      "constraints:con:replica-lag",
+      "constraints:con:replica-loss-detection",
+      "constraints:con:row-lock",
+      "constraints:con:tmp-disk",
+      "evidence:ev-app-topology",
+      "evidence:ev-cgroup-memory-events",
+      "evidence:ev-cluster-blackbox",
+      "evidence:ev-cluster-fault-catalog",
+      "evidence:ev-cluster-prometheus-targets",
+      "evidence:ev-cluster-quota",
+      "evidence:ev-cluster-replication",
+      "evidence:ev-cluster-stress",
+      "evidence:ev-cluster-topology",
+      "evidence:ev-db-probe",
+      "evidence:ev-deploy-source",
+      "evidence:ev-docker-ps",
+      "evidence:ev-docker-runtime",
+      "evidence:ev-host-facts",
+      "evidence:ev-hygiene-audit",
+      "evidence:ev-mysql-indexes",
+      "evidence:ev-mysql-tables",
+      "evidence:ev-mysql-vars",
+      "evidence:ev-scoring-ab-round1",
+      "evidence:ev-scoring-gate-metric",
+      "evidence:ev-scoring-keywords-source",
+      "evidence:ev:rca-inc_1790868998",
+      "mappings:map:app-container",
+      "mappings:map:app-ip",
+      "mappings:map:cluster-app-instance",
+      "mappings:map:cluster-replica-count",
+      "mappings:map:conn-processlist",
+      "mappings:map:cpu-throttle",
+      "mappings:map:db-maxconn",
+      "mappings:map:db-tmp-disk",
+      "mappings:map:db-version",
+      "mappings:map:deploy-event",
+      "mappings:map:gateway-probe",
+      "mappings:map:host-cpu",
+      "mappings:map:idx-txn-created",
+      "mappings:map:idx-txn-customer",
+      "mappings:map:latency-p99",
+      "mappings:map:mem-pressure",
+      "mappings:map:replica-io-running",
+      "mappings:map:replica-lag",
+      "mappings:map:table-rows",
+      "mappings:map:uptime-since-deploy",
+      "relations:rel:alert-triggers-incident",
+      "relations:rel:app-accesses-db",
+      "relations:rel:app-cluster-managed-by-runtime",
+      "relations:rel:app-datasource",
+      "relations:rel:app-derives-host",
+      "relations:rel:app-exposes-api",
+      "relations:rel:app-generates-deploy",
+      "relations:rel:app-has-fn",
+      "relations:rel:app-member-of-cluster",
+      "relations:rel:app-produces-metric",
+      "relations:rel:app-reads-replica",
+      "relations:rel:app-runs-on-container",
+      "relations:rel:cluster-has-instance-1",
+      "relations:rel:cluster-has-instance-2",
+      "relations:rel:cluster-has-instance-3",
+      "relations:rel:cluster-has-primary",
+      "relations:rel:cluster-has-replica",
+      "relations:rel:cluster-lb-by-gateway",
+      "relations:rel:cluster-produces-error-rate",
+      "relations:rel:cluster-produces-replica-count",
+      "relations:rel:container-deployed-on-host",
+      "relations:rel:container-managed-by-runtime",
+      "relations:rel:db-contains-audit",
+      "relations:rel:db-contains-customer",
+      "relations:rel:db-contains-txn",
+      "relations:rel:db-derives-tables",
+      "relations:rel:db-member-of-cluster",
+      "relations:rel:deploy-candidate-incident",
+      "relations:rel:deploy-window-metric",
+      "relations:rel:derive-client-to-cluster",
+      "relations:rel:derive-cluster-instance",
+      "relations:rel:derive-primary-to-replica",
+      "relations:rel:ds-points-db",
+      "relations:rel:gateway-evidenced-by-probe",
+      "relations:rel:gateway-routes-to-cluster",
+      "relations:rel:host-wsl-equiv-phys",
+      "relations:rel:host-wsl-hosts-container",
+      "relations:rel:incident-rc",
+      "relations:rel:instance-1-runs-on-container",
+      "relations:rel:instance-equiv-container",
+      "relations:rel:instance-produces-mem",
+      "relations:rel:instance-produces-throttle",
+      "relations:rel:primary-produces-dbcpu",
+      "relations:rel:primary-produces-tmpdisk",
+      "relations:rel:primary-replicates-to-replica",
+      "relations:rel:rc-attr-table",
+      "relations:rel:rc-cluster-capacity-attr",
+      "relations:rel:rc-cluster-capacity-evidenced-cpu",
+      "relations:rel:rc-cluster-capacity-evidenced-mem",
+      "relations:rel:rc-conn-exhaust-attr",
+      "relations:rel:rc-conn-exhaust-evidenced",
+      "relations:rel:rc-cpu-throttle-attr-cluster",
+      "relations:rel:rc-cpu-throttle-evidenced",
+      "relations:rel:rc-db-cpu-starve-attr",
+      "relations:rel:rc-db-cpu-starve-evidenced",
+      "relations:rel:rc-db-replica-loss-attr",
+      "relations:rel:rc-db-replica-loss-evidenced",
+      "relations:rel:rc-evidence-conn",
+      "relations:rel:rc-evidence-p99",
+      "relations:rel:rc-gateway-down-attr",
+      "relations:rel:rc-gateway-down-evidenced",
+      "relations:rel:rc-mem-pressure-attr",
+      "relations:rel:rc-mem-pressure-evidenced",
+      "relations:rel:rc-net-fault-attr-cluster",
+      "relations:rel:rc-net-fault-evidenced",
+      "relations:rel:rc-net-fault-evidenced-loss",
+      "relations:rel:rc-oom-kill-attr-instance",
+      "relations:rel:rc-oom-kill-evidenced",
+      "relations:rel:rc-oom-kill-evidenced-counter",
+      "relations:rel:rc-primary-readonly-attr",
+      "relations:rel:rc-primary-readonly-evidenced",
+      "relations:rel:rc-replica-hang-attr-cluster",
+      "relations:rel:rc-replica-hang-evidenced",
+      "relations:rel:rc-replica-lag-attr",
+      "relations:rel:rc-replica-lag-evidenced",
+      "relations:rel:rc-replica-loss-attr-cluster",
+      "relations:rel:rc-replica-loss-evidenced",
+      "relations:rel:rc-row-lock-attr",
+      "relations:rel:rc-row-lock-attr-table",
+      "relations:rel:rc-row-lock-evidenced",
+      "relations:rel:rc-slow-sql-idx",
+      "relations:rel:rc-tmp-disk-attributed",
+      "relations:rel:rc-tmp-disk-evidenced",
+      "relations:rel:replica-produces-io",
+      "relations:rel:replica-produces-lag",
+      "relations:rel:txn-has-idx-created",
+      "relations:rel:txn-has-idx-customer",
+      "terms:alert:p99",
+      "terms:api:auth",
+      "terms:app:instance-1",
+      "terms:app:instance-2",
+      "terms:app:instance-3",
+      "terms:app:payment-app",
+      "terms:app:payment-app-cluster",
+      "terms:db:mysql-cluster",
+      "terms:db:mysql-core",
+      "terms:db:mysql-replica",
+      "terms:db:primary",
+      "terms:ds:pay",
+      "terms:env:cluster",
+      "terms:env:container",
+      "terms:env:gateway",
+      "terms:env:host-phys",
+      "terms:env:host-wsl",
+      "terms:evt:deploy",
+      "terms:fn:auth",
+      "terms:idx:txn-created",
+      "terms:idx:txn-customer",
+      "terms:incident:payment-timeout",
+      "terms:metric:conn-exhaust",
+      "terms:metric:cpu-throttle",
+      "terms:metric:db-cpu",
+      "terms:metric:db-tmp-disk",
+      "terms:metric:gateway-probe",
+      "terms:metric:http-error-rate",
+      "terms:metric:mem-pressure",
+      "terms:metric:mysql-p99",
+      "terms:metric:net-delay",
+      "terms:metric:net-loss",
+      "terms:metric:oom-kill-count",
+      "terms:metric:replica-healthy-count",
+      "terms:metric:replica-io-running",
+      "terms:metric:replica-lag",
+      "terms:metric:uptime-since-deploy",
+      "terms:rc:cluster-capacity",
+      "terms:rc:conn-exhaust",
+      "terms:rc:cpu-throttle",
+      "terms:rc:db-cpu-starve",
+      "terms:rc:db-replica-loss",
+      "terms:rc:gateway-down",
+      "terms:rc:mem-pressure",
+      "terms:rc:net-fault",
+      "terms:rc:oom-kill",
+      "terms:rc:primary-readonly",
+      "terms:rc:replica-hang",
+      "terms:rc:replica-lag",
+      "terms:rc:replica-loss",
+      "terms:rc:row-lock",
+      "terms:rc:slow-sql",
+      "terms:rc:tmp-disk",
+      "terms:table:t_audit",
+      "terms:table:t_customer",
+      "terms:table:t_txn"
+    ],
+    "scores": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "mean": 1.0,
+    "full_credit": 215,
+    "zero_credit": 0,
+    "per_case": [
+      {
+        "case_id": "constraints:con:app-cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:app-error-budget",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:app-mem-limit",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:app-replica-quorum",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:change-correlation",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:cluster-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:cluster-cpu-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:conn-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-availability",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-cpu-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-maxconn",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-replica-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-role",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:db-tmp-table",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:fastpath-trust",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:gateway-availability",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:gateway-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:index-usage",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:net-quality",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:oom-detection",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:p99-threshold",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:pool-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:pool-waiting",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-hang-detection",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:replica-loss-detection",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:row-lock",
+        "score": 1.0
+      },
+      {
+        "case_id": "constraints:con:tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-app-topology",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cgroup-memory-events",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-blackbox",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-fault-catalog",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-prometheus-targets",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-quota",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-replication",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-stress",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-cluster-topology",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-db-probe",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-deploy-source",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-docker-ps",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-docker-runtime",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-host-facts",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-hygiene-audit",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-mysql-indexes",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-mysql-tables",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-mysql-vars",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-scoring-ab-round1",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-scoring-gate-metric",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev-scoring-keywords-source",
+        "score": 1.0
+      },
+      {
+        "case_id": "evidence:ev:rca-inc_1790868998",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:app-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:app-ip",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:cluster-app-instance",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:cluster-replica-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:conn-processlist",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:db-maxconn",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:db-tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:db-version",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:deploy-event",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:gateway-probe",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:host-cpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:idx-txn-created",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:idx-txn-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:latency-p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:replica-io-running",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:table-rows",
+        "score": 1.0
+      },
+      {
+        "case_id": "mappings:map:uptime-since-deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:alert-triggers-incident",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-accesses-db",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-cluster-managed-by-runtime",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-datasource",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-derives-host",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-exposes-api",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-generates-deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-has-fn",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-member-of-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-produces-metric",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-reads-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:app-runs-on-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-instance-1",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-instance-2",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-instance-3",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-primary",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-has-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-lb-by-gateway",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-produces-error-rate",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:cluster-produces-replica-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:container-deployed-on-host",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:container-managed-by-runtime",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-contains-audit",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-contains-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-contains-txn",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-derives-tables",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:db-member-of-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:deploy-candidate-incident",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:deploy-window-metric",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:derive-client-to-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:derive-cluster-instance",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:derive-primary-to-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:ds-points-db",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:gateway-evidenced-by-probe",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:gateway-routes-to-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:host-wsl-equiv-phys",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:host-wsl-hosts-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:incident-rc",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-1-runs-on-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-equiv-container",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-produces-mem",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:instance-produces-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:primary-produces-dbcpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:primary-produces-tmpdisk",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:primary-replicates-to-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-attr-table",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cluster-capacity-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cluster-capacity-evidenced-cpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cluster-capacity-evidenced-mem",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-conn-exhaust-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-conn-exhaust-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cpu-throttle-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-cpu-throttle-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-cpu-starve-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-cpu-starve-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-replica-loss-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-db-replica-loss-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-evidence-conn",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-evidence-p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-gateway-down-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-gateway-down-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-mem-pressure-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-mem-pressure-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-net-fault-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-net-fault-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-net-fault-evidenced-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-oom-kill-attr-instance",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-oom-kill-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-oom-kill-evidenced-counter",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-primary-readonly-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-primary-readonly-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-hang-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-hang-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-lag-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-lag-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-loss-attr-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-replica-loss-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-row-lock-attr",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-row-lock-attr-table",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-row-lock-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-slow-sql-idx",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-tmp-disk-attributed",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:rc-tmp-disk-evidenced",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:replica-produces-io",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:replica-produces-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:txn-has-idx-created",
+        "score": 1.0
+      },
+      {
+        "case_id": "relations:rel:txn-has-idx-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:alert:p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:api:auth",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:instance-1",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:instance-2",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:instance-3",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:payment-app",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:app:payment-app-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:db:mysql-cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:db:mysql-core",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:db:mysql-replica",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:db:primary",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:ds:pay",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:cluster",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:container",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:gateway",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:host-phys",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:env:host-wsl",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:evt:deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:fn:auth",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:idx:txn-created",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:idx:txn-customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:incident:payment-timeout",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:conn-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:db-cpu",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:db-tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:gateway-probe",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:http-error-rate",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:mysql-p99",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:net-delay",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:net-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:oom-kill-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:replica-healthy-count",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:replica-io-running",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:metric:uptime-since-deploy",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:cluster-capacity",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:conn-exhaust",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:cpu-throttle",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:db-cpu-starve",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:db-replica-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:gateway-down",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:mem-pressure",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:net-fault",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:oom-kill",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:primary-readonly",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:replica-hang",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:replica-lag",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:replica-loss",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:row-lock",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:slow-sql",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:rc:tmp-disk",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:table:t_audit",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:table:t_customer",
+        "score": 1.0
+      },
+      {
+        "case_id": "terms:table:t_txn",
+        "score": 1.0
+      }
+    ],
+    "check": {
+      "passed": true,
+      "violations": [],
+      "affected_records": [],
+      "historical_evidence": [
+        "ev-app-topology",
+        "ev-db-probe",
+        "ev-docker-ps",
+        "ev:rca-inc_1790868998"
+      ],
+      "needs_reobservation": [
+        {
+          "family": "terms",
+          "id": "fn:auth",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "terms",
+          "id": "ds:pay",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "terms",
+          "id": "metric:mysql-p99",
+          "evidence_refs": [
+            "ev-db-probe"
+          ]
+        },
+        {
+          "family": "terms",
+          "id": "metric:conn-exhaust",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "terms",
+          "id": "incident:payment-timeout",
+          "evidence_refs": [
+            "ev-db-probe"
+          ]
+        },
+        {
+          "family": "mappings",
+          "id": "map:app-ip",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "mappings",
+          "id": "map:latency-p99",
+          "evidence_refs": [
+            "ev-db-probe"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:app-exposes-api",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:app-accesses-db",
+          "evidence_refs": [
+            "ev-app-topology",
+            "ev-db-probe"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:app-datasource",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:ds-points-db",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:incident-rc",
+          "evidence_refs": [
+            "ev-db-probe"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:rc-evidence-p99",
+          "evidence_refs": [
+            "ev-db-probe"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:rc-evidence-conn",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        },
+        {
+          "family": "relations",
+          "id": "rel:app-produces-metric",
+          "evidence_refs": [
+            "ev-db-probe"
+          ]
+        },
+        {
+          "family": "constraints",
+          "id": "con:pool-exhaust",
+          "evidence_refs": [
+            "ev-app-topology"
+          ]
+        }
+      ],
+      "declared_env_size": 24
+    }
+  },
+  "improved_cases": [
+    "evidence:ev-app-topology",
+    "evidence:ev-db-probe",
+    "evidence:ev-docker-ps",
+    "evidence:ev:rca-inc_1790868998",
+    "mappings:map:app-container",
+    "relations:rel:app-runs-on-container",
+    "relations:rel:container-deployed-on-host",
+    "terms:app:payment-app",
+    "terms:db:mysql-cluster",
+    "terms:env:container"
+  ],
+  "regressed_cases": [],
+  "mean_delta": 0.0465,
+  "visualization": "<repo>\\.evoontology\\visualizations\\ontology-layer-explorer.html",
+  "versions": [
+    "ontology_v0",
+    "ontology_v0-rca",
+    "ontology_v0-rca-agent",
+    "ontology_v1",
+    "ontology_v1-cluster",
+    "ontology_v2",
+    "ontology_v2-scoring",
+    "ontology_v3",
+    "ontology_v3-hygiene",
+    "ontology_v4",
+    "ontology_v4-remediation",
+    "ontology_v5",
+    "ontology_v5-command-targets",
+    "ontology_v6",
+    "ontology_v6-memory",
+    "ontology_v7",
+    "ontology_v7-freshness"
+  ],
+  "project_mode": "rolling_trajectory"
+}

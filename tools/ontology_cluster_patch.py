@@ -22,7 +22,7 @@
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Optional, Set
 
 NOW = "2026-10-02T00:00:00+00:00"
 

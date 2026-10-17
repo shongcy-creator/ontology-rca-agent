@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import urllib.request, json, sys
+import urllib.request, json
 
 payload = json.dumps({
     "alert": {
@@ -38,6 +38,6 @@ except urllib.request.HTTPError as e:
     print("HTTP", e.code)
     body = e.read().decode()
     print("Body:", body[:500])
-except Exception as e:
+except Exception:
     import traceback
     traceback.print_exc()

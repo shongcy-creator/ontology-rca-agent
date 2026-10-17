@@ -1,0 +1,93 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rt:   <https://sapiens.ai/ontology/credit-card-ops/runtime/vocab#> .
+
+# ============================================================================
+# 运行时本体（.evoontology 5 族记录）的 SHACL 形状 —— 手写的结构部分。
+#
+# 校验对象是 tools/ontology_shacl.py 把运行时记录投影成的 RDF：
+#   术语 → rt:Term（并带上它的 TTL 类）；关系 → 一条直接三元组 + 一个 rt:Relation 节点；
+#   映射 / 约束 / 证据 → rt:Mapping / rt:Constraint / rt:Evidence。
+#
+# domain / range 形状**不写在这里**：它们在运行时从 ontology.ttl 的 rdfs:domain / rdfs:range
+# 生成，TTL 仍是唯一事实源。谓词与类是否属于 TTL 词表、历史证据是否写明来由，
+# 已由 tools/ontology_typing.py（T1/T2）与 tools/ontology_freshness.py（F2b）检查，这里不重复。
+#
+# 严重级别：sh:Violation 阻断发布；sh:Warning 只告警（与卫生闸门对"缺证据"的既有口径一致）。
+# ============================================================================
+
+rt:TermShape a sh:NodeShape ;
+  sh:targetClass rt:Term ;
+  sh:property [
+    sh:path rt:lifecycleState ; sh:minCount 1 ; sh:maxCount 1 ;
+    sh:in ( "active" "validated" "draft" ) ;
+    sh:message "术语的 lifecycle.state 必须是 active / validated / draft 之一（EvoOntology 只让前两者参与查询）" ;
+  ] ;
+  sh:property [
+    sh:path rt:evidence ; sh:class rt:Evidence ;
+    sh:message "术语引用了不存在的证据" ;
+  ] .
+
+rt:ActiveTermEvidenceShape a sh:NodeShape ;
+  sh:targetClass rt:Term ;
+  sh:severity sh:Warning ;
+  sh:or (
+    [ sh:path rt:lifecycleState ; sh:hasValue "draft" ]
+    [ sh:path rt:evidence ; sh:minCount 1 ]
+  ) ;
+  sh:message "生效中的术语没有任何证据支撑；若该概念在环境中并未实现，应改标 draft" .
+
+rt:RelationShape a sh:NodeShape ;
+  sh:targetClass rt:Relation ;
+  sh:property [ sh:path rt:source ; sh:minCount 1 ; sh:maxCount 1 ; sh:class rt:Term ;
+                sh:message "关系的 source 必须是一个已存在的术语" ] ;
+  sh:property [ sh:path rt:target ; sh:minCount 1 ; sh:maxCount 1 ; sh:class rt:Term ;
+                sh:message "关系的 target 必须是一个已存在的术语" ] ;
+  sh:property [ sh:path rt:evidence ; sh:class rt:Evidence ;
+                sh:message "关系引用了不存在的证据" ] .
+
+# 注意：sh:severity 不会从 NodeShape 继承到嵌套的属性形状 —— 必须写在属性形状上，
+# 否则结果仍按默认的 sh:Violation 报告（第一次实测就是这样把告警报成了违反）。
+rt:RelationEvidenceShape a sh:NodeShape ;
+  sh:targetClass rt:Relation ;
+  sh:property [ sh:path rt:evidence ; sh:minCount 1 ; sh:severity sh:Warning ;
+                sh:message "关系没有任何证据支撑" ] .
+
+rt:MappingShape a sh:NodeShape ;
+  sh:targetClass rt:Mapping ;
+  sh:property [ sh:path rt:term ; sh:minCount 1 ; sh:maxCount 1 ; sh:class rt:Term ;
+                sh:message "映射必须接地到一个已存在的术语" ] ;
+  sh:property [ sh:path rt:confidence ; sh:maxCount 1 ; sh:in ( "high" "medium" "low" ) ;
+                sh:message "映射的 confidence 必须是 high / medium / low" ] ;
+  sh:property [ sh:path rt:evidence ; sh:class rt:Evidence ;
+                sh:message "映射引用了不存在的证据" ] .
+
+rt:ConstraintShape a sh:NodeShape ;
+  sh:targetClass rt:Constraint ;
+  sh:property [
+    sh:path rt:target ; sh:minCount 1 ; sh:maxCount 1 ;
+    sh:or ( [ sh:class rt:Term ] [ sh:class rt:Mapping ] ) ;
+    sh:message "约束的 target 必须是已存在的术语或映射" ;
+  ] ;
+  sh:property [ sh:path rt:severity ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "block" "warn" ) ;
+                sh:message "约束的 severity 必须是 block / warn" ] ;
+  sh:property [ sh:path rt:constraintType ; sh:minCount 1 ; sh:maxCount 1 ;
+                sh:in ( "capacity" "business_rule" "threshold" ) ;
+                sh:message "约束的 constraint_type 必须是 capacity / business_rule / threshold" ] ;
+  # 没有 trigger_keywords 的约束永远不会被 match_constraints 命中 —— 等于不存在
+  sh:property [ sh:path rt:triggerKeyword ; sh:minCount 1 ;
+                sh:message "约束没有 trigger_keywords，永远不会被告警文本命中" ] ;
+  sh:property [ sh:path rt:evidence ; sh:class rt:Evidence ;
+                sh:message "约束引用了不存在的证据" ] .
+
+rt:ConstraintConfidenceShape a sh:NodeShape ;
+  sh:targetClass rt:Constraint ;
+  sh:property [ sh:path rt:confidence ; sh:minCount 1 ; sh:maxCount 1 ; sh:severity sh:Warning ;
+                sh:in ( "high" "medium" "low" ) ;
+                sh:message "约束未声明 confidence（high / medium / low）" ] .
+
+rt:EvidenceShape a sh:NodeShape ;
+  sh:targetClass rt:Evidence ;
+  sh:property [ sh:path rt:sourceText ; sh:minCount 1 ;
+                sh:message "证据必须写明来源（source）" ] .

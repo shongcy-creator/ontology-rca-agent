@@ -124,8 +124,9 @@
 # ------------------------------------------------------------------
 # 对象属性（拓扑关系）
 # ------------------------------------------------------------------
+# SHACL 门禁（第 9 轮）实测违反后的评审决定：TTL 口径过窄，而不是数据错 —— 集群副本（ApplicationInstance）同样运行于容器。
 :runsOn a owl:ObjectProperty ;
-  rdfs:domain :Application ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( :Application :ApplicationInstance ) ] ;
   rdfs:range :Container ;
   rdfs:label "runsOn"@en , "运行于"@zh ;
   rdfs:comment "应用运行于容器（1 应用可对应多副本容器）"@zh .
@@ -172,14 +173,16 @@
   rdfs:label "hasIndex"@en , "拥有索引"@zh ;
   rdfs:comment "表拥有索引"@zh .
 
+# SHACL 门禁（第 9 轮）实测违反后的评审决定：TTL 口径过窄，而不是数据错 —— 应用集群（compose 服务）整体由容器运行时引擎管理。
 :managedBy a owl:ObjectProperty ;
-  rdfs:domain :Container ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( :Container :ApplicationCluster ) ] ;
   rdfs:range :Cluster ;
   rdfs:label "managedBy"@en , "由集群管理"@zh ;
   rdfs:comment "容器由某集群管理（可选）"@zh .
 
+# SHACL 门禁（第 9 轮）实测违反后的评审决定：TTL 口径过窄，而不是数据错 —— 数据库节点（DatabaseNode ⊂ Resource）各自经 mysqld-exporter 产出指标。
 :produces a owl:ObjectProperty ;
-  rdfs:domain :Component ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( :Component :Resource ) ] ;
   rdfs:range :Metric ;
   rdfs:label "produces"@en , "产出指标"@zh ;
   rdfs:comment "组件产出某类指标（RCA 证据关联）"@zh .
@@ -196,8 +199,9 @@
   rdfs:label "raises"@en , "触发告警"@zh ;
   rdfs:comment "组件触发告警"@zh .
 
+# SHACL 门禁（第 9 轮）实测违反后的评审决定：TTL 口径过窄，而不是数据错 —— 变更事件与故障时间窗重叠时作为诱因（推理规则 R3），Alert 与 Event 同属 Observation。
 :triggers a owl:ObjectProperty ;
-  rdfs:domain :Alert ;
+  rdfs:domain :Observation ;
   rdfs:range :Incident ;
   rdfs:label "triggers"@en , "升级为故障"@zh ;
   rdfs:comment "告警升级为故障"@zh .
@@ -208,9 +212,10 @@
   rdfs:label "hasRootCause"@en , "根因"@zh ;
   rdfs:comment "故障的根因结论（RCA 输出）"@zh .
 
+# SHACL 门禁（第 9 轮）实测违反后的评审决定：TTL 口径过窄，而不是数据错 —— 根因同样会归因到组件（应用集群、网关）。
 :attributedTo a owl:ObjectProperty ;
   rdfs:domain :RootCause ;
-  rdfs:range :Resource ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( :Resource :Component ) ] ;
   rdfs:label "attributedTo"@en , "归因于实体"@zh ;
   rdfs:comment "根因归因到某实体（容器/宿主机/数据库/表）"@zh .
 
@@ -418,3 +423,22 @@
 :memQuotaMB a owl:DatatypeProperty ; rdfs:domain :ResourceQuota ; rdfs:range xsd:integer .
 :faultLayer a owl:DatatypeProperty ; rdfs:domain :FailureInjection ; rdfs:range xsd:string .
 
+
+# ---- 运行时关系谓词补齐（第 8 轮·类型契约）------------------------------------
+# 运行时关系一直在用、TTL 却没有声明的属性；以及原先写成散文的属性链。
+# 声明后，运行时每条关系的 predicate 必须取自本文件（tools/ontology_typing.py T1），
+# domain/range 由 SHACL 形状检查（tools/ontology_shacl.py）。
+
+:exposes a owl:ObjectProperty ;
+  rdfs:domain :Application ; rdfs:range :Interface ;
+  rdfs:label "exposes"@en , "暴露接口"@zh .
+
+:hasComponent a owl:ObjectProperty ;
+  rdfs:domain :Application ; rdfs:range :BusinessFunction ;
+  rdfs:label "hasComponent"@en , "包含业务功能"@zh .
+
+:runsOnHost a owl:ObjectProperty ;
+  owl:propertyChainAxiom ( :runsOn :deployedOn ) ;
+  rdfs:domain :Application ; rdfs:range :HostMachine ;
+  rdfs:label "runsOnHost"@en , "最终运行于宿主机"@zh ;
+  rdfs:comment "由 runsOn 与 deployedOn 组合派生：应用 → 容器 → 宿主机。运行时记录用这个谓词时，两段链必须真实存在（T3）。"@zh .

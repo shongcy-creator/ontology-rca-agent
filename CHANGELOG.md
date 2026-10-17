@@ -8,6 +8,68 @@ versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Ontology gates that can fail where the ontology was previously unchecked** — three checks,
+  all wired into `tools/ontology_hygiene.py` (so they run before every evolution round is
+  accepted, and in CI):
+  - `tools/ontology_freshness.py` — **evidence freshness**. Records that describe the current state
+    (terms / mappings / relations / constraints) must not name a container or host that is absent
+    from the declared environment (`rca-agent/docker-compose.yml`, F1); non-historical evidence must
+    not either (F2); evidence marked `status: historical` must say where and why (F2b). Active
+    records backed *only* by historical evidence are listed as needing re-observation (warning).
+    It deliberately does **not** execute `evidence.query`: those are free text (docker CLI, SQL,
+    PromQL, PowerShell, Python expressions), and executing ontology data as shell commands is a
+    command-injection surface. `ontology_v6` failed it with 10 records naming the pre-cluster
+    container `cc-credit-card-app` — including the grounding mapping `map:app-container`.
+  - `tools/ontology_typing.py` — **typing contract**. Every relation has a `predicate` and every
+    term a `class`, both from the TTL vocabulary (T1/T2); a term whose alias is a TTL individual
+    must carry that individual's `rdf:type` (T2b), so the TTL stays the source of truth for types;
+    a predicate declared with `owl:propertyChainAxiom` must have the chain actually present (T3).
+  - `tools/ontology_shacl.py` + `ontology_turtle/shapes.ttl` — **SHACL**. The runtime records are
+    projected to RDF; domain/range shapes are *generated* from `ontology.ttl` (union domains become
+    `sh:or`), structural shapes are hand-written. Closed-world on purpose: OWL treats
+    `rdfs:domain` as an inference rule, so an OWL reasoner can never report a domain violation.
+    Fails closed when `pyshacl` is missing. Its first run on `ontology_v8` reported 11 violations
+    that had never been checked.
+- Ontology rounds 7–9, each through the evolution protocol (paired evaluation + gate):
+  `ontology_v7` (freshness), `ontology_v8` (typing), `ontology_v9` (SHACL conformance). Real alert
+  texts replayed v6 → v9: strict 20/21 → 20/21, top-5 21/21 → 21/21, 0 regressions
+  (`reports/ontology_v6_v9_replay.json`).
+- `requirements-dev.txt` — pinned gate and lint dependencies (rdflib, pyshacl, pyyaml, ruff), shared
+  by CI and local runs.
+
+### Changed
+
+- The engine reads a relation's `predicate` field instead of string-prefix matching
+  `connection_condition` (`cond.startswith("attributedto")`); older versions without the field
+  fall back to the prefix.
+- `OntologyScoring.supported_by_constraint` — the signal the router uses to catch an over-confident
+  fast path — now follows **typed** edges (direct `evidencedBy`/`attributedTo`; two-hop
+  attributed-component-produces-metric, constraint-component-produces-evidence, and part-whole)
+  instead of any undirected 2-hop path. Measured before adopting: 0/21 decisions changed on the
+  real alert texts and 0 route changes in the A/B, while over all (constraint target, root cause)
+  pairs it drops 110 → 61 connections — 46 of the 49 removed were **sibling** links (two root causes
+  "supporting" each other only because they are attributed to the same component or share a
+  metric), exactly the over-confidence the router is meant to catch. A first version of the typed
+  rule also dropped legitimate part-whole support (constraint on the DB cluster, root cause on one
+  of its nodes); that was found by classifying the removed pairs and fixed before adoption.
+- `ontology.ttl`: declares `:exposes`, `:hasComponent`, and the property chain `:runsOnHost`
+  (`runsOn o deployedOn`, previously prose). Five domains/ranges widened after SHACL review —
+  `runsOn`, `managedBy`, `produces`, `triggers`, `attributedTo` — each with the reason in a comment
+  (CONTRIBUTING rule 2: decide whether the criterion or the system is wrong, and record it).
+  Note `generate_ontology_ttl.py` no longer reproduces this file (it predates the cluster section);
+  running it would drop that section.
+
+### Fixed
+
+- `ontology_v9`: `env:gateway` and `evt:deploy` used `evidencedBy` (domain `RootCause`), which put the
+  gateway component and the deploy event into the engine's "metric → root causes it evidences"
+  index — `metric:gateway-probe` recalled `env:gateway` as a root cause. Now `observedBy`.
+  `db:primary replicatesTo db:mysql-cluster` (range `DatabaseNode`) is now `memberOf`.
+- `ontology_v7`: `map:app-container` grounded `env:container` on a container that no longer exists;
+  `map:app-ip` hard-coded the old container's IP `172.18.0.3` (found by audit — the freshness check
+  only recognises names, not literals).
+- `evolve_ontology_cluster.py` printed every round's result as "可诊断性" (round 1's metric).
+
 - `tools/ontology_ab_replay.py` — replays the **real** alert texts archived by the e2e run
   (`.chaos/rca_diagnosis_report.json` → `alert_text`) against any two ontology versions and reports
   **paired strict hits**. Same inputs, so any delta can only come from the ontology.

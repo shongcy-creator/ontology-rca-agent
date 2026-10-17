@@ -290,7 +290,6 @@ class RCAEngine:
             nid = entry_id.lower()
             ntype = str(node.get("type", "")).lower()
             is_relation = ntype == "relation" or nid.startswith("rel:")
-            is_observation = nid.startswith(("metric:", "alert:", "incident:", "evt:", "con:"))
 
             best = None
             if use_ontology and entry_id in self.scoring.index:

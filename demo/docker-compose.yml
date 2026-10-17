@@ -1,3 +1,8 @@
+# ── 安全默认值（与 rca-agent/docker-compose.yml 同口径）─────────────────────
+# 1. 端口默认只绑回环 `${CC_BIND:-127.0.0.1}:...` —— 本机可访问，别的机器连不上。
+#    确实要对外暴露时：CC_BIND=0.0.0.0（并同时改掉所有明文口令）。
+# 2. 本文件的口令（apppass / rootpass / admin123）是**演示默认值**，
+#    只允许跑在本机隔离环境；对外暴露前必须全部替换。
 services:
   # ── 应用层 ────────────────────────────────────────────────
   app:
@@ -6,7 +11,7 @@ services:
       dockerfile: Dockerfile
     container_name: cc-credit-card-app
     ports:
-      - "8080:8080"
+      - "${CC_BIND:-127.0.0.1}:8080:8080"
     environment:
       DB_HOST: mysql
       DB_PORT: "3306"
@@ -38,7 +43,7 @@ services:
       MYSQL_USER: appuser
       MYSQL_PASSWORD: apppass
     ports:
-      - "3306:3306"
+      - "${CC_BIND:-127.0.0.1}:3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d:ro
@@ -64,7 +69,7 @@ services:
     container_name: cc-prometheus
     restart: unless-stopped
     ports:
-      - "9090:9090"
+      - "${CC_BIND:-127.0.0.1}:9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
@@ -87,7 +92,7 @@ services:
     container_name: cc-mysqld-exporter
     restart: unless-stopped
     ports:
-      - "9104:9104"
+      - "${CC_BIND:-127.0.0.1}:9104:9104"
     networks:
       - ccdemo-net
     depends_on:
@@ -98,10 +103,11 @@ services:
     container_name: cc-grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${CC_BIND:-127.0.0.1}:3000:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin123
+      # 演示默认口令；对外暴露前必须替换（CC_BIND 改成 0.0.0.0 时尤其）
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin123}
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_ALERTING_ENABLED: "true"
     volumes:

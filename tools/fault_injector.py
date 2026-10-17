@@ -11,6 +11,7 @@
   recover ID|--all  回滚（数据驱动，进程被杀也能复原）
   run ID            完整演练：注入 → 叠加压测 → 保持 → 观测 → 回滚 → 校验恢复
   verify [ID ...]   批量演练并输出机器可读报告（供端到端 RCA 验证消费）
+  verify --fast     同上，但只跑 7 个快速反馈场景（全部不依赖压测台）
   seed              准备测试体量（t_txn 30 万行 + t_seq 小表）
 
 示例：
@@ -19,6 +20,7 @@
   python tools/fault_injector.py inject app_pause_replica
   python tools/fault_injector.py run db_row_lock_hold --hold 60 \
       --stress "--duration 60 --concurrency 24"
+  python tools/fault_injector.py verify --fast
   python tools/fault_injector.py recover --all
 """
 from __future__ import annotations
@@ -54,9 +56,8 @@ for _stream in (sys.stdout, sys.stderr):
 #: 这条 `> 0` 的恢复校验永远不可能变假，看起来像"回滚失败"，其实是"基线漂了"。
 DEFAULT_VERIFY_STRESS = "--duration 20 --concurrency 12"
 
-from tools.chaos import FAULTS, Injector, ensure_dataset          # noqa: E402
+from tools.chaos import FAULTS, FAST_SUBSET, Injector, ensure_dataset   # noqa: E402
 from tools.chaos.core import (                                     # noqa: E402
-    APP_GATEWAY,
     APP_LB,
     CHAOS_DIR,
     CONSOLE,
@@ -69,7 +70,6 @@ from tools.chaos.core import (                                     # noqa: E402
     http_json,
     mysql_scalar,
     prom_query,
-    prom_wait,
     zombie_count,
 )
 
@@ -235,6 +235,14 @@ def doctor_checks() -> List[Dict[str, Any]]:
     n_app_targets = len(prom_query('up{job="payment-app"}'))
     rec("prometheus 应用副本目标", n_app_targets >= 3, n_app_targets)
 
+    # 所有抓取目标都在线 —— 不只是应用副本。踩过的坑：container-exporter 没配重启策略，
+    # Docker 引擎重启后其余 15 个容器都回来了，只有它停在 Exited(255)；体检 18/18 全绿，
+    # 而 app_oom_kill 的注入期信号（cc_container_restart_count）只有它产出，
+    # 那个场景从此"通过"（注入 + 回滚成功）却永远观测不到信号。
+    down = sorted({"%s(%s)" % (r["metric"].get("job", "?"), r["metric"].get("instance", "?"))
+                   for r in prom_query("up == 0")})
+    rec("prometheus 抓取目标全部在线", not down, "离线: " + ", ".join(down) if down else "ok")
+
     probe = prom_query('probe_success{job="blackbox-gateway"}')
     rec("blackbox 网关探活", bool(probe), "no probe_success yet" if not probe else "ok")
 
@@ -378,7 +386,8 @@ def verify_scenarios(fault_ids: Optional[List[str]] = None,
                      cooldown: float = 8.0,
                      progress: Optional[Callable[[str], None]] = None,
                      should_stop: Optional[Callable[[], bool]] = None,
-                     json_out: str = "") -> Dict[str, Any]:
+                     json_out: str = "",
+                     subset_name: str = "") -> Dict[str, Any]:
     """
     批量演练：每个场景 inject → 压测 → 保持 → 回滚 → 校验恢复（结构化返回）。
 
@@ -483,9 +492,13 @@ def verify_scenarios(fault_ids: Optional[List[str]] = None,
                    if (r.get("inject") or {}).get("signal_checks")
                    and not any(c.get("ok") for c in (r["inject"].get("signal_checks") or [])))
     # 产物路径：**子集运行绝不覆盖全量证据**。
-    # 踩过的坑：用 `--only app_memory_stress` 做一次回归，就把 21/21 的
+    # 踩过的坑：随手指定几个场景做一次回归，就把 21/21 的
     # fault_verify_report.json（137KB）覆盖成了 1/1 —— 报告里"故障注入自检"
     # 那一节会瞬间变成假数据。所以按范围分开落盘。
+    #
+    # 注意子集之间**仍然**共用一个文件名：先后跑两个不同的子集，后者覆盖前者。
+    # 这是可接受的（都只是子集证据），但"这份报告是谁跑的"必须能从里面读出来
+    # —— 所以 `subset_name` 落进报告（`--fast` 会写 "fast"，手列 ID 留空）。
     subset = bool(fault_ids) and set(fault_ids) != set(FAULTS)
     summary = {"total": total, "attempted": len(results), "passed": ok_n,
                "failed": len(results) - ok_n,
@@ -494,6 +507,7 @@ def verify_scenarios(fault_ids: Optional[List[str]] = None,
                "signals_observed_full": sig_full,
                "signals_observed_none": sig_none,
                "scope": "subset" if subset else "full",
+               "subset_name": subset_name,
                "fault_ids": list(fault_ids) if fault_ids else sorted(FAULTS),
                "stopped_early": stopped_early, "stopped_at": stopped_at,
                "results": results}
@@ -514,18 +528,41 @@ def verify_scenarios(fault_ids: Optional[List[str]] = None,
     say("  其中注入期**全部声明信号成立** %d/%d；完全未观测到信号 %d/%d"
         % (sig_full, len(results), sig_none, len(results)))
     if sig_none:
-        say("  （未观测到信号的那几个场景，信号是 [2m] 级速率窗口，"
-            "而验证只等 %ss，窗口未铺满）" % int(signal_timeout))
+        # 原先这里固定打印"信号是 [2m] 级速率窗口、窗口未铺满"——那只是某两个场景的历史原因，
+        # 对瞬时比值类判据（如 db_conn_saturation）是错误的解释，会把人引向错误的方向。
+        none_ids = [r["fault_id"] for r in results
+                    if (r.get("inject") or {}).get("signal_checks")
+                    and not any(c.get("ok") for c in r["inject"]["signal_checks"])]
+        say("  未观测到信号：%s —— 原因逐条看报告里的 signal_checks（判据、等待时长、实测值），"
+            "常见的有速率窗口长于等待（%ss）、注入量不足以越过阈值" % (", ".join(none_ids), int(signal_timeout)))
     return summary
 
 
 def cmd_verify(args: argparse.Namespace) -> int:
     """批量演练（CLI 包装）。"""
+    fault_ids = args.fault_ids
+    subset_name = ""
+    if args.fast:
+        # `--fast` 就是一份固定子集（catalog.FAST_SUBSET），不是"加速开关"。
+        # 同时给显式 ID 是矛盾的：那两个请求想跑的场景不一样，不能猜用户要哪个。
+        if fault_ids:
+            print("✗ --fast 与显式场景 ID 不能同时给 —— --fast 本身就是一份固定的 7 场景子集；"
+                  "要跑别的组合请直接列 ID。")
+            return 2
+        fault_ids = list(FAST_SUBSET)
+        subset_name = "fast"
+        print("快速反馈子集（%d 个场景，全部不依赖压测台）：" % len(fault_ids))
+        for fid in fault_ids:
+            f = FAULTS[fid]
+            print("  · %-22s [%s] %s" % (fid, f.layer, f.title))
+        print("  ※ 这是**有意收窄**的覆盖：不含网络/慢查询/锁等需要压测的场景。")
+        print("     要全量证据请跑 `verify`，别拿这份报告下“总体没问题”的结论。")
     summary = verify_scenarios(
-        fault_ids=args.fault_ids, hold=args.hold, stress=args.stress,
+        fault_ids=fault_ids, hold=args.hold, stress=args.stress,
         params=args.param, signal_timeout=args.signal_timeout,
         recovery_timeout=args.recovery_timeout, cooldown=args.cooldown,
         json_out=args.json_out or "",
+        subset_name=subset_name,
     )
     return 0 if summary["passed"] == summary["total"] else 1
 
@@ -734,6 +771,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     sp = sub.add_parser("verify", help="批量演练并输出报告")
     sp.add_argument("fault_ids", nargs="*")
+    sp.add_argument("--fast", action="store_true",
+                    help="只跑 %d 个快速反馈场景（全部不依赖压测台）：%s。"
+                         "与显式场景 ID 互斥 —— 它是固定子集，不是加速开关。"
+                         % (len(FAST_SUBSET), ", ".join(FAST_SUBSET)))
     sp.add_argument("--hold", type=float, default=60.0)
     sp.add_argument("--stress", default=None,
                     help="压测参数串；默认 '%s'（与文档 §10.2 验证配方一致）"

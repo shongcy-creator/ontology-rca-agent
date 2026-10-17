@@ -38,7 +38,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 for _s in (sys.stdout, sys.stderr):
@@ -73,7 +73,7 @@ def parse_ttl() -> Dict[str, Any]:
     返回 {subjects: {local: {...}}, classes: [...], prefixes: {...}}。
     解析失败**不静默**：把错误记进返回值的 `errors`，让调用方显示出来。
     """
-    from rdflib import RDF, RDFS, Graph, OWL, URIRef
+    from rdflib import RDF, RDFS, Graph, URIRef
     g = Graph()
     errors: List[str] = []
     files = sorted(TTL_DIR.glob("*.ttl"))

@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
-from typing import Dict, Optional
 from fastapi import APIRouter, HTTPException
 from backend.models import ChatRequest, ChatResponse, ChatMessage
 from backend.services.rca_engine import RCAEngine
 from backend.services.evo_ontology import EvoOntologyClient
-from backend.services.prometheus import PrometheusClient
 from backend.services import incident_store
 
 router = APIRouter()
@@ -214,16 +212,15 @@ async def chat(req: ChatRequest) -> ChatResponse:
         msg = ChatMessage(role="assistant", content=md, incident_id=incident_id)
         hist.append({"role": "assistant", "content": md})
         return ChatResponse(message=msg, session_id=req.session_id, incident_id=incident_id)
-    else:
-        responses = [
-            "我是 RCA Agent。请描述告警或故障，例如：payment-app P99 延迟超过 500ms，MySQL 连接池耗尽",
-            "收到。请告诉我具体告警内容和时间。",
-            "好的，正在分析。请提供更多细节。",
-        ]
-        content = responses[len(hist) % len(responses)]
-        hist.append({"role": "assistant", "content": content})
-        msg = ChatMessage(role="assistant", content=content)
-        return ChatResponse(message=msg, session_id=req.session_id)
+    responses = [
+        "我是 RCA Agent。请描述告警或故障，例如：payment-app P99 延迟超过 500ms，MySQL 连接池耗尽",
+        "收到。请告诉我具体告警内容和时间。",
+        "好的，正在分析。请提供更多细节。",
+    ]
+    content = responses[len(hist) % len(responses)]
+    hist.append({"role": "assistant", "content": content})
+    msg = ChatMessage(role="assistant", content=content)
+    return ChatResponse(message=msg, session_id=req.session_id)
 
 @router.post("/chat/tool")
 async def tool_call(session_id: str, tool_name: str, arguments: dict):
@@ -236,25 +233,24 @@ async def tool_call(session_id: str, tool_name: str, arguments: dict):
         iid = result.get("incident_id", "")
         incident_store.save(iid, result)
         return {"tool_name": tool_name, "result": result, "incident_id": iid}
-    elif tool_name == "query_prometheus":
+    if tool_name == "query_prometheus":
         from backend.services.prometheus import PrometheusClient
         client = PrometheusClient()
         data = client.query(arguments.get("query", "up"))
         return {"tool_name": tool_name, "result": data}
-    elif tool_name == "get_topology":
+    if tool_name == "get_topology":
         evo = get_evo()
         nodes = evo.get_topology(arguments.get("app_name", "payment-app"))
         return {"tool_name": tool_name, "result": {"nodes": nodes}}
-    elif tool_name == "browse_ontology":
+    if tool_name == "browse_ontology":
         evo = get_evo()
         items = evo.browse_semantics(arguments.get("query", ""))
         return {"tool_name": tool_name, "result": items}
-    elif tool_name == "get_incidents":
+    if tool_name == "get_incidents":
         hist = _history.get(session_id, [])
         msgs = [{"role": m["role"], "content": m["content"][:200]} for m in hist if m["role"] in ("user", "assistant")]
         return {"tool_name": tool_name, "result": {"messages": msgs}}
-    else:
-        return {"tool_name": tool_name, "error": "Unknown tool: " + tool_name}
+    return {"tool_name": tool_name, "error": "Unknown tool: " + tool_name}
 
 @router.get("/chat/history/{session_id}")
 async def get_history(session_id: str):

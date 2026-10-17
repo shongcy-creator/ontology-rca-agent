@@ -8,7 +8,7 @@ up:            ## 一条命令把环境带到可用状态
 up-build:      ## 同上，但顺带重建镜像（首次或改了代码后用）
 	python tools/dev_up.py --build
 
-doctor:        ## 环境体检（18 项）
+doctor:        ## 环境体检（19 项）
 	python tools/fault_injector.py doctor
 
 bootstrap:     ## 只做引导：建 schema + 配主从复制（这步不在 compose 里）
@@ -23,7 +23,7 @@ down:          ## 停栈并删除卷（数据会没，谨慎）
 logs:          ## 看日志
 	docker compose -f rca-agent/docker-compose.yml logs --tail 40 -f
 
-verify-fast:   ## 代表性子集（7 个场景）—— 快速反馈
+verify-fast:   ## 固定子集（7 个场景：四层全覆盖、都不依赖压测台）—— 快速反馈
 	python tools/fault_injector.py verify --fast
 
 verify:        ## 全量 21 场景（约 45 分钟）

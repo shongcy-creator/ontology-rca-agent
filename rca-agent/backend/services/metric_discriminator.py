@@ -37,7 +37,7 @@
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Sequence
 
 OOM_KILL = "rc:oom-kill"
 MEM_PRESSURE = "rc:mem-pressure"

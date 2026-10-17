@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """RCA Agent 端到端验证脚本."""
-import json, sys, time
+import json, sys
 import urllib.request, urllib.error
 
 BASE = "http://localhost:8088"

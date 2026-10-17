@@ -22,7 +22,10 @@ end-to-end diagnosis scoring, and a versioned ontology-evolution protocol.
   is the diagnosis right? did remediation actually make the criterion go away?
 - A **versioned ontology** (`.evoontology/`) evolved through the
   [EvoOntology](https://github.com/ruc-datalab/EvoOntology) protocol: candidate version → paired evaluation →
-  gate → accept. Current: `ontology_v6` (56 terms / 87 relations / 30 constraints / 22 evidence).
+  gate → accept. Current: `ontology_v9` (56 terms / 87 relations / 30 constraints / 22 evidence).
+  Every relation carries a `predicate` and every term a `class` from the OWL/TTL vocabulary, and each
+  version must pass SHACL shapes generated from the TTL's domain/range, a typing contract and an
+  evidence-freshness check before it is accepted.
 
 ## What it is NOT
 
@@ -106,7 +109,7 @@ inverse operation and a post-check, and roll back automatically if the check fai
 ![Model settings](docs/images/模型设置_LLM切换.png)
 ![Cost dashboard](docs/images/成本看板.png)
 
-### 10. Cluster monitoring — Prometheus + 23 alert rules + Grafana
+### 10. Cluster monitoring — Prometheus + 24 alert rules + Grafana
 
 ![Grafana dashboard](docs/images/Grafana_面板.png)
 
@@ -124,7 +127,7 @@ the declared alert actually fires. Currently **20/21 = 95%**.
                  └──────────┬──────┘
                     MySQL primary ── GTID ── replica 1 / replica 2
                             │
-      Prometheus + 23 alert rules + Alertmanager + blackbox   Grafana :3000
+      Prometheus + 24 alert rules + blackbox (no Alertmanager)  Grafana :3000
                             │
                   FastAPI RCA backend :8088 ── React console :3001
                      │            │
@@ -149,7 +152,7 @@ the declared alert actually fires. Currently **20/21 = 95%**.
 
 ```bash
 # 1) bring up the cluster (app x3 + gateway, MySQL primary + 2 replicas,
-#    Prometheus/Grafana/Alertmanager, RCA backend + console)
+#    Prometheus/Grafana, RCA backend + console)
 docker compose -f rca-agent/docker-compose.yml up -d
 
 # 2) bootstrap the cluster: schema + replication. **This is NOT done by compose** —
@@ -160,7 +163,7 @@ python tools/cluster_bootstrap.py
 # 3) build the synthetic dataset (~4.8M rows) — required by the scenarios
 python tools/fault_injector.py seed
 
-# 4) environment health check (18 items) — expect all PASS
+# 4) environment health check (19 items) — expect all PASS
 python tools/fault_injector.py doctor
 
 # 5) open the console
@@ -173,7 +176,7 @@ Requirements: Docker with **compose v2**, Python 3.11+, Node 20+ (only to rebuil
 
 ```bash
 python tools/fault_injector.py verify                 # all 21 scenarios: inject → signal → recover
-python tools/fault_injector.py verify --fast          # representative subset (7) — CI friendly
+python tools/fault_injector.py verify --fast          # fixed subset (7): all 4 layers, none needs the stress harness
 python tools/alert_coverage_check.py                  # inject → wait → did the declared alert fire?
 python tools/cluster_rca_verify.py                    # end-to-end: inject → stress → alerts → diagnose → score
 python tools/evolve_ontology_cluster.py --round memory  # one ontology round (paired eval + gate)

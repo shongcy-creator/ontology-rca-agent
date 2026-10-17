@@ -22,7 +22,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
-from .llm_client import LLMClient, LLMResponse, sanitize_proxy_env
+from .llm_client import LLMClient, sanitize_proxy_env
 from .llm_config import llm_config
 from .tools import build_default_registry, ToolRegistry
 from .tools.base import redact

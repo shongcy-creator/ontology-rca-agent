@@ -1,0 +1,12 @@
+{
+  "summary": "类型契约版本：87 条关系补 predicate（83 条从 connection_condition 前缀提取，4 条逐条说明），56 个术语补 class（30 个取自 TTL 个体的 rdf:type，其余按前缀规则或逐条指定）。TTL 补声明 :exposes / :hasComponent，并把散文写的 `runsOn o deployedOn` 声明为属性链 :runsOnHost。引擎改为优先读 predicate 字段，不再对 connection_condition 做字符串前缀匹配（缺字段时回退旧逻辑）。",
+  "limitations": [
+    "本轮如实按记录自称的谓词定类型，domain/range 违反留给 SHACL 门禁发现并另起一轮修正。",
+    "rel:instance-equiv-container 声称副本 owl:sameAs 容器 —— 两者并非同一个体，且与已有的 runsOn 关系重复；SHACL 不检查 sameAs，需要人工评审后改语义。",
+    "rel:derive-client-to-cluster 的条件文本仍写着 routesTo o hasInstance，与端点不符；本轮按端点定为 routesTo，没有改它的端点（那会改变图结构，应单独评估）。"
+  ],
+  "links": [],
+  "questions": [],
+  "recorded_at": "2026-10-17T01:39:53.962032+00:00",
+  "version": "ontology_v8-typing"
+}

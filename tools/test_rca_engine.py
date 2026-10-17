@@ -1,4 +1,3 @@
-import os as _os
 from pathlib import Path as _Path
 _ROOT = _Path(__file__).resolve().parent.parent
 #!/usr/bin/env python3
@@ -30,6 +29,6 @@ try:
     print("topology nodes:", len(result.get("topology", [])))
     print("candidates:", len(result.get("candidates", [])))
     print("chain steps:", len(result.get("rca_chain", [])))
-except Exception as e:
+except Exception:
     import traceback
     traceback.print_exc()

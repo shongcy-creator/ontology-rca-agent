@@ -15,7 +15,6 @@
   python tools/restart_and_test.py
   CC_PYTHON=/path/to/python python tools/restart_and_test.py
 """
-import json
 import os
 import subprocess
 import sys

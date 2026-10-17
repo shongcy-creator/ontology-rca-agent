@@ -14,22 +14,30 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      # 版本锁在 requirements-dev.txt（本地与 CI 共用一份）。其中 pyshacl 是卫生闸门的
+      # SHACL 部分所需 —— 缺了它闸门失败即关闭，而不是静默跳过。
       - name: Install tooling deps
         run: |
           python -m pip install --upgrade pip
-          pip install rdflib pyyaml
+          pip install -r requirements-dev.txt
       # 只编**首方**代码：vendor/ 是上游第三方，全仓 py_compile 失败时无法判断是谁的问题。
+      # .chaos/ 是运行期状态目录（git-ignored）；offline job 只需要本体目录，
+      # ontology_hygiene 与 A/B 都不写报告，不需要 .chaos。
       - name: Python syntax (first-party only)
         run: |
-          mkdir -p .chaos
           python -m py_compile $(git ls-files 'tools/*.py' 'tools/**/*.py' \
             'rca-agent/backend/*.py' 'rca-agent/backend/**/*.py' 'demo/*.py' 'demo/**/*.py' \
             | tr '\n' ' ')
-      - name: Ontology hygiene contract
+      # ruff 版本锁在 requirements-dev.txt：规则集会随版本变化，不锁的话一次与我们
+      # 代码无关的 ruff 发版就能把绿门变红（CONTRIBUTING 第 10 条）。
+      # 升级 ruff 时请连同 ruff.toml 里那几行"实测条数"一起复核。
+      - name: Python lint (ruff)
+        run: ruff check tools/ rca-agent/backend/ --output-format=concise
+      # 卫生闸门 = 游离/可达/lifecycle + 证据时效（F1/F2/F2b）+ 类型契约（T1/T2/T2b/T3）+ SHACL。
+      - name: Ontology hygiene contract (incl. freshness, typing, SHACL)
         run: python tools/ontology_hygiene.py
       - name: Ontology A/B (top-1 regression, offline)
         run: |
-          mkdir -p .chaos
           read -r PARENT ACTIVE <<< "$(python - <<'PY'
           import sys
           sys.path.insert(0, ".")
@@ -45,6 +53,33 @@ jobs:
           fi
           python tools/ontology_scoring_verify.py --parent "$PARENT" --active "$ACTIVE" \
             --top-k 1 --json-out .chaos/ontology_scoring_ab.json
+
+  frontend:
+    name: Frontend build + typecheck + lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: rca-agent/frontend/package-lock.json
+      - name: Install + build + typecheck
+        working-directory: rca-agent/frontend
+        run: |
+          npm ci
+          npm run build
+      - name: Lint (eslint)
+        working-directory: rca-agent/frontend
+        run: npm run lint
+      # 断言生产构建没有把 sourcemap 打进 dist（泄露源码路径）
+      - name: Assert no .map in dist
+        working-directory: rca-agent/frontend
+        run: |
+          if ls dist/assets/*.map 2>/dev/null; then
+            echo "::error::production build emitted .map files (vite sourcemap must stay off)"
+            exit 1
+          fi
 
   smoke:
     name: Compose smoke + environment doctor
@@ -102,7 +137,7 @@ jobs:
           done
           echo "::error::doctor still failing after 15 attempts"
           exit 1
-      - name: Doctor (18 checks, final)
+      - name: Doctor (19 checks, final)
         run: python tools/fault_injector.py doctor
       - name: Logs on failure
         if: failure()

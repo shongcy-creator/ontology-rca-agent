@@ -476,6 +476,9 @@ services:
   container-exporter:
     image: python:3.11-alpine
     command: ["python", "/exporter.py"]
+    # 原先没有重启策略：Docker 引擎重启后其余服务（unless-stopped）都自动回来，唯独它停在
+    # Exited(255)，OOM / 重启计数从此无人观测。doctor 的「抓取目标全部在线」现在会发现这种情况。
+    restart: unless-stopped
     environment:
       EXPORTER_PORT: "9105"
       CONTAINER_PREFIXES: "rca-agent-payment-app"

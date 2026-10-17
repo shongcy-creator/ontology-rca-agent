@@ -121,7 +121,7 @@ python tools/cluster_bootstrap.py
 #    不 seed 的话 t_txn 是空的，doctor 的「测试体量 t_txn」与依赖它的场景全部失真。
 python tools/fault_injector.py seed
 
-# 4) 环境体检（期望 18 项 PASS）
+# 4) 环境体检（期望 19 项 PASS）
 python tools/fault_injector.py doctor
 
 # 5) 文件属主：容器（root）写 .chaos / .evoontology，宿主用户改不动

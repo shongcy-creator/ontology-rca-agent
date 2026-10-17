@@ -178,7 +178,6 @@ def traverse_topology(app_name: str = "payment-app") -> list:
 
 def score_candidates(topology: list, alert: dict) -> list:
     """对拓扑节点按关键词匹配打分，返回候选根因列表。"""
-    keywords_str = " ".join(alert["keywords"]).lower()
     sev_boost = alert["confidence_boost"]
     candidates = []
     for node in topology:

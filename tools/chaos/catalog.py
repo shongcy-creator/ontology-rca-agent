@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, Optional, Tuple
 
 from .core import (
     APP_GATEWAY,
@@ -23,16 +23,11 @@ from .core import (
     MYSQL_APP_USER,
     MYSQL_DB,
     MYSQL_PRIMARY,
-    MYSQL_REPLICAS,
     Fault,
     FaultContext,
-    all_mysql_nodes,
-    app_replicas,
-    container_ip,
     container_state,
     docker,
     docker_exec,
-    http_json,
     kill_by_marker,
     mysql_kill_sessions,
     mysql_scalar,
@@ -515,9 +510,28 @@ def _db_slow_query_recover(ctx: FaultContext) -> Dict[str, Any]:
     return {"ok": True, "detail": res}
 
 
+def _threads_connected(node: str) -> Optional[int]:
+    v = mysql_scalar(node, "SELECT VARIABLE_VALUE FROM performance_schema.global_status "
+                           "WHERE VARIABLE_NAME='Threads_connected'")
+    return int(v) if v.isdigit() else None
+
+
 def _db_conn_saturation_inject(ctx: FaultContext) -> Dict[str, Any]:
     node = ctx.targets[0] if ctx.targets else MYSQL_PRIMARY
-    n = int(ctx.p("connections", 180))
+    # 注入量按**注入时实测的基线**计算，让合计落在目标占用率上，而不是写死连接数。
+    # 踩过的坑：有效窗口只有约 15 个连接宽 —— 合计要 >170（判据 0.85×200）才算成立，
+    # 又要 <≈185 给 mysqld_exporter 的抓取连接留位（否则 mysql_up=0、监控被打瞎，见 dd6abf9）。
+    # 而应用自身的基线在 17~37 之间漂移（连接池空闲连接数随重启/负载变化）。
+    # 写死 150：基线 29 时合计 179（0.895，成立）；Docker 重启后基线 17，合计 167（0.835），
+    # 信号在结构上不可能成立 —— 实测 verify --fast 里这个场景"通过"却 0/1 信号成立。
+    maxconn = mysql_scalar(node, "SELECT @@max_connections")
+    baseline = _threads_connected(node)
+    if not maxconn.isdigit() or baseline is None:
+        return {"ok": False, "error": "读不到 max_connections / Threads_connected，无法按基线确定注入量"
+                                      "（max_connections=%r, Threads_connected=%r）" % (maxconn, baseline)}
+    target_ratio = float(ctx.p("target_ratio", 0.90))
+    explicit = ctx.p("connections")
+    n = int(explicit) if explicit is not None else max(0, round(target_ratio * int(maxconn)) - baseline)
     hold_s = int(ctx.p("hold_s", 1800))
     # 单次 docker exec 内用 shell 循环并发起 N 个长期连接（避免 N 次 exec 开销）。
     #
@@ -542,10 +556,12 @@ def _db_conn_saturation_inject(ctx: FaultContext) -> Dict[str, Any]:
     # 每个 mysql 客户端都要 fork + 建连，180 个串行起来需要十几秒才到峰值；
     # 等不够会让"信号是否可以观测"的判定变成随机结果。
     time.sleep(int(ctx.p("settle_s", 18)))
-    total = mysql_scalar(node, "SELECT COUNT(*) FROM information_schema.processlist")
-    maxconn = mysql_scalar(node, "SELECT @@max_connections")
+    total = _threads_connected(node)
     return {"ok": True, "recover_hint": {"node": node},
-            "detail": {"requested": n, "total_connections": total, "max_connections": maxconn}}
+            "detail": {"requested": n, "sizing": "explicit" if explicit is not None else "target_ratio",
+                       "target_ratio": None if explicit is not None else target_ratio,
+                       "baseline_threads_connected": baseline,
+                       "threads_connected_after": total, "max_connections": int(maxconn)}}
 
 
 def _db_conn_saturation_recover(ctx: FaultContext) -> Dict[str, Any]:
@@ -1164,8 +1180,10 @@ _register(Fault(
                 "（实测：注入 170 → 峰值 197/200，全量跑批里正是这样变成 `alert_coverage=False`）。",
     inject=_db_conn_saturation_inject, recover=_db_conn_saturation_recover,
     selector="mysql-primary",
-    default_params={"connections": 150},
-    params_help={"connections": "持有的连接数（应用自身约 27，合计需 <185 以留出导出器余量）"},
+    default_params={"target_ratio": 0.90},
+    params_help={"target_ratio": "目标占用率：注入量 = target_ratio × max_connections − 注入前的 Threads_connected"
+                                 "（0.90 → 合计约 180/200：越过 0.85 判据，同时给导出器留约 20 个槽位）",
+                 "connections": "显式指定持有的连接数（覆盖 target_ratio；不随基线自适应）"},
     signals=[
         'mysql_global_status_threads_connected / mysql_global_variables_max_connections > 0.85',
     ],
@@ -1401,3 +1419,48 @@ _register(Fault(
     alert_names=["MySQLDiskTempTables"],
     blast_radius="数据库侧排序类查询全面变慢",
 ))
+
+
+# ── 快速反馈子集（`fault_injector.py verify --fast`）─────────────────────────
+# 选它的口径只有两条，都是为了"快速反馈"这个目的本身：
+#
+# ① **四个层一个都不缺** —— application / runtime / database / resource 各自至少
+#    一个场景。回归往往只坏在一个层里，覆盖面比数量重要。
+# ② **一个都不依赖压测台** —— `needs_stress` 与 `signal_needs_stress` 都为假。
+#    依赖压测的场景要先起并发负载才会产生信号，慢，且历史上最容易受环境影响
+#    （见 docs/lessons/02：压测台曾经连着它自己，842/842 全失败仍像个性能结论）。
+#    快速反馈的价值在于"改了东西几分钟内知道有没有炸"，把不确定性引进来就废了。
+#
+# 所以这是**刻意的取舍**：少测两个机制（网络、慢查询/锁），换确定的耗时。
+# 它**不能**替代全量 21 —— 覆盖面上的洞是有意的，不是漏的。
+#
+# `app_memory_stress` 与 `app_oom_kill` 必须**成对**出现，不能只留一个：
+# 指标面判别器只在候选中同时出现 rc:oom-kill 与 rc:mem-pressure 时才启动
+# （rca-agent/backend/services/metric_discriminator.py），单独一个只测到它的一半。
+FAST_SUBSET: Tuple[str, ...] = (
+    "app_kill_replica",      # application  副本被强杀 → rc:replica-loss
+    "app_gateway_stop",      # application  入口不可达（依赖类）
+    "app_memory_stress",     # runtime      指标面判别器：内存压力
+    "app_oom_kill",          # runtime      指标面判别器：真 OOM Kill
+    "db_conn_saturation",    # database     连接耗尽
+    "db_replica_lag",        # database     复制延迟
+    "res_cluster_memory",    # resource     集群内存容量
+)
+
+# 自校验：这份子集是**手抄的场景 ID**，而场景会被改名、会被新加 stress 依赖。
+# 两种漂移都是静默的 —— 改名后 ID 对不上（verify 会报 unknown fault，还算响），
+# 而给其中某个加 `needs_stress` 则完全不响：`--fast` 照样"通过"，只是悄悄变慢、
+# 悄悄变不稳，而那正是这个子集存在的意义所在。所以在导入时就炸。
+_unknown = [f for f in FAST_SUBSET if f not in FAULTS]
+if _unknown:
+    raise ValueError(
+        "FAST_SUBSET 引用了不存在的场景 %s —— 场景改名后必须同步这里，"
+        "否则 --fast 会静默丢掉覆盖" % _unknown
+    )
+_stressy = [f for f in FAST_SUBSET
+            if FAULTS[f].needs_stress or FAULTS[f].signal_needs_stress]
+if _stressy:
+    raise ValueError(
+        "FAST_SUBSET 必须全部不依赖压测台，但这些依赖: %s —— "
+        "要么换成等价的无压测场景，要么接受 --fast 变慢" % _stressy
+    )

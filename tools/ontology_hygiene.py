@@ -48,6 +48,18 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "rca-agent"))
 
+# ── 控制台编码兜底 ────────────────────────────────────────────────────────────
+# 与 tools/fault_injector.py 同口径。踩过的坑：Windows 默认控制台是 GBK，
+# 而本脚本的结论行末尾带 ✅ / ❌（U+2705 / U+274C），`print` 会抛
+# UnicodeEncodeError —— 于是**检查全部跑完了，结论却没打出来**，退出码还是 1。
+# 那看起来就像"卫生检查不通过"，其实只是打印不出来。编码不了就退化成 '?'，
+# 绝不让日志问题冒充检查结论。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(errors="replace")   # type: ignore[union-attr]
+    except Exception:  # noqa: BLE001
+        pass
+
 from tools.ontology_cluster_patch import SCENARIO_EXPECTED_TERMS  # noqa: E402
 
 WORKSPACE = ROOT / ".evoontology"
@@ -322,9 +334,34 @@ def gate_records(rec: Dict[str, List[dict]], version: str) -> Dict[str, Any]:
         warnings.append("声明 active 但无 evidence_refs 的术语 %d 个：%s "
                         "—— 若该概念在环境中并未实现，应改标 lifecycle.state=draft"
                         % (len(no_ev), no_ev))
+
+    from tools.ontology_freshness import check_records as freshness_check
+    fr = freshness_check(rec)
+    for v in fr["violations"]:
+        violations.append("证据时效 %s：%s %s 的 %s 点名了声明环境之外的 `%s`"
+                          % (v["rule"], v["family"], v["id"], v["field"], v["token"])
+                          if v["token"] else
+                          "证据时效 %s：历史证据 %s 缺少 %s" % (v["rule"], v["id"], v["field"]))
+    if fr["needs_reobservation"]:
+        warnings.append("只靠历史证据支撑、待集群在线时重新观测的记录 %d 条：%s"
+                        % (len(fr["needs_reobservation"]),
+                           ["%s" % n["id"] for n in fr["needs_reobservation"]]))
+
+    from tools.ontology_typing import check_typing
+    ty = check_typing(rec)
+    for prob in ty["problems"]:
+        violations.append("类型契约 %s：%s %s" % (prob["rule"], prob["id"], prob["detail"]))
+
+    from tools.ontology_shacl import validate_records as shacl_validate
+    sh = shacl_validate(rec)
+    for v in sh["violations"]:
+        violations.append("SHACL %s：%s %s%s" % (v["shape"], v["focus"], v["message"],
+                                                "（关系 %s）" % ", ".join(v["relations"]) if v["relations"] else ""))
+    for w in sh["warnings"]:
+        warnings.append("SHACL %s：%s %s" % (w["shape"], w["focus"], w["message"]))
     return {"passed": not violations, "violations": violations, "warnings": warnings,
             "orphans": a["orphans"], "unverifiable_root_causes": a["unverifiable_root_causes"],
-            "contract_mean": s["mean"]}
+            "contract_mean": s["mean"], "freshness": fr, "typing": ty, "shacl": sh}
 
 
 def main(argv: List[str] | None = None) -> int:

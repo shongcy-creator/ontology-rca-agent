@@ -61,7 +61,7 @@ for _s in (sys.stdout, sys.stderr):
 from tools.chaos import FAULTS, Injector                                    # noqa: E402
 from tools.chaos.core import (                                              # noqa: E402
     CHAOS_DIR, MYSQL_PRIMARY, MYSQL_REPLICAS, app_replicas,
-    mysql_scalar, mysql_sql, prom_query,
+    mysql_scalar, prom_query,
 )
 
 # ═════════════════════════════════════════════════════════════════════════════

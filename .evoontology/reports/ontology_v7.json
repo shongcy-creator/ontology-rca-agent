@@ -1,0 +1,12 @@
+{
+  "summary": "证据时效版本：新增 tools/ontology_freshness.py 并接入卫生闸门 —— 描述当前状态的记录不得点名声明环境之外的实体（F1），非历史证据同样不得（F2），历史证据必须写明观测环境与原因（F2b）。本轮把 ev-docker-ps / ev-app-topology / ev-db-probe / ev:rca-inc_1790868998 标为 historical，修正 env:container 名称与定义、app:payment-app 与 db:mysql-cluster 的别名、map:app-container 的接地条件、两条关系描述，并修正 map:app-ip 里写死的旧容器 IP。",
+  "limitations": [
+    "时效检查只认**名字**（容器名、URL 主机名），认不出过期的字面量：map:app-ip 写死的 IP 就是靠人工审计发现的。",
+    "同属单实例时代、但点名的实体在集群里仍然存在的证据（如 ev-mysql-vars 经服务名 mysql 观测）不会被标记。",
+    "仍有 16 条记录只靠历史证据支撑（fn:auth, ds:pay, metric:mysql-p99, metric:conn-exhaust, incident:payment-timeout, map:app-ip, map:latency-p99, rel:app-exposes-api, rel:app-accesses-db, rel:app-datasource, rel:ds-points-db, rel:incident-rc, rel:rc-evidence-p99, rel:rc-evidence-conn, rel:app-produces-metric, con:pool-exhaust）。本轮刻意不给它们硬配证据，它们以告警形式保留，需要集群在线时重新观测后补新证据。"
+  ],
+  "links": [],
+  "questions": [],
+  "recorded_at": "2026-10-17T01:32:25.140104+00:00",
+  "version": "ontology_v7-freshness"
+}

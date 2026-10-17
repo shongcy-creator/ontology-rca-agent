@@ -56,7 +56,6 @@ if SPA.exists():
 
 @app.get("/", include_in_schema=False)
 async def root():
-    from fastapi.responses import RedirectResponse
     if SPA.exists():
         return RedirectResponse(url="/ui/")
     return {"service": "rca-agent", "docs": "/docs"}

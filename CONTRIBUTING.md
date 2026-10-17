@@ -6,20 +6,31 @@ count, so most of the rules below are about how claims get made.
 ## Development setup
 
 ```bash
+pip install -r requirements-dev.txt        # gate + lint deps (rdflib, pyshacl, pyyaml, ruff), pinned
 docker compose -f rca-agent/docker-compose.yml up -d
 python tools/fault_injector.py seed        # build the synthetic dataset (~4.8M rows)
-python tools/fault_injector.py doctor      # 18 checks, expect all PASS
+python tools/fault_injector.py doctor      # 19 checks, expect all PASS
 cd rca-agent/frontend && npm ci && npm run build   # only if you touch the console
 ```
 
 Fast feedback loops (no long runs):
 
 ```bash
-python tools/fault_injector.py verify --fast   # 7 representative scenarios (~10-15 min)
-python tools/ontology_hygiene.py               # ontology hygiene contract
+python tools/fault_injector.py verify --fast   # 7 scenarios, none needing the stress harness
+python tools/ontology_hygiene.py               # ontology gate: hygiene + freshness + typing + SHACL
 python tools/ontology_scoring_verify.py        # ontology A/B top-1 regression (seconds, offline)
 python -m py_compile tools/*.py rca-agent/backend/**/*.py
 ```
+
+`--fast` is a **fixed subset, not a speed knob**: the 7 scenarios in
+`tools/chaos/catalog.py` → `FAST_SUBSET`, chosen so that all four layers are covered and
+**none** depends on the stress harness (`needs_stress` / `signal_needs_stress`). It
+deliberately has holes — no network, slow-query or lock scenarios. It is a smoke signal,
+not a replacement for the full 21; don't read "fast all green" as "the system is fine".
+The subset self-validates on import: renaming one of its scenarios, or giving one a stress
+dependency, raises rather than silently shrinking coverage. Its floor is
+**9 minutes** with the default `--hold 60 --cooldown 20` (7×60 + 6×20), plus injection
+and recovery waits — a floor derived from the defaults, not a measured wall-clock.
 
 ## Non-negotiable disciplines
 

@@ -102,7 +102,7 @@ def main(argv=None) -> int:
         print("\n[3/4] 建数据集 ... 跳过（--skip-seed）")
 
     print("\n" + "=" * 92)
-    print("[4/4] 环境体检（18 项；最多重试 %d 次）" % a.doctor_retries)
+    print("[4/4] 环境体检（19 项；最多重试 %d 次）" % a.doctor_retries)
     print("=" * 92, flush=True)
     for i in range(1, a.doctor_retries + 1):
         ok, out = doctor_ok()

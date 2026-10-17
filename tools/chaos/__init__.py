@@ -8,7 +8,7 @@
 
 对外入口：`tools/fault_injector.py`（CLI）。
 """
-from .catalog import FAULTS, ensure_dataset          # noqa: F401
+from .catalog import FAULTS, FAST_SUBSET, ensure_dataset    # noqa: F401
 from .core import Injector, Fault, FaultContext       # noqa: F401
 
-__all__ = ["FAULTS", "Injector", "Fault", "FaultContext", "ensure_dataset"]
+__all__ = ["FAULTS", "FAST_SUBSET", "Injector", "Fault", "FaultContext", "ensure_dataset"]

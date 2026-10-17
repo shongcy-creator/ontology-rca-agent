@@ -82,12 +82,6 @@ async def _env_containers(args: Dict[str, Any]) -> ToolResult:
         if len(parts) < 4:
             continue
         status = parts[3]
-        restarts = 0
-        try:
-            if "Restarting" in status:
-                restarts = 1
-        except Exception:
-            pass
         containers.append({
             "name": parts[0], "image": parts[1], "state": parts[2],
             "status": status, "ports": parts[4] if len(parts) > 4 else "",

@@ -911,6 +911,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_247be283e0c5415aa5b57d4deba1d102.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_247be283e0c5415aa5b57d4deba1d102.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_247be283e0c5415aa5b57d4deba1d102.json"
+          ]
         }
       ],
       "topics": [],
@@ -1342,6 +1349,55 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_7d3a3c60762c4ebdab8253a3d951f1f6.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7d3a3c60762c4ebdab8253a3d951f1f6.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7d3a3c60762c4ebdab8253a3d951f1f6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b872657cb8544c4c88ea33476d72f667.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b872657cb8544c4c88ea33476d72f667.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e7421b773fbc410a9cbf12516631ed04.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e7421b773fbc410a9cbf12516631ed04.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f7ff0b8986d847d3903e2edfbea83fea.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f7ff0b8986d847d3903e2edfbea83fea.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b872657cb8544c4c88ea33476d72f667.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b872657cb8544c4c88ea33476d72f667.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e7421b773fbc410a9cbf12516631ed04.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e7421b773fbc410a9cbf12516631ed04.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f7ff0b8986d847d3903e2edfbea83fea.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f7ff0b8986d847d3903e2edfbea83fea.json"
+          ]
         }
       ],
       "topics": [],
@@ -1452,6 +1508,62 @@
           "source_ref": "/app/.evoontology/trajectories/task_50fd5c0ced3f43e98e7841557d3a7fe7.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_50fd5c0ced3f43e98e7841557d3a7fe7.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_50fd5c0ced3f43e98e7841557d3a7fe7.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_50fd5c0ced3f43e98e7841557d3a7fe7.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bec39d52a8fc4aefa5856d7abf634156.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bec39d52a8fc4aefa5856d7abf634156.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d3b7da74d7b84b7fa6caa7ab6c6c2180.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d3b7da74d7b84b7fa6caa7ab6c6c2180.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fa6e8b0724414e008a3d185c24b25b48.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fa6e8b0724414e008a3d185c24b25b48.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_bec39d52a8fc4aefa5856d7abf634156.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_bec39d52a8fc4aefa5856d7abf634156.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d3b7da74d7b84b7fa6caa7ab6c6c2180.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d3b7da74d7b84b7fa6caa7ab6c6c2180.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fa6e8b0724414e008a3d185c24b25b48.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fa6e8b0724414e008a3d185c24b25b48.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_4006d59204704a43b0aac76443d4db5c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_4006d59204704a43b0aac76443d4db5c.json"
           ]
         }
       ],
@@ -1627,6 +1739,118 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_19a29c1f8f8142b09622ce6b91e3e547.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_13210e6fb90b47e2a96b5a632c6dd191.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_13210e6fb90b47e2a96b5a632c6dd191.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_13c94addc89c47cb937d000f73b1a5ca.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_13c94addc89c47cb937d000f73b1a5ca.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_19a29c1f8f8142b09622ce6b91e3e547.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_19a29c1f8f8142b09622ce6b91e3e547.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_863e7c78cd0b44e68b4805d8be726f82.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_863e7c78cd0b44e68b4805d8be726f82.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_90d7bb1a01b84cc980bdbbbc2e9bf1d1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_90d7bb1a01b84cc980bdbbbc2e9bf1d1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9503082181bd457983406ab8653529b9.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9503082181bd457983406ab8653529b9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b13e567f352947e89e3301c8182a7651.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b13e567f352947e89e3301c8182a7651.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f7bfd4c193524801b42d750995d145e2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f7bfd4c193524801b42d750995d145e2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_13210e6fb90b47e2a96b5a632c6dd191.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_13210e6fb90b47e2a96b5a632c6dd191.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_13c94addc89c47cb937d000f73b1a5ca.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_13c94addc89c47cb937d000f73b1a5ca.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_90d7bb1a01b84cc980bdbbbc2e9bf1d1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_90d7bb1a01b84cc980bdbbbc2e9bf1d1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_9503082181bd457983406ab8653529b9.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_9503082181bd457983406ab8653529b9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b13e567f352947e89e3301c8182a7651.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b13e567f352947e89e3301c8182a7651.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f7bfd4c193524801b42d750995d145e2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f7bfd4c193524801b42d750995d145e2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ec68413f404b44298438a2ac67027b52.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ec68413f404b44298438a2ac67027b52.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5ddf927a82b84ecc8fe4fe0ea82ea3b1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5ddf927a82b84ecc8fe4fe0ea82ea3b1.json"
+          ]
         }
       ],
       "topics": [],
@@ -1773,6 +1997,153 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_f11bc9dfba394719a14601e11187266a.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2be2237139db4f0ca412fa8a16115dd8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2be2237139db4f0ca412fa8a16115dd8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_38a2c495d8884320a99c85d5259e1a60.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_38a2c495d8884320a99c85d5259e1a60.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_492c49df05054df796e4dac405597557.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_492c49df05054df796e4dac405597557.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5468e8fe6119431a903d7362462d57a2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5468e8fe6119431a903d7362462d57a2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_61be56e9d72848f8a7d00454db97a7e2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_61be56e9d72848f8a7d00454db97a7e2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9767d329cf7a4e59b2a1e1b10b02177b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9767d329cf7a4e59b2a1e1b10b02177b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ac9ff5dc58054bf0b29b1bf2cd607bd9.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ac9ff5dc58054bf0b29b1bf2cd607bd9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d39fde1183de49b28ed03dfb84c2d0de.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d39fde1183de49b28ed03dfb84c2d0de.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_efc5d631085c4171a507626364a42a22.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_efc5d631085c4171a507626364a42a22.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f11bc9dfba394719a14601e11187266a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f11bc9dfba394719a14601e11187266a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f3194c6349174dfda736c82beed9308e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f3194c6349174dfda736c82beed9308e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_2be2237139db4f0ca412fa8a16115dd8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_2be2237139db4f0ca412fa8a16115dd8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_38a2c495d8884320a99c85d5259e1a60.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_38a2c495d8884320a99c85d5259e1a60.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_492c49df05054df796e4dac405597557.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_492c49df05054df796e4dac405597557.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5468e8fe6119431a903d7362462d57a2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5468e8fe6119431a903d7362462d57a2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_9767d329cf7a4e59b2a1e1b10b02177b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_9767d329cf7a4e59b2a1e1b10b02177b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ac9ff5dc58054bf0b29b1bf2cd607bd9.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ac9ff5dc58054bf0b29b1bf2cd607bd9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d39fde1183de49b28ed03dfb84c2d0de.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d39fde1183de49b28ed03dfb84c2d0de.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_efc5d631085c4171a507626364a42a22.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_efc5d631085c4171a507626364a42a22.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f3194c6349174dfda736c82beed9308e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f3194c6349174dfda736c82beed9308e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e1eaa77323a64bb68902713beb345494.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e1eaa77323a64bb68902713beb345494.json"
+          ]
         }
       ],
       "topics": [],
@@ -1904,6 +2275,111 @@
           "source_ref": "/app/.evoontology/trajectories/task_02ac166708da45529fe559efbe8bdb0f.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_02ac166708da45529fe559efbe8bdb0f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_02ac166708da45529fe559efbe8bdb0f.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_02ac166708da45529fe559efbe8bdb0f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_098e946acb4142ad81b2fdca63e3d17f.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_098e946acb4142ad81b2fdca63e3d17f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0f2a4164d1834b7488ea856b42115f4d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0f2a4164d1834b7488ea856b42115f4d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_35ff464c3dc04ce59f58e2ff05391768.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_35ff464c3dc04ce59f58e2ff05391768.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_36e1b764fdb146d6ad887c2eed75c5c8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_36e1b764fdb146d6ad887c2eed75c5c8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_99ba29e6ef2043939d1cf1fa1c29c7b8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_99ba29e6ef2043939d1cf1fa1c29c7b8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b940e7d398f640599f8dcd9022e0f20a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b940e7d398f640599f8dcd9022e0f20a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4e46e3ca42447bf8253a71d288369c4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4e46e3ca42447bf8253a71d288369c4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_098e946acb4142ad81b2fdca63e3d17f.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_098e946acb4142ad81b2fdca63e3d17f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0f2a4164d1834b7488ea856b42115f4d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0f2a4164d1834b7488ea856b42115f4d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_35ff464c3dc04ce59f58e2ff05391768.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_35ff464c3dc04ce59f58e2ff05391768.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_36e1b764fdb146d6ad887c2eed75c5c8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_36e1b764fdb146d6ad887c2eed75c5c8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_99ba29e6ef2043939d1cf1fa1c29c7b8.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_99ba29e6ef2043939d1cf1fa1c29c7b8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b940e7d398f640599f8dcd9022e0f20a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b940e7d398f640599f8dcd9022e0f20a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6d371188b0d24e9498925115a3c5fa44.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6d371188b0d24e9498925115a3c5fa44.json"
           ]
         }
       ],
@@ -2104,6 +2580,55 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_f0ca2b4245ce4055b0167a411dc7e27d.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a1b76ea717fd4fa6a63ba3541a92bab6.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a1b76ea717fd4fa6a63ba3541a92bab6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a63573ed154a4fe5a35b11ec33041657.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a63573ed154a4fe5a35b11ec33041657.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f0ca2b4245ce4055b0167a411dc7e27d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f0ca2b4245ce4055b0167a411dc7e27d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe6aa90a8722461b92b3b2171a38dfe0.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe6aa90a8722461b92b3b2171a38dfe0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a1b76ea717fd4fa6a63ba3541a92bab6.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a1b76ea717fd4fa6a63ba3541a92bab6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a63573ed154a4fe5a35b11ec33041657.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a63573ed154a4fe5a35b11ec33041657.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fe6aa90a8722461b92b3b2171a38dfe0.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fe6aa90a8722461b92b3b2171a38dfe0.json"
+          ]
         }
       ],
       "topics": [],
@@ -2220,6 +2745,55 @@
           "source_ref": "/app/.evoontology/trajectories/task_a9a185cb3e2440c3ad18271e410f89cd.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_a9a185cb3e2440c3ad18271e410f89cd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0e7788b03cd94224ace1ed532f443fc3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0e7788b03cd94224ace1ed532f443fc3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46f5aa692344496d8503e010f7083257.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46f5aa692344496d8503e010f7083257.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_50d768cc9bc843fc9f20d56cba5ffb8a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_50d768cc9bc843fc9f20d56cba5ffb8a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a9a185cb3e2440c3ad18271e410f89cd.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a9a185cb3e2440c3ad18271e410f89cd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0e7788b03cd94224ace1ed532f443fc3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0e7788b03cd94224ace1ed532f443fc3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_46f5aa692344496d8503e010f7083257.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_46f5aa692344496d8503e010f7083257.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_50d768cc9bc843fc9f20d56cba5ffb8a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_50d768cc9bc843fc9f20d56cba5ffb8a.json"
           ]
         }
       ],
@@ -2385,6 +2959,55 @@
           "source_ref": "/app/.evoontology/trajectories/task_c1ad88170ebc4f1f8cfb010c69e687d0.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_c1ad88170ebc4f1f8cfb010c69e687d0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9267b599b85348a780e185e2a596f720.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9267b599b85348a780e185e2a596f720.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a0c64d08095f42bbb598cd95d5b705f2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a0c64d08095f42bbb598cd95d5b705f2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c1ad88170ebc4f1f8cfb010c69e687d0.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c1ad88170ebc4f1f8cfb010c69e687d0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d1efd777396847449230ef35eb75d608.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d1efd777396847449230ef35eb75d608.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_9267b599b85348a780e185e2a596f720.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_9267b599b85348a780e185e2a596f720.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a0c64d08095f42bbb598cd95d5b705f2.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a0c64d08095f42bbb598cd95d5b705f2.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_d1efd777396847449230ef35eb75d608.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_d1efd777396847449230ef35eb75d608.json"
           ]
         }
       ],
@@ -2640,6 +3263,27 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e1ef23d6a6864f2ca27f49bfaa4e03c1.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_5ce9874dd80e466a8d45e37282f00f6c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_5ce9874dd80e466a8d45e37282f00f6c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_141ce26769d34246af02f4fd62819e23.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_141ce26769d34246af02f4fd62819e23.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_39aae204ae504c978fd4707d0d8dc4a3.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_39aae204ae504c978fd4707d0d8dc4a3.json"
+          ]
         }
       ],
       "topics": [],
@@ -2785,6 +3429,41 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_6614bbf5a31a4fa3a0169ca6ec99e06c.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_61698dd3240a407e920996f3e5db64ad.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_61698dd3240a407e920996f3e5db64ad.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6614bbf5a31a4fa3a0169ca6ec99e06c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6614bbf5a31a4fa3a0169ca6ec99e06c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_df62159b6e8f47f3a8f54f4ae0c8c4c4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_df62159b6e8f47f3a8f54f4ae0c8c4c4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_61698dd3240a407e920996f3e5db64ad.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_61698dd3240a407e920996f3e5db64ad.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_df62159b6e8f47f3a8f54f4ae0c8c4c4.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_df62159b6e8f47f3a8f54f4ae0c8c4c4.json"
+          ]
         }
       ],
       "topics": [],
@@ -2901,6 +3580,20 @@
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2a7ef8cf77514a1992ea010ee4520e4c.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2506edefbfb84d159ef2b700e8f8ab71.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2506edefbfb84d159ef2b700e8f8ab71.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_2506edefbfb84d159ef2b700e8f8ab71.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_2506edefbfb84d159ef2b700e8f8ab71.json"
+          ]
         }
       ],
       "topics": [],
@@ -2955,6 +3648,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_06ffac2f56f242c0802560bdd054e825.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_06ffac2f56f242c0802560bdd054e825.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_06ffac2f56f242c0802560bdd054e825.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_06ffac2f56f242c0802560bdd054e825.json"
           ]
         }
       ],
@@ -3046,6 +3746,132 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_d90d5c3b26054390a30d48d3b8a57ad0.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_00c66b3197f34481b795674f1029e19c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_00c66b3197f34481b795674f1029e19c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_196132d4dd2d49bc9283efb530e73c62.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_196132d4dd2d49bc9283efb530e73c62.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_26f6a4824f154214b7d3d8a35c42e704.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_26f6a4824f154214b7d3d8a35c42e704.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3197d3b46d9f4e7abb379a14c30355a6.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3197d3b46d9f4e7abb379a14c30355a6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3c10354e6a48479295c6b41b87829c12.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3c10354e6a48479295c6b41b87829c12.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46523842fe5049e3bba1d27affa68a35.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46523842fe5049e3bba1d27affa68a35.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6047138b6fa04dff9cfafebdea6e1703.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6047138b6fa04dff9cfafebdea6e1703.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7ab7c126e2cd41ed822103a8007c922f.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7ab7c126e2cd41ed822103a8007c922f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d90d5c3b26054390a30d48d3b8a57ad0.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d90d5c3b26054390a30d48d3b8a57ad0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f29aa4d8946046c6ad58133eb839f4d0.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f29aa4d8946046c6ad58133eb839f4d0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_00c66b3197f34481b795674f1029e19c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_00c66b3197f34481b795674f1029e19c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_196132d4dd2d49bc9283efb530e73c62.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_196132d4dd2d49bc9283efb530e73c62.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_26f6a4824f154214b7d3d8a35c42e704.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_26f6a4824f154214b7d3d8a35c42e704.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_3c10354e6a48479295c6b41b87829c12.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_3c10354e6a48479295c6b41b87829c12.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_46523842fe5049e3bba1d27affa68a35.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_46523842fe5049e3bba1d27affa68a35.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6047138b6fa04dff9cfafebdea6e1703.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6047138b6fa04dff9cfafebdea6e1703.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7ab7c126e2cd41ed822103a8007c922f.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7ab7c126e2cd41ed822103a8007c922f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_f29aa4d8946046c6ad58133eb839f4d0.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_f29aa4d8946046c6ad58133eb839f4d0.json"
+          ]
         }
       ],
       "topics": [],
@@ -3079,6 +3905,62 @@
           "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe49d4501274431fb10dd9dd62ac5652.json",
           "evidence_refs": [
             "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe49d4501274431fb10dd9dd62ac5652.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0a87d9e1c16840139f92d4f6a20e917b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0a87d9e1c16840139f92d4f6a20e917b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_31ddcfa1d0944cb4b733cea7df1377c0.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_31ddcfa1d0944cb4b733cea7df1377c0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8da1b15c31164242a56ec09273cf96e1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8da1b15c31164242a56ec09273cf96e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c25c709d0e8c42519ab1ae277d3ea524.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c25c709d0e8c42519ab1ae277d3ea524.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_0a87d9e1c16840139f92d4f6a20e917b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_0a87d9e1c16840139f92d4f6a20e917b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_31ddcfa1d0944cb4b733cea7df1377c0.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_31ddcfa1d0944cb4b733cea7df1377c0.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8da1b15c31164242a56ec09273cf96e1.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8da1b15c31164242a56ec09273cf96e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c25c709d0e8c42519ab1ae277d3ea524.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c25c709d0e8c42519ab1ae277d3ea524.json"
           ]
         }
       ],
@@ -3148,6 +4030,111 @@
           "source_ref": "/app/.evoontology/trajectories/task_68b60c2bebd8469abb2f607b3b37f243.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_68b60c2bebd8469abb2f607b3b37f243.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1738628b3c7d4b2486bef47ea7951556.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1738628b3c7d4b2486bef47ea7951556.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_64e978f2eca24403be6b52cd953692be.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_64e978f2eca24403be6b52cd953692be.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_68b60c2bebd8469abb2f607b3b37f243.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_68b60c2bebd8469abb2f607b3b37f243.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8144eacb6ef646f0822d44bf27afcdaa.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8144eacb6ef646f0822d44bf27afcdaa.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b3986aee6a3e4d3886f08b39c436dc02.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b3986aee6a3e4d3886f08b39c436dc02.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cccf89ea790f4663949fa637dfccfe7e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cccf89ea790f4663949fa637dfccfe7e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_da01672d580341328351a848b7c3425e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_da01672d580341328351a848b7c3425e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fb2ce8312ea84f299b9218eef6c3970d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fb2ce8312ea84f299b9218eef6c3970d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1738628b3c7d4b2486bef47ea7951556.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1738628b3c7d4b2486bef47ea7951556.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_64e978f2eca24403be6b52cd953692be.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_64e978f2eca24403be6b52cd953692be.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8144eacb6ef646f0822d44bf27afcdaa.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8144eacb6ef646f0822d44bf27afcdaa.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b3986aee6a3e4d3886f08b39c436dc02.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b3986aee6a3e4d3886f08b39c436dc02.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_cccf89ea790f4663949fa637dfccfe7e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_cccf89ea790f4663949fa637dfccfe7e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_da01672d580341328351a848b7c3425e.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_da01672d580341328351a848b7c3425e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_fb2ce8312ea84f299b9218eef6c3970d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_fb2ce8312ea84f299b9218eef6c3970d.json"
           ]
         }
       ],
@@ -3286,6 +4273,55 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_b4db6da79b284f6bb1c930f103fd97eb.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1a0de215f05d4bc9b9ee6714fd140ba6.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1a0de215f05d4bc9b9ee6714fd140ba6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_33c45434d68e4909b11b7c6b4938c83c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_33c45434d68e4909b11b7c6b4938c83c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a84d3912071b45a3abda86730c0175dc.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a84d3912071b45a3abda86730c0175dc.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b4db6da79b284f6bb1c930f103fd97eb.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b4db6da79b284f6bb1c930f103fd97eb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1a0de215f05d4bc9b9ee6714fd140ba6.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1a0de215f05d4bc9b9ee6714fd140ba6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_33c45434d68e4909b11b7c6b4938c83c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_33c45434d68e4909b11b7c6b4938c83c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_a84d3912071b45a3abda86730c0175dc.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_a84d3912071b45a3abda86730c0175dc.json"
+          ]
         }
       ],
       "topics": [],
@@ -3375,6 +4411,41 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_fe1cde21a02e4a77a47588b520ab874e.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46d1150c43d541c8b87dd716702cd19d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_46d1150c43d541c8b87dd716702cd19d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b854c284dbc41599f91df0b1099b8a6.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b854c284dbc41599f91df0b1099b8a6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe1cde21a02e4a77a47588b520ab874e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fe1cde21a02e4a77a47588b520ab874e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_46d1150c43d541c8b87dd716702cd19d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_46d1150c43d541c8b87dd716702cd19d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6b854c284dbc41599f91df0b1099b8a6.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6b854c284dbc41599f91df0b1099b8a6.json"
+          ]
         }
       ],
       "topics": [],
@@ -3401,6 +4472,41 @@
           "source_ref": "/app/.evoontology/trajectories/task_0431eeb9e9d249e088f1b2305d9e5719.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_0431eeb9e9d249e088f1b2305d9e5719.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0431eeb9e9d249e088f1b2305d9e5719.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0431eeb9e9d249e088f1b2305d9e5719.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6d80ddefcc9c4668b1ee2eceb7aa99a5.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6d80ddefcc9c4668b1ee2eceb7aa99a5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7d05c8f712e54ace923e9ff6a4a68e59.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7d05c8f712e54ace923e9ff6a4a68e59.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6d80ddefcc9c4668b1ee2eceb7aa99a5.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6d80ddefcc9c4668b1ee2eceb7aa99a5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7d05c8f712e54ace923e9ff6a4a68e59.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7d05c8f712e54ace923e9ff6a4a68e59.json"
           ]
         }
       ],
@@ -3429,6 +4535,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_ff98103e54a44aba828246d03e6bca34.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ff98103e54a44aba828246d03e6bca34.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ff98103e54a44aba828246d03e6bca34.json"
+          ]
         }
       ],
       "topics": [],
@@ -3455,6 +4568,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_13236c9b50634219af0fe420e74995ad.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_13236c9b50634219af0fe420e74995ad.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_13236c9b50634219af0fe420e74995ad.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_13236c9b50634219af0fe420e74995ad.json"
           ]
         }
       ],
@@ -3602,6 +4722,132 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_bd2f89bd787147d4b398fb20f7835473.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_05a03e1586b34cf08834fd2883dbe041.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_05a03e1586b34cf08834fd2883dbe041.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0f5345d36faa4fe09cbaa8e8140210c5.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0f5345d36faa4fe09cbaa8e8140210c5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4b894ec19aa14dfea35f523ab658e947.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4b894ec19aa14dfea35f523ab658e947.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e006e63f81341a08035a4722ed15d66.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e006e63f81341a08035a4722ed15d66.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8fcec35335a940aaaff11f02f7be72b8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8fcec35335a940aaaff11f02f7be72b8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_97726cae6dda4cf59278cfc94237c7cd.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_97726cae6dda4cf59278cfc94237c7cd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a44ae1dc6bb2496da31ef089ca3f9eac.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a44ae1dc6bb2496da31ef089ca3f9eac.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ac5d9d605faf43a3b690600771c607de.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ac5d9d605faf43a3b690600771c607de.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b6af84639e364c09bd41d059a6199945.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b6af84639e364c09bd41d059a6199945.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd2f89bd787147d4b398fb20f7835473.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd2f89bd787147d4b398fb20f7835473.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd627954ad3440f89cea96cf4a930074.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd627954ad3440f89cea96cf4a930074.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c235abf2ae06443cbbb3d7f9789d6991.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c235abf2ae06443cbbb3d7f9789d6991.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c8965083f9f74dddb70cae9435ce0c95.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c8965083f9f74dddb70cae9435ce0c95.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d07bb322df5f487aa19efa102c4061c4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d07bb322df5f487aa19efa102c4061c4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4417a04f793409ba4b7750f1171ff9b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4417a04f793409ba4b7750f1171ff9b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ddc4f25ed44743c894cdec90262bcfaa.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ddc4f25ed44743c894cdec90262bcfaa.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e6eaf933bef8483686b159ce8f2a8626.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e6eaf933bef8483686b159ce8f2a8626.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f82ab3bc8a5440cab6071cad5dc8c53c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f82ab3bc8a5440cab6071cad5dc8c53c.json"
+          ]
         }
       ],
       "topics": [],
@@ -3642,6 +4888,27 @@
           "source_ref": "/app/.evoontology/trajectories/task_5d6abd69bb5047eda494e092d097038d.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_5d6abd69bb5047eda494e092d097038d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_39c20116e5a84ce6ae2244e69a26d3df.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_39c20116e5a84ce6ae2244e69a26d3df.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5d6abd69bb5047eda494e092d097038d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5d6abd69bb5047eda494e092d097038d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f917e5281c104ee09773840b362c7a36.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f917e5281c104ee09773840b362c7a36.json"
           ]
         }
       ],
@@ -3684,6 +4951,27 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_b13d1dbf30b24bb7b00bd05f826b3c81.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_32adc877c06c4fc9ab43d642fffbd61e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_32adc877c06c4fc9ab43d642fffbd61e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b13d1dbf30b24bb7b00bd05f826b3c81.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b13d1dbf30b24bb7b00bd05f826b3c81.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b396445dc81d41cd841573ba5390ec9e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b396445dc81d41cd841573ba5390ec9e.json"
+          ]
         }
       ],
       "topics": [],
@@ -3724,6 +5012,27 @@
           "source_ref": "/app/.evoontology/trajectories/task_f644b8fd0aa24daab5a96be9a1408b9c.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_f644b8fd0aa24daab5a96be9a1408b9c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_76f372fa605749e9a5a70c93078f6b16.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_76f372fa605749e9a5a70c93078f6b16.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_89b1fe971ecb4de4bb9c885e7a6197e8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_89b1fe971ecb4de4bb9c885e7a6197e8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f644b8fd0aa24daab5a96be9a1408b9c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f644b8fd0aa24daab5a96be9a1408b9c.json"
           ]
         }
       ],
@@ -3829,6 +5138,90 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_ddf5a8beb3344a24ad2ad489e125d47e.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_094594f320234853bf53a7e9c72ad5c1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_094594f320234853bf53a7e9c72ad5c1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0d69d19ccd044ab8a226d2185770f90b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_0d69d19ccd044ab8a226d2185770f90b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4bf8b5ea8b324abdbb577cecdf0a1a91.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4bf8b5ea8b324abdbb577cecdf0a1a91.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_744cc380c2f343acba91ec6c806cd4fd.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_744cc380c2f343acba91ec6c806cd4fd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_824515355b274b098783a54f73fb2399.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_824515355b274b098783a54f73fb2399.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8261c3bfaf6f4b0a8f972f7462293a0d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8261c3bfaf6f4b0a8f972f7462293a0d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_87b96797eae84541bd2b8e16b15bf09a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_87b96797eae84541bd2b8e16b15bf09a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a5489e5ffe1d45b9b5effae850f9e454.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a5489e5ffe1d45b9b5effae850f9e454.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ca3db4bb24bb43fca8515339f6897d6e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ca3db4bb24bb43fca8515339f6897d6e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ddf5a8beb3344a24ad2ad489e125d47e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ddf5a8beb3344a24ad2ad489e125d47e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e2f5e20ae3924e2c90b5a69cc245a0cd.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e2f5e20ae3924e2c90b5a69cc245a0cd.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f607027d653e47c9b299fc3d68ee7d54.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f607027d653e47c9b299fc3d68ee7d54.json"
+          ]
         }
       ],
       "topics": [],
@@ -3869,6 +5262,27 @@
           "source_ref": "/app/.evoontology/trajectories/task_34b4151d33674237beebdbefa007f885.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_34b4151d33674237beebdbefa007f885.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_34b4151d33674237beebdbefa007f885.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_34b4151d33674237beebdbefa007f885.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3f6f763b72ab491cbfbaab76eaa0c42c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3f6f763b72ab491cbfbaab76eaa0c42c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_51fd8b6277a941e48d085b6d4d0b763f.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_51fd8b6277a941e48d085b6d4d0b763f.json"
           ]
         }
       ],
@@ -3988,6 +5402,104 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_a9f75aadfa5c4a62b6bcbfe700280cf9.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_05dac8ed287847bea1505e042029abaf.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_05dac8ed287847bea1505e042029abaf.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_125bd214bc6542b18e61f7fdf971e808.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_125bd214bc6542b18e61f7fdf971e808.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1d9107869d86453a9dc33f2d62e44ca4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1d9107869d86453a9dc33f2d62e44ca4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_332ffc80fc02421cac0a8474b212b043.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_332ffc80fc02421cac0a8474b212b043.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3cd6ce77e6f94850a84d90ef608dcf1a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3cd6ce77e6f94850a84d90ef608dcf1a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8827a952de1e41fb8e22ec416fe8744c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8827a952de1e41fb8e22ec416fe8744c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a9f75aadfa5c4a62b6bcbfe700280cf9.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a9f75aadfa5c4a62b6bcbfe700280cf9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bcb2ce519c7e4c74b3813498d6ba3485.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bcb2ce519c7e4c74b3813498d6ba3485.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_de4932926b9a4dc3b70010d75c6ac26f.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_de4932926b9a4dc3b70010d75c6ac26f.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_df3d960020324b8ea453b7ae3017afbf.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_df3d960020324b8ea453b7ae3017afbf.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_df740601ae714684a848ec6327521119.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_df740601ae714684a848ec6327521119.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e7bcace1d0774d86aefa5767138dc97d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e7bcace1d0774d86aefa5767138dc97d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fb8c649fb42c4166bf1b06f320984a08.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fb8c649fb42c4166bf1b06f320984a08.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fd458674c0644393ad44353c39f5e450.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fd458674c0644393ad44353c39f5e450.json"
+          ]
         }
       ],
       "topics": [],
@@ -4092,6 +5604,90 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_9381443d877342bd9c77d0a32e989e79.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_027a83f781e746038caad6ce32200cd9.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_027a83f781e746038caad6ce32200cd9.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_061ed5c3afcf46929b3eef754c16944e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_061ed5c3afcf46929b3eef754c16944e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1c739b33a1f446dcb1fff7944d81e0e4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1c739b33a1f446dcb1fff7944d81e0e4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2e9a69de27ef4f2a9031fddbc61fd0e1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_2e9a69de27ef4f2a9031fddbc61fd0e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4120d5da3fde4c1db55d2acb4c4da98c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4120d5da3fde4c1db55d2acb4c4da98c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_71c07dc16fab45bfae8c6d88aa4ea96b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_71c07dc16fab45bfae8c6d88aa4ea96b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9381443d877342bd9c77d0a32e989e79.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_9381443d877342bd9c77d0a32e989e79.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a8181b894fe84ddbbe8a8e413248a1c6.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a8181b894fe84ddbbe8a8e413248a1c6.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cf39f1165f964d2d835a7059eaf06477.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cf39f1165f964d2d835a7059eaf06477.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d6797e3bf4ce4382b94b95a587831c27.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d6797e3bf4ce4382b94b95a587831c27.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ecd9e046209e44e18a14fe5cece59b58.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ecd9e046209e44e18a14fe5cece59b58.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f81a08d7dd21444bac798b4a354af8d7.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f81a08d7dd21444bac798b4a354af8d7.json"
+          ]
         }
       ],
       "topics": [],
@@ -4195,6 +5791,90 @@
           "source_ref": "/app/.evoontology/trajectories/task_a9480afa5e564dabb40812ff19c77d86.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_a9480afa5e564dabb40812ff19c77d86.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_19ec22c0fd5648ad87a102722bdeaf09.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_19ec22c0fd5648ad87a102722bdeaf09.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1e36ca0a9c6748e085c9f14ef52b4d8d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1e36ca0a9c6748e085c9f14ef52b4d8d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_352c80863cc34f44b03ba590e755e257.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_352c80863cc34f44b03ba590e755e257.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6bb656d542b34993a5ab5e3ad5707dff.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6bb656d542b34993a5ab5e3ad5707dff.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e341748afab46f49623cfa158b4ad19.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e341748afab46f49623cfa158b4ad19.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a1307344ee1a4e2b839696f6fe91a5c4.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a1307344ee1a4e2b839696f6fe91a5c4.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a9480afa5e564dabb40812ff19c77d86.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a9480afa5e564dabb40812ff19c77d86.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c22c50bbb57c4da589566c5d1fc77def.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c22c50bbb57c4da589566c5d1fc77def.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c3e353123a844f4f8923826c1ab4bca3.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c3e353123a844f4f8923826c1ab4bca3.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cfacb1e47959458a8fd11ca37d7e2a2a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_cfacb1e47959458a8fd11ca37d7e2a2a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4b7d5cd17014bf3a1c4148a4c00ff33.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d4b7d5cd17014bf3a1c4148a4c00ff33.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e205e8b04ba14341bffbd29f3b6372da.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e205e8b04ba14341bffbd29f3b6372da.json"
           ]
         }
       ],
@@ -4314,6 +5994,104 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_4b50ce96d3964d7e828c939a7a354a57.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4b50ce96d3964d7e828c939a7a354a57.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4b50ce96d3964d7e828c939a7a354a57.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4f3988553a414a8ca95e0a12acc9fb09.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4f3988553a414a8ca95e0a12acc9fb09.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_56805c6da5d7423cb2f0f21b4ad4f6d1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_56805c6da5d7423cb2f0f21b4ad4f6d1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_63083cabe5544ed48dc45cf26455597e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_63083cabe5544ed48dc45cf26455597e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_85214fdc5f924200b2b13b643282a8a8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_85214fdc5f924200b2b13b643282a8a8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_884e35dab6b849d9af6c32f5d4ecf1d8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_884e35dab6b849d9af6c32f5d4ecf1d8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8d7503f169f94d0ca1a38164fc99e262.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8d7503f169f94d0ca1a38164fc99e262.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_92e06fddb3704c0a8ca0c9a5149e078a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_92e06fddb3704c0a8ca0c9a5149e078a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a3e3a10de6c448e0b7fe0badaa34838c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a3e3a10de6c448e0b7fe0badaa34838c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c57cd2a527364515a4d6b1a1c2612576.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c57cd2a527364515a4d6b1a1c2612576.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_daa0aa9b3bea4561bb3c636f13488c73.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_daa0aa9b3bea4561bb3c636f13488c73.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ea81552195f446948e9d4bc71efaec06.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ea81552195f446948e9d4bc71efaec06.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_eaecbaee2bb941bebe1eabe019cb90f8.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_eaecbaee2bb941bebe1eabe019cb90f8.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f442a623a88b488ea0e27f17ed31eca2.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f442a623a88b488ea0e27f17ed31eca2.json"
+          ]
         }
       ],
       "topics": [],
@@ -4418,6 +6196,90 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_a7a96a67625b44678a75ab3f060a6b9a.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_18b46eac5e2040458303da424af1ef09.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_18b46eac5e2040458303da424af1ef09.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3ffd9a96d77f4c4aa75707a5512ea810.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_3ffd9a96d77f4c4aa75707a5512ea810.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4df52a559fb14fa1a5cb2e8db080ba16.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_4df52a559fb14fa1a5cb2e8db080ba16.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_69c74ad3e3134a2187fe25dec354e579.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_69c74ad3e3134a2187fe25dec354e579.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8839e567c0b34b08878686db640218f5.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8839e567c0b34b08878686db640218f5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a071132eae8d402f98bf164041423f94.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a071132eae8d402f98bf164041423f94.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a4c127b161c24093a11d68c183828b06.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a4c127b161c24093a11d68c183828b06.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a7a96a67625b44678a75ab3f060a6b9a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_a7a96a67625b44678a75ab3f060a6b9a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b57f6aac560f44fc9260fb2fbb1c43bb.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b57f6aac560f44fc9260fb2fbb1c43bb.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b6c8a301b01e460cbe475916ac319f3e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b6c8a301b01e460cbe475916ac319f3e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d3ff22098ba24b99a877d359edfaea8e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_d3ff22098ba24b99a877d359edfaea8e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f9e4628703ec4d749dadb338eb55ec14.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_f9e4628703ec4d749dadb338eb55ec14.json"
+          ]
         }
       ],
       "topics": [],
@@ -4501,6 +6363,69 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_7d7f5066c114492ab62f278f8a400e82.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_17a88dfdf12443be9e42d4b74f27f00e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_17a88dfdf12443be9e42d4b74f27f00e.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6ad9a9bb496d417c902df34ab915eb32.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6ad9a9bb496d417c902df34ab915eb32.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7d7f5066c114492ab62f278f8a400e82.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7d7f5066c114492ab62f278f8a400e82.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7e56e79f08bb4b0199517e5cf4889074.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7e56e79f08bb4b0199517e5cf4889074.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b0651f648f304cd883cc7c4b70ab83e1.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b0651f648f304cd883cc7c4b70ab83e1.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ba9783f9d3e341bd920ced4b617a78ed.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ba9783f9d3e341bd920ced4b617a78ed.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bad1afb69f29470bad431974c1d4fd09.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bad1afb69f29470bad431974c1d4fd09.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e477c9439ffa4cbbb77717af7458890a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e477c9439ffa4cbbb77717af7458890a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ee3d20829c494820aafc9875bc8554c7.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ee3d20829c494820aafc9875bc8554c7.json"
+          ]
         }
       ],
       "topics": [],
@@ -4534,6 +6459,20 @@
           "source_ref": "/app/.evoontology/trajectories/task_fb04212c4bfe4365b59ad7c536c0d4ca.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_fb04212c4bfe4365b59ad7c536c0d4ca.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c6ca4c8238ea461aabe5b2b5ced1a482.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c6ca4c8238ea461aabe5b2b5ced1a482.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fb04212c4bfe4365b59ad7c536c0d4ca.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fb04212c4bfe4365b59ad7c536c0d4ca.json"
           ]
         }
       ],
@@ -4569,6 +6508,20 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_bd63799e0c384af0a0179e4020b8fd7e.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5bb1247c867b4ce38e0b068a42669f48.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_5bb1247c867b4ce38e0b068a42669f48.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd63799e0c384af0a0179e4020b8fd7e.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_bd63799e0c384af0a0179e4020b8fd7e.json"
+          ]
         }
       ],
       "topics": [],
@@ -4595,6 +6548,13 @@
           "source_ref": "/app/.evoontology/trajectories/task_1a5ce6e004fb4231829b08ce9872bd12.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_1a5ce6e004fb4231829b08ce9872bd12.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1a5ce6e004fb4231829b08ce9872bd12.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1a5ce6e004fb4231829b08ce9872bd12.json"
           ]
         }
       ],
@@ -4623,6 +6583,13 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_fd5d587a35d04d47b13b86f769f2b4ca.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fd5d587a35d04d47b13b86f769f2b4ca.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_fd5d587a35d04d47b13b86f769f2b4ca.json"
+          ]
         }
       ],
       "topics": [],
@@ -4649,6 +6616,55 @@
           "source_ref": "/app/.evoontology/trajectories/task_987a4827cad244089f9888bc7a9334df.json",
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_987a4827cad244089f9888bc7a9334df.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6c3bf473e4c94e9b8b0dec662c676e60.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6c3bf473e4c94e9b8b0dec662c676e60.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e1cd8d94e63417c8a38b79d55bf0e46.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e1cd8d94e63417c8a38b79d55bf0e46.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_987a4827cad244089f9888bc7a9334df.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_987a4827cad244089f9888bc7a9334df.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e0d090a2972249f5a51ff419d2af23db.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_e0d090a2972249f5a51ff419d2af23db.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6c3bf473e4c94e9b8b0dec662c676e60.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6c3bf473e4c94e9b8b0dec662c676e60.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8e1cd8d94e63417c8a38b79d55bf0e46.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8e1cd8d94e63417c8a38b79d55bf0e46.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_e0d090a2972249f5a51ff419d2af23db.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_e0d090a2972249f5a51ff419d2af23db.json"
           ]
         }
       ],
@@ -4677,12 +6693,360 @@
           "evidence_refs": [
             "/app/.evoontology/trajectories/task_c16285c1a45d4c3295b6ef0b0affba74.json"
           ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7f3d675a23e849f39494542d4a60bf7c.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7f3d675a23e849f39494542d4a60bf7c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8655000ed8b04b38a16d3c91fd7da51b.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8655000ed8b04b38a16d3c91fd7da51b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b30c416824a040b1b19ea8de02cf5934.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b30c416824a040b1b19ea8de02cf5934.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c16285c1a45d4c3295b6ef0b0affba74.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c16285c1a45d4c3295b6ef0b0affba74.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7f3d675a23e849f39494542d4a60bf7c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7f3d675a23e849f39494542d4a60bf7c.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8655000ed8b04b38a16d3c91fd7da51b.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8655000ed8b04b38a16d3c91fd7da51b.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b30c416824a040b1b19ea8de02cf5934.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b30c416824a040b1b19ea8de02cf5934.json"
+          ]
         }
       ],
       "topics": [],
       "recorded_at": "2026-10-10T09:42:39.014782+00:00",
       "purpose": "construction"
+    },
+    {
+      "id": "q_1537ae022fa0e19f",
+      "question": "MySQL 连接数逼近/耗尽 max_connections（占用率 > 85%）—— 连接池排队、新连接被拒，写路径与查询延迟同时上升；MySQL 并发执行线程 threads_running 过高，数据库 CPU 资源不足",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ed9103b00b84017a08a61153eac896d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ed9103b00b84017a08a61153eac896d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7022a6e696d84ac1be870c7481772f1d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7022a6e696d84ac1be870c7481772f1d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7e3b550f66f74ae39e70f8b6bcf2d7c5.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_7e3b550f66f74ae39e70f8b6bcf2d7c5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e39f8790c434772b7f75b5b8a4e7af5.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_8e39f8790c434772b7f75b5b8a4e7af5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c73a09696768415db9ee3792f61cc853.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_c73a09696768415db9ee3792f61cc853.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1ed9103b00b84017a08a61153eac896d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1ed9103b00b84017a08a61153eac896d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7022a6e696d84ac1be870c7481772f1d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7022a6e696d84ac1be870c7481772f1d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_7e3b550f66f74ae39e70f8b6bcf2d7c5.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_7e3b550f66f74ae39e70f8b6bcf2d7c5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_8e39f8790c434772b7f75b5b8a4e7af5.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_8e39f8790c434772b7f75b5b8a4e7af5.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_c73a09696768415db9ee3792f61cc853.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_c73a09696768415db9ee3792f61cc853.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-11T14:13:28.119773+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_1d9c23cb49737d7b",
+      "question": "payment-app 应用集群全部副本同时内存越限（3/3 副本 working set 逼近 cgroup 上限），集群整体内存容量不足，需扩容或提高配额",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_082f70092ad34eb392590fa340b05d00.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_082f70092ad34eb392590fa340b05d00.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_19911377fc334c1a84866e04a3cb0586.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_19911377fc334c1a84866e04a3cb0586.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1d5c63975f14473bafcf0e8aacb9848a.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1d5c63975f14473bafcf0e8aacb9848a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b2334a0d0834d2b9ae421844e329071.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6b2334a0d0834d2b9ae421844e329071.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_082f70092ad34eb392590fa340b05d00.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_082f70092ad34eb392590fa340b05d00.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_19911377fc334c1a84866e04a3cb0586.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_19911377fc334c1a84866e04a3cb0586.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1d5c63975f14473bafcf0e8aacb9848a.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1d5c63975f14473bafcf0e8aacb9848a.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6b2334a0d0834d2b9ae421844e329071.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6b2334a0d0834d2b9ae421844e329071.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-11T10:26:53.677498+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_f8febe258378878d",
+      "question": "MySQL 实例 replica-1 不可用（mysql_up=0，db_role=replica）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；**但若同时伴随连接占用率极高（`MySQLTooManyConnections`），更可能是连接耗尽把导出器自己的抓取连接也拒了，此时库其实还活着**（实测：注入占满 197/200 时 `mysql_up=0` 而库正常）。若 db_role=replica：写路径正常，这是**只读副本 replica-1 不可用/副本丢失**，后果是读容量下降与复制滞后；MySQL 实例 replica-2 不可用（mysql_up=0，db_role=replica）—— 判据：mysql_up=0。若 db_role=primary：主库不可用，写路径与复制源全部受影响；**但若同时伴随连接占用率极高（`MySQLTooManyConnections`），更可能是连接耗尽把导出器自己的抓取连接也拒了，此时库其实还活着**（实测：注入占满 197/200 时 `mysql_up=0` 而库正常）。若 db_role=replica：写路径正常，这是**只读副本 replica-2 不可用/副本丢失**，后果是读容量下降与复制滞后",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6c72ad362ff543a185951a8a62e3f703.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_6c72ad362ff543a185951a8a62e3f703.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_6c72ad362ff543a185951a8a62e3f703.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_6c72ad362ff543a185951a8a62e3f703.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-11T09:57:05.265355+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_a40b254da5c477a5",
+      "question": "cc-mysql-core 出现异常，请诊断根因。",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ed8f46501f9426db9d0b57857bb2a39.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_1ed8f46501f9426db9d0b57857bb2a39.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_1ed8f46501f9426db9d0b57857bb2a39.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_1ed8f46501f9426db9d0b57857bb2a39.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-11T03:40:21.695178+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_2ceca2e525e281d7",
+      "question": "rca-agent-payment-app-3 出现异常，请诊断根因。告警来源：AppContainerCpuThrottled、AppReplicaLatencySkew（layer=runtime，场景=单副本 CPU 打满（触发 cgroup CPU 配额节流））",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ac59ea69ab634ad88b073c42bf358330.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_ac59ea69ab634ad88b073c42bf358330.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_ac59ea69ab634ad88b073c42bf358330.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_ac59ea69ab634ad88b073c42bf358330.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-11T03:32:14.301026+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_3032897b175bdcd7",
+      "question": "rca-agent-payment-app-1 出现异常，请诊断根因。",
+      "origin": "history",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "history",
+          "source_ref": "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b7ee411abfb94294a9ec91a6915d239d.json",
+          "evidence_refs": [
+            "D:\\05_code\\credit-card-sys-ops\\.evoontology\\trajectories\\task_b7ee411abfb94294a9ec91a6915d239d.json"
+          ]
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_b7ee411abfb94294a9ec91a6915d239d.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_b7ee411abfb94294a9ec91a6915d239d.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-11T03:02:07.353762+00:00",
+      "purpose": "construction"
+    },
+    {
+      "id": "q_d726387ca64b5c94",
+      "question": "payment-app 容器 CPU 被 cgroup quota 节流 throttled，处理器资源不足导致请求排队变慢；payment-app 单个副本 app_instance 的 P99 显著高于其余副本（偏斜 > 2 倍且 > 300ms）—— 这表示问题集中在**一个副本**上。需按证据区分（不要预设原因）：① 该副本 CPU 被 cgroup 节流：看 rate(cc_container_cpu_throttled_seconds_total) 是否只在它身上升高；② 该副本网络延迟/丢包：看它的请求耗时分布与 blackbox 探针；③ 该副本内存压力：看 cc_container_memory_working_set_bytes / cc_container_memory_limit_bytes",
+      "origin": "user",
+      "data_source": {
+        "type": "docker-compose-cluster",
+        "endpoint": "http://localhost:8080 (cc-app-gateway, least_conn → payment-app ×3) + mysql:3306 (cc-mysql-core PRIMARY, GTID) + mysql-replica-1/2:3306 (read-only replicas) + http://localhost:9090 (Prometheus, DNS-SD + blackbox)",
+        "description": "信用卡系统运维模拟环境（集群版）：应用层 3 副本 + Nginx 网关负载均衡；数据库层 1 主 2 只读副本（GTID 异步复制，读写分离）；监控层 Prometheus 副本自动发现 + blackbox 外部探活；故障注入器覆盖应用层/数据库层/资源耗尽共 21 个场景"
+      },
+      "provenance": [
+        {
+          "origin": "user",
+          "source_ref": "current request",
+          "evidence_refs": []
+        },
+        {
+          "origin": "history",
+          "source_ref": "/app/.evoontology/trajectories/task_4286d582682547858859014473028f1c.json",
+          "evidence_refs": [
+            "/app/.evoontology/trajectories/task_4286d582682547858859014473028f1c.json"
+          ]
+        }
+      ],
+      "topics": [],
+      "recorded_at": "2026-10-17T04:12:06.127585+00:00",
+      "purpose": "construction"
     }
   ],
-  "updated_at": "2026-10-10T10:10:12.945073+00:00"
+  "updated_at": "2026-10-17T05:17:33.610645+00:00"
 }

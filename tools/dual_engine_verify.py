@@ -103,7 +103,6 @@ async def main():
     check("快路径耗时 < 20s（含冷启动拓扑遍历）", det_ms < 20000, det_ms)
     check("含路由依据", bool((det.get("route") or {}).get("reason")))
     check("含本体 seed 快照", det.get("seed") is not None)
-    det_incident = det.get("incident_id")
 
     # ── 3. Agentic 路径（真实 LLM）────────────────────────────────
     print("\n[3] Agentic path (real LLM)")

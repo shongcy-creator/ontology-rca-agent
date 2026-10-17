@@ -44,6 +44,17 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "rca-agent"))              # backend 包（引擎 top1 口径）
 sys.path.insert(0, str(ROOT / "vendor" / "EvoOntology"))
 
+# ── 控制台编码兜底 ────────────────────────────────────────────────────────────
+# 与 tools/fault_injector.py 等 19 个脚本同口径。踩过的坑：Windows 默认控制台是
+# GBK，而发布成功那行打印的是 `✔ 已发布并激活: %s`（U+2714）—— 会抛
+# UnicodeEncodeError。这个位置尤其糟：**版本已经发布并激活了，却在打印成功
+# 消息时崩掉**，看起来像"发布失败"。编码不了就退化成 '?'。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(errors="replace")   # type: ignore[union-attr]
+    except Exception:  # noqa: BLE001
+        pass
+
 WORKSPACE = ROOT / ".evoontology"
 
 from evoontology import EvolutionSession, SemanticStore           # noqa: E402
@@ -76,6 +87,21 @@ from tools.ontology_v6_patch import (                               # noqa: E402
     check_matrix as check_memory_matrix,
     N_INVARIANTS as MEMORY_N_INVARIANTS,
 )
+from tools.ontology_v7_patch import (                               # noqa: E402
+    build_patch as build_freshness_patch,
+    describe as describe_freshness,
+)
+from tools.ontology_freshness import record_scores as freshness_scores  # noqa: E402
+from tools.ontology_v8_patch import (                               # noqa: E402
+    build_patch as build_typing_patch,
+    describe as describe_typing,
+)
+from tools.ontology_typing import check_typing                       # noqa: E402
+from tools.ontology_v9_patch import (                               # noqa: E402
+    build_patch as build_shapes_patch,
+    describe as describe_shapes,
+)
+from tools.ontology_shacl import record_scores as shacl_scores       # noqa: E402
 
 #: 每轮迭代的配置：补丁来源 / 候选版本名 / 发布版本名 / 评估口径 / 假设
 ROUNDS = {
@@ -124,6 +150,32 @@ ROUNDS = {
         "publish": "ontology_v6",
         "metric": "memory_semantics",
         "title": "区分「内存压力」与「已被 OOM Kill」（第 6 轮·语义精确化）",
+    },
+    # 第 7 轮起，假设/说明/局限由 patch 模块的 describe() 提供（数字取自成对评估），
+    # 不再往 main() 的 if/elif 链里追加段落。
+    "freshness": {
+        "patch": build_freshness_patch,
+        "describe": describe_freshness,
+        "candidate": "ontology_v7-freshness",
+        "publish": "ontology_v7",
+        "metric": "evidence_freshness",
+        "title": "证据时效：不再点名已不存在的环境实体（第 7 轮·时效）",
+    },
+    "typing": {
+        "patch": build_typing_patch,
+        "describe": describe_typing,
+        "candidate": "ontology_v8-typing",
+        "publish": "ontology_v8",
+        "metric": "typing_contract",
+        "title": "关系有谓词、术语有类，取值来自 TTL（第 8 轮·类型契约）",
+    },
+    "shapes": {
+        "patch": build_shapes_patch,
+        "describe": describe_shapes,
+        "candidate": "ontology_v9-shapes",
+        "publish": "ontology_v9",
+        "metric": "shacl_conformance",
+        "title": "关系符合 TTL 的 domain/range（第 9 轮·SHACL 一致性）",
     },
 }
 
@@ -362,7 +414,57 @@ def evaluate_by_metric(metric: str, version: str,
         return evaluate_remediation(records, version)
     if metric == "memory_semantics":
         return evaluate_memory_semantics(records, version)
+    if metric == "evidence_freshness":
+        return evaluate_freshness(records, version)
+    if metric == "typing_contract":
+        return evaluate_typing(records, version)
+    if metric == "shacl_conformance":
+        return evaluate_shacl(records, version)
     return evaluate(records, cases)
+
+
+def evaluate_typing(records: Dict[str, List[dict]], version: str) -> Dict[str, Any]:
+    """**类型契约**口径（第 8 轮引入）：逐术语、逐关系 0/1（T1/T2/T2b/T3 全过即 1）。"""
+    r = check_typing(records)
+    scores = r["scores"]
+    return {"metric": "typing_contract", "version": version,
+            "case_ids": r["case_ids"], "scores": scores,
+            "mean": round(sum(scores) / len(scores), 4) if scores else 0.0,
+            "full_credit": sum(1 for x in scores if x >= 1.0),
+            "zero_credit": sum(1 for x in scores if x <= 0.0),
+            "per_case": [{"case_id": c, "score": x} for c, x in zip(r["case_ids"], scores)],
+            "problems": r["problems"]}
+
+
+def evaluate_shacl(records: Dict[str, List[dict]], version: str) -> Dict[str, Any]:
+    """**SHACL 一致性**口径（第 9 轮引入）：逐记录 0/1，被任何 sh:Violation 牵连即 0。"""
+    r = shacl_scores(records)
+    scores = r["scores"]
+    return {"metric": "shacl_conformance", "version": version,
+            "case_ids": r["case_ids"], "scores": scores,
+            "mean": round(sum(scores) / len(scores), 4) if scores else 0.0,
+            "full_credit": sum(1 for x in scores if x >= 1.0),
+            "zero_credit": sum(1 for x in scores if x <= 0.0),
+            "per_case": [{"case_id": c, "score": x} for c, x in zip(r["case_ids"], scores)],
+            "problems": r["shacl"]["violations"]}
+
+
+def evaluate_freshness(records: Dict[str, List[dict]], version: str) -> Dict[str, Any]:
+    """
+    **证据时效**口径（第 7 轮引入）：逐记录 0/1 —— 该记录没有 F1/F2/F2b 违反即 1。
+
+    case 是本体记录本身（术语/映射/关系/约束/证据），因为本轮修的就是记录；
+    引擎 top1 另作回归观察量。
+    """
+    r = freshness_scores(records)
+    scores = r["scores"]
+    return {"metric": "evidence_freshness", "version": version,
+            "case_ids": r["case_ids"], "scores": scores,
+            "mean": round(sum(scores) / len(scores), 4) if scores else 0.0,
+            "full_credit": sum(1 for x in scores if x >= 1.0),
+            "zero_credit": sum(1 for x in scores if x <= 0.0),
+            "per_case": [{"case_id": c, "score": x} for c, x in zip(r["case_ids"], scores)],
+            "check": r["check"]}
 
 
 def evaluate_memory_semantics(records: Dict[str, List[dict]],
@@ -690,7 +792,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     _reg_parent_scores: List[float] = []
     _reg_cand_scores: List[float] = []
     if metric in ("hygiene_contract", "memory_semantics", "remediation_contract",
-                  "structural"):
+                  "structural", "evidence_freshness", "typing_contract",
+                  "shacl_conformance"):
         pe = evaluate_engine(parent_records, cases, label=parent)
         ce = evaluate_engine(candidate_records, cases, label=CANDIDATE)
         regression = {"parent_engine_top1": pe["mean"], "candidate_engine_top1": ce["mean"],
@@ -811,7 +914,10 @@ def main(argv: Optional[List[str]] = None) -> int:
                                 acceptance={"protocol": "ground_truth"})
     print("    run_id=%s budget=%s" % (run["run_id"], run["budget"]))
 
-    if metric == "structural":
+    texts = rc["describe"](parent_eval, cand_eval) if "describe" in rc else None
+    if texts:
+        hypothesis = texts["hypothesis"]
+    elif metric == "structural":
         hypothesis = (
             "环境已从单容器单库扩展为『3 副本应用 + Nginx 网关 + 1 主 2 只读副本 MySQL 集群』，"
             "而本体仍停留在单实例视图（18 个 Term 中没有任何副本/集群/网关/复制/配额概念），"
@@ -992,7 +1098,9 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     print("[12] 写版本说明报告（reports/%s.json）..." % CANDIDATE)
     wf = ProjectWorkflow(ws)
-    if args.round == "memory":
+    if texts:
+        summary, limitations = texts["summary"], texts["limitations"]
+    elif args.round == "memory":
         summary = (
             "内存语义精确化版本：把『内存被压到极限但还没被杀』显式建模为 "
             "`rc:mem-pressure`，并新增 `metric:oom-kill-count`"
@@ -1241,8 +1349,10 @@ def _emit_final_report(args: argparse.Namespace, parent: str, candidate: str,
 
     print("\n" + "=" * 88)
     print("本体迭代完成：%s → %s" % (parent, published))
-    print("  可诊断性 平均分 %.3f → %.3f (Δ%+.3f)；零分场景 %d → %d"
-          % (parent_eval["mean"], cand_eval["mean"],
+    # 口径名取自评估结果本身：这一行原先固定写"可诊断性"（第 1 轮的口径），
+    # 后续轮次的口径不同，标签却没变，等于把数字贴错了名字。
+    print("  %s 平均分 %.3f → %.3f (Δ%+.3f)；零分 case %d → %d"
+          % (cand_eval.get("metric", "可诊断性"), parent_eval["mean"], cand_eval["mean"],
              cand_eval["mean"] - parent_eval["mean"],
              parent_eval["zero_credit"], cand_eval["zero_credit"]))
     print("  报告: %s" % args.json_out)

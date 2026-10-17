@@ -18,7 +18,7 @@ from backend.services.llm_config import (
 )
 from backend.services.orchestrator import diagnose
 from backend.services.tools import build_default_registry
-from backend.services.rate_limiter import limiter, estimate_run_cost, MODEL_PRICE_PER_1M_TOKENS
+from backend.services.rate_limiter import limiter, MODEL_PRICE_PER_1M_TOKENS
 from backend.services import evolution_trigger
 
 router = APIRouter()
@@ -74,7 +74,7 @@ async def api_diagnose(req: DiagnoseRequest):
             persist=req.persist,
             app_name=req.app_name,
         )
-    except Exception as e:  # noqa: BLE001
+    except Exception:  # noqa: BLE001
         import traceback
         err = traceback.format_exc()
         print("[AGENT ERROR]", err, flush=True)
@@ -140,7 +140,7 @@ async def api_diagnose_stream(req: DiagnoseRequest):
         try:
             final = await task
             yield _sse("final", final)
-        except Exception as e:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             import traceback
             yield _sse("error", {"error": traceback.format_exc()[:2000]})
 

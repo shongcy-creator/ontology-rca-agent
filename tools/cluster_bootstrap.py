@@ -172,7 +172,7 @@ def ensure_repl_user() -> str:
 
 
 def replica_status(container: str) -> Dict[str, Any]:
-    """
+    r"""
     读取复制状态。
 
     MySQL 8.0 的 SHOW REPLICA STATUS 未配置复制时返回空集。

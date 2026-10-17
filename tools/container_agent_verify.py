@@ -99,7 +99,7 @@ check("agentic 完成", d.get("status") in ("completed", "timeout", "budget_exce
 check("调用了工具", len(tools) >= 1, tools)
 check("有证据链", len(d.get("evidence") or []) > 0, len(d.get("evidence") or []))
 # 容器内环境工具（需 docker socket + docker-cli）
-env_tools = [t for t in tools if t.startswith("env_") or t.startswith("db_")]
+env_tools = [t for t in tools if t.startswith(("env_", "db_"))]
 check("使用了环境/数据库取证工具", len(env_tools) >= 1, tools)
 
 run_id = d.get("run_id")

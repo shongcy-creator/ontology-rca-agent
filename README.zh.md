@@ -18,8 +18,10 @@
 - **验证工具链**：专门测那些通常没人测的东西 —— 故障真的复现了它的信号吗？
   声明的告警真的响了吗？诊断判对了吗？处置动作真的让判据消失了吗？
 - **版本化本体**（`.evoontology/`）：通过 [EvoOntology](https://github.com/ruc-datalab/EvoOntology)
-  协议演化（候选版本 → 成对评估 → 闸门 → 接受）。当前 `ontology_v6`
-  （56 术语 / 87 关系 / 30 约束 / 22 证据）。
+  协议演化（候选版本 → 成对评估 → 闸门 → 接受）。当前 `ontology_v9`
+  （56 术语 / 87 关系 / 30 约束 / 22 证据）。每条关系带取自 OWL/TTL 词表的 `predicate`、
+  每个术语带 `class`；每个版本发布前必须通过由 TTL domain/range 生成的 SHACL 形状、
+  类型契约与证据时效检查。
 
 ## 它不是什么
 
@@ -99,7 +101,7 @@
 ![模型设置](docs/images/模型设置_LLM切换.png)
 ![成本看板](docs/images/成本看板.png)
 
-### 10. 集群监控 —— Prometheus + 23 条告警规则 + Grafana
+### 10. 集群监控 —— Prometheus + 24 条告警规则 + Grafana
 
 ![Grafana 面板](docs/images/Grafana_面板.png)
 
@@ -117,7 +119,7 @@
                  └──────────┬──────┘
                     MySQL 主库 ── GTID ── 只读副本 1 / 只读副本 2
                             │
-      Prometheus + 23 条告警规则 + Alertmanager + blackbox     Grafana :3000
+      Prometheus + 24 条告警规则 + blackbox（无 Alertmanager）   Grafana :3000
                             │
                   FastAPI 诊断后端 :8088 ── React 控制台 :3001
                      │            │
@@ -142,7 +144,7 @@
 
 ```bash
 # 1) 起集群（应用 ×3 + 网关，MySQL 主库 + 2 副本，
-#    Prometheus/Grafana/Alertmanager，诊断后端 + 控制台）
+#    Prometheus/Grafana，诊断后端 + 控制台）
 docker compose -f rca-agent/docker-compose.yml up -d
 
 # 2) 引导集群：建 schema + 配主从复制（**这一步不在 compose 里**）
@@ -153,7 +155,7 @@ python tools/cluster_bootstrap.py
 # 3) 建合成数据集（约 480 万行）—— 场景依赖它
 python tools/fault_injector.py seed
 
-# 4) 环境体检（18 项）—— 期望全部 PASS
+# 4) 环境体检（19 项）—— 期望全部 PASS
 python tools/fault_injector.py doctor
 
 # 5) 打开控制台
@@ -166,7 +168,7 @@ python tools/fault_injector.py doctor
 
 ```bash
 python tools/fault_injector.py verify                 # 21 个场景：注入 → 信号 → 回滚
-python tools/fault_injector.py verify --fast          # 代表性子集（7 个）—— 适合快速反馈
+python tools/fault_injector.py verify --fast          # 固定子集（7 个）：四层全覆盖、都不依赖压测台
 python tools/alert_coverage_check.py                  # 注入 → 等够久 → 声明的告警是否真的 firing
 python tools/cluster_rca_verify.py                    # 端到端：注入 → 压测 → 告警 → 诊断 → 评分
 python tools/evolve_ontology_cluster.py --round memory  # 走一轮本体演化（成对评估 + 闸门）

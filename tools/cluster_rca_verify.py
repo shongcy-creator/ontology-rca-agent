@@ -35,7 +35,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -229,7 +229,6 @@ def build_alert_text(alerts: Dict[str, Any], fault: Any,
     items = alerts.get("alerts") or []
     pre = set(pre_names or ())
     declared = set(getattr(fault, "alert_names", None) or [])
-    names_now = {a.get("name") for a in items}
 
     chosen: List[Dict[str, Any]] = []
     if declared:
@@ -354,11 +353,6 @@ def score_diagnosis(body: Any, expected_terms: List[str],
            "期望术语出现在候选/证据/推理中(%s)" % ",".join(hit_b_terms[:3]) if hit_b else
            "语义关键词命中(%s)" % ",".join(hit_kw[:3]) if hit_c else "未命中")
 
-    expected_cats = set()
-    for t in expected_terms:
-        if t.startswith("rc:") or t.startswith("metric:") or t.startswith("con:"):
-            pass
-    fault_cat_hint = None
     partial = ok or (rc_cat and rc_cat not in ("", "未知"))
     return {
         "ok": ok, "how": how, "partial": bool(partial),
@@ -571,7 +565,13 @@ def verify_one(fid: str, eng: Injector, args: argparse.Namespace,
     # 只有在**声明告警一条都没 firing** 时才值得判定原因（都响了就无需解释）。
     mh = monitoring_health()
     res["monitoring"] = mh
-    if not res.get("alert_coverage") and not mh.get("healthy"):
+    if not res.get("alert_coverage") and interfered:
+        # 受外部干扰的场景：告警没响的原因不可判定（输入本身被污染），
+        # 不能归为"监控被打瞎"，更不能归为"告警设计缺口"。
+        res["monitoring"]["verdict"] = (
+            "声明告警未触发，但本场景受到外部干扰（激活故障=%s）→ 原因**不可判定**，"
+            "不计入「告警设计缺口」或「观测链路不健康」" % observed)
+    elif not res.get("alert_coverage") and not mh.get("healthy"):
         det = "; ".join("%s → %s" % (i.get("expr"), i.get("targets") or i.get("error"))
                         for i in mh.get("issues") or [])
         res["monitoring"]["verdict"] = (
@@ -857,7 +857,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         """
         blinded, gaps = [], []
         for r in results:
-            if r.get("alert_coverage"):
+            # 受外部干扰的场景另有 interference 汇总；把它们算进"告警设计缺口"
+            # 会让人去改一条本来没问题的告警（实测：app_gateway_stop 就这样被误判过）。
+            if r.get("alert_coverage") or (r.get("interference") or {}).get("detected"):
                 continue
             (gaps if (r.get("monitoring") or {}).get("healthy", True) else blinded).append(
                 r.get("scenario"))

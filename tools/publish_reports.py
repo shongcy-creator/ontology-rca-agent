@@ -67,6 +67,10 @@ PAIRS: list[tuple[str, str]] = [
      "reports/rca_diagnosis_report_discriminator.json"),
     (".chaos/rca_diagnosis_report_connfix.json", "reports/rca_diagnosis_report_connfix.json"),
     (".chaos/observability_guard_verify.json", "reports/observability_guard_verify.json"),
+    (".chaos/ontology_evolution_freshness.json", "reports/ontology_v7_report.json"),
+    (".chaos/ontology_evolution_typing.json", "reports/ontology_v8_report.json"),
+    (".chaos/ontology_evolution_shapes.json", "reports/ontology_v9_report.json"),
+    (".chaos/ontology_v6_v9_replay.json", "reports/ontology_v6_v9_replay.json"),
 ]
 
 INTERPRETER = re.compile(r"[A-Za-z]:\\+Users\\+[^\"'\\]*?(?:\\[^\"'\\]*?)*?python\.exe")
@@ -85,8 +89,7 @@ def clean_str(s: str) -> str:
     s = INTERPRETER_FWD.sub("<python>", s)
     s = HOME.sub("<home>", s)
     s = HOME_FWD.sub("<home>", s)
-    s = re.sub(r"[A-Za-z]:\\+[^\"'\s]*credit-card-sys-ops", "<repo>", s)
-    return s
+    return re.sub(r"[A-Za-z]:\\+[^\"'\s]*credit-card-sys-ops", "<repo>", s)
 
 
 def clean(o: Any) -> Any:

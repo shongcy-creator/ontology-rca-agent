@@ -48,7 +48,6 @@ from __future__ import annotations
 import json
 import re
 import threading
-import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -128,6 +127,27 @@ _CAMEL = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 _NAME_SPLIT = re.compile(r"[：:，,、（）()\[\]【】/／\s·\-—_]+")
 
 
+_COND_PREFIX = re.compile(r"^\s*([A-Za-z]+)\s*:")
+
+
+#: 支撑判定可走的谓词（小写），见 OntologyScoring.supported_by_constraint
+_SUPPORT_FORWARD = frozenset({"evidencedby", "attributedto"})
+_SUPPORT_BACKWARD = frozenset({"evidencedby", "attributedto", "produces"})
+_PART_WHOLE = frozenset({"hasnode", "containstable", "memberof", "hasinstance", "hasindex"})
+
+
+def relation_predicate(relation: Dict[str, Any]) -> str:
+    """
+    关系的谓词（小写）。ontology_v8 起取 `predicate` 字段（取值受 TTL 词表约束）；
+    更早的版本没有该字段，回退为从 connection_condition 的前缀解析。
+    """
+    pred = str(relation.get("predicate") or "")
+    if not pred:
+        m = _COND_PREFIX.match(str(relation.get("connection_condition") or ""))
+        pred = m.group(1) if m else ""
+    return pred.lower()
+
+
 def _ascii_tokens(*texts: str) -> List[str]:
     """从若干文本里抽 ASCII 词元（拆 camelCase / 分隔符，去停用词，长度 ≥3）。"""
     out: List[str] = []
@@ -150,7 +170,7 @@ def _cjk_ngrams(text: str, max_len: int = 4) -> List[str]:
         if len(chars) < 2:
             continue
         for n in range(2, min(max_len, len(chars)) + 1):
-            for i in range(0, len(chars) - n + 1):
+            for i in range(len(chars) - n + 1):
                 g = chars[i:i + n]
                 if g not in out:
                     out.append(g)
@@ -186,6 +206,7 @@ class OntologyScoring:
         #: 这里给默认值，保证 `_build()` 抛异常（本体不可读）时查询方法不会 AttributeError。
         self._attributed: Dict[str, List[str]] = {}
         self._by_evidence: Dict[str, List[str]] = {}
+        self._edges_cache: Optional[Dict[str, Set[Tuple[str, str]]]] = None
         self.known_root_causes: Set[str] = set()
         self._build()
 
@@ -307,12 +328,12 @@ class OntologyScoring:
             for r in self.relations:
                 src = str(r.get("source") or "")
                 tgt = str(r.get("target") or "")
-                cond = str(r.get("connection_condition") or "").lower()
+                pred = relation_predicate(r)
                 if not src or not tgt:
                     continue
-                if cond.startswith("attributedto"):
+                if pred == "attributedto":
                     self._attributed.setdefault(src, []).append(tgt)
-                elif cond.startswith("evidencedby"):
+                elif pred == "evidencedby":
                     self._by_evidence.setdefault(tgt, []).append(src)
 
             for tid, term in terms.items():
@@ -505,10 +526,10 @@ class OntologyScoring:
             tgt = str(r.get("target") or "")
             item = {"id": tgt, "label": self.label_for(tgt),
                     "condition": cond, "description": r.get("description", "")}
-            low = cond.lower()
-            if low.startswith("attributedto"):
+            pred = relation_predicate(r)
+            if pred == "attributedto":
                 affected.append(item)
-            elif low.startswith("evidencedby"):
+            elif pred == "evidencedby":
                 evidenced.append(item)
             else:
                 related.append(item)
@@ -633,39 +654,56 @@ class OntologyScoring:
     def supported_by_constraint(self, text: str, entity_id: str,
                                 max_hops: int = 2) -> bool:
         """
-        判断规则引擎给出的根因实体是否被"本体约束命中"支撑。
+        判断规则引擎给出的根因实体是否被"本体约束命中"支撑 —— router 用它识别"快路径过度自信"。
 
-        判定：命中的约束，其 target 与本实体在关系图中距离 ≤ max_hops，
-        或二者类别一致且实体就是该约束 target。
-        这是 router 用来识别"快路径过度自信"的关键信号。
+        支撑必须走**有语义的边**（按谓词，ontology_v8 起取 predicate 字段）：
+          · 一跳：实体 evidencedBy / attributedTo 约束目标，或约束目标 evidencedBy / attributedTo /
+            produces 实体
+          · 两跳（max_hops ≥ 2）：实体归因的组件 produces 约束目标；约束目标 produces 实体的证据指标；
+            实体归因的组件与约束目标是整体-部分关系（hasNode / containsTable / memberOf / hasInstance / hasIndex）
+
+        原先是无向、不分谓词的 2 跳可达。实测（21 条真实告警）两种判定的结论 0/21 不同，
+        但在全部（约束目标, 根因）组合上，旧判定多连通的部分主要是**兄弟连接**：
+        两个根因只因归因到同一组件（或共享同一指标）就互相"支撑"——正是 router 要识别的那类过度自信。
         """
         hits = self.match_constraints(text)
         if not hits or not entity_id:
             return False
         targets = {h["target"] for h in hits if h["target"]}
-        if entity_id in targets:
+        return any(self._supports(entity_id, t, max_hops) for t in targets)
+
+    def _out_edges(self) -> Dict[str, Set[Tuple[str, str]]]:
+        if self._edges_cache is None:
+            edges: Dict[str, Set[Tuple[str, str]]] = {}
+            for r in self.relations:
+                s, t = str(r.get("source") or ""), str(r.get("target") or "")
+                if s and t:
+                    edges.setdefault(s, set()).add((relation_predicate(r), t))
+            self._edges_cache = edges
+        return self._edges_cache
+
+    def _supports(self, entity: str, target: str, max_hops: int) -> bool:
+        if entity == target:
             return True
-        # 图距离
-        adj: Dict[str, Set[str]] = {}
-        for r in self.relations:
-            s, t = str(r.get("source") or ""), str(r.get("target") or "")
-            if not s or not t:
-                continue
-            adj.setdefault(s, set()).add(t)
-            adj.setdefault(t, set()).add(s)
-        frontier = {entity_id}
-        seen = {entity_id}
-        for _ in range(max_hops):
-            nxt: Set[str] = set()
-            for n in frontier:
-                nxt |= adj.get(n, set())
-            if nxt & targets:
+        out = self._out_edges()
+        e_out, t_out = out.get(entity, set()), out.get(target, set())
+        if any(p in _SUPPORT_FORWARD and x == target for p, x in e_out):
+            return True
+        if any(p in _SUPPORT_BACKWARD and x == entity for p, x in t_out):
+            return True
+        if max_hops < 2:
+            return False
+        for p, x in e_out:
+            if p == "attributedto":
+                x_out = out.get(x, set())
+                if ("produces", target) in x_out:
+                    return True
+                if any(q in _PART_WHOLE and y == target for q, y in x_out):
+                    return True
+                if any(q in _PART_WHOLE and y == x for q, y in t_out):
+                    return True
+            if p == "evidencedby" and ("produces", x) in t_out:
                 return True
-            nxt -= seen
-            seen |= nxt
-            frontier = nxt
-            if not frontier:
-                break
         return False
 
     def summary(self) -> Dict[str, Any]:

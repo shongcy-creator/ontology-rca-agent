@@ -385,7 +385,6 @@ def self_test(verify_timeout: float = 60.0) -> Dict[str, Any]:
     #    先手工把 max_connections 设成 60（制造 verify 不通过的条件），
     #    再跑 apply，观察是否自动回滚到 60（即 revert 生效）。
     mysql_sql(MYSQL_PRIMARY, "SET GLOBAL max_connections=60", user="root", pwd="rootpass")
-    op = REVERSIBLE_OPS["restore-max-connections"]
     applied = _apply_reversible("restore-max-connections")     # 设为 200
     ver = _wait_verify("max(mysql_global_variables_max_connections{db_node=\"primary\"}) < 100",
                        timeout_s=15, interval=3)
